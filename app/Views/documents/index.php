@@ -1,0 +1,147 @@
+﻿<?= $this->extend('layouts/app') ?>
+
+<?= $this->section('content') ?>
+<style>
+    .docs-compact .card-body {
+        padding: 14px;
+    }
+    .docs-group {
+        border-top: 1px solid #e9edf5;
+        padding-top: 12px;
+        margin-top: 12px;
+    }
+    .docs-group:first-of-type {
+        border-top: 0;
+        padding-top: 0;
+        margin-top: 0;
+    }
+    .docs-group-title {
+        font-size: 13px;
+        font-weight: 700;
+        color: #59607a;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: .3px;
+    }
+    .doc-item .card-body {
+        padding: 12px;
+    }
+    .doc-item h6 {
+        font-size: 13px;
+        line-height: 1.35;
+        margin-bottom: 10px;
+    }
+    .doc-item .btn {
+        padding: 5px 10px;
+        font-size: 12px;
+    }
+    .docs-row {
+        --bs-gutter-x: 10px;
+        --bs-gutter-y: 10px;
+    }
+</style>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card docs-compact">
+            <div class="card-body">
+                <h5 class="card-title mb-1">Pelayanan Pengurusan Dokumen</h5>
+                <p class="text-muted mb-2">Pilih jenis surat, lalu pilih sumber data: sesuai profil atau manual.</p>
+
+                <?php if (! $hasProfile) : ?>
+                    <div class="alert alert-warning">
+                        Profil Anda belum lengkap. <a href="<?= site_url('profile') ?>">Lengkapi profil sekarang</a> agar bisa membuat surat otomatis.
+                    </div>
+                <?php endif; ?>
+
+                <?php foreach ($docGroups as $groupName => $items) : ?>
+                    <div class="docs-group">
+                        <div class="docs-group-title"><?= esc($groupName) ?></div>
+                        <div class="row docs-row">
+                            <?php foreach ($items as $key => $label) : ?>
+                                <div class="col-md-6 col-lg-4 doc-item">
+                                    <div class="card h-100 mb-0">
+                                        <div class="card-body d-flex flex-column">
+                                            <h6><?= esc($label) ?></h6>
+                                            <div class="mt-auto">
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        Buat Surat
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <a class="dropdown-item <?= $hasProfile ? '' : 'disabled' ?>" href="<?= $hasProfile ? site_url('documents/generate/' . $key) : '#' ?>" <?= $hasProfile ? '' : 'tabindex="-1" aria-disabled="true"' ?>>
+                                                                Sesuai Profil
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item" href="<?= site_url('documents/create-manual/' . $key) ?>">
+                                                                Isi Data Manual
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-2">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Riwayat Surat</h5>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>No</th>
+                            <?php if ($role === 'admin') : ?><th>Akun</th><?php endif; ?>
+                            <th>Nama Warga</th>
+                            <th>NIK</th>
+                            <th>Jenis Surat</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach ($requests as $index => $row) : ?>
+                            <tr>
+                                <td><?= esc((string) ($index + 1)) ?></td>
+                                <?php if ($role === 'admin') : ?><td><?= esc($row['user_name'] ?? '-') ?></td><?php endif; ?>
+                                <td><?= esc($row['citizen_name']) ?></td>
+                                <td><?= esc($row['nik']) ?></td>
+                                <td><?= esc($row['document_type']) ?></td>
+                                <td><span class="badge bg-info"><?= esc($row['status']) ?></span></td>
+                                <td>
+                                    <a href="<?= site_url('documents/preview/' . $row['id']) ?>" class="btn btn-sm btn-secondary">Lihat Surat</a>
+                                    <?php if ($role === 'admin') : ?>
+                                        <form action="<?= site_url('documents/status/' . $row['id']) ?>" method="post" class="d-inline">
+                                            <?= csrf_field() ?>
+                                            <input type="hidden" name="status" value="selesai">
+                                            <input type="hidden" name="admin_notes" value="Disetujui admin">
+                                            <button class="btn btn-sm btn-success" type="submit">Set Selesai</button>
+                                        </form>
+                                    <?php endif; ?>
+                                    <form action="<?= site_url('documents/delete/' . $row['id']) ?>" method="post" class="d-inline">
+                                        <?= csrf_field() ?>
+                                        <button class="btn btn-sm btn-danger" type="submit" data-confirm="Hapus data surat ini?">Hapus</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?= $this->endSection() ?>

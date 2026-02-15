@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow,noarchive">
+    <meta name="app-link-token" content="<?= esc((string) session()->get('link_token')) ?>">
+    <title><?= esc($title ?? 'Dashboard Desa') ?></title>
+
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,700,800&display=swap" rel="stylesheet">
+    <link href="<?= base_url('assets/plugins/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
+    <link href="<?= base_url('assets/plugins/font-awesome/css/all.min.css') ?>" rel="stylesheet">
+    <link href="<?= base_url('assets/plugins/perfectscroll/perfect-scrollbar.css') ?>" rel="stylesheet">
+    <link href="<?= base_url('assets/css/main.min.css') ?>" rel="stylesheet">
+    <link href="<?= base_url('assets/css/custom.css') ?>" rel="stylesheet">
+    <link id="adminDarkThemeCss" href="<?= base_url('assets/css/dark-theme.css') ?>" rel="stylesheet" disabled>
+    <script>
+        (function () {
+            var mode = 'light';
+            try {
+                var stored = localStorage.getItem('admin-theme');
+                if (stored === 'dark' || stored === 'light') {
+                    mode = stored;
+                }
+            } catch (e) {}
+
+            window.__adminThemeMode = mode;
+            var darkCss = document.getElementById('adminDarkThemeCss');
+            if (darkCss) {
+                darkCss.disabled = mode !== 'dark';
+            }
+        })();
+    </script>
+    <style>
+        .top-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+        .page-header .navbar .navbar-brand.top-brand {
+            width: auto;
+            height: auto;
+            background: none;
+            margin: 0;
+            padding: 0;
+            display: inline-flex;
+            flex: 0 1 auto;
+        }
+        .top-brand-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: transparent;
+            color: #4f64d9;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 24px;
+        }
+        .top-brand-icon svg {
+            width: 18px;
+            height: 18px;
+            stroke-width: 1.9;
+        }
+        .top-brand-title {
+            display: inline-block;
+            font-weight: 700;
+            margin: 0;
+            line-height: 1.1;
+            font-size: 26px;
+            letter-spacing: 0;
+            color: #4f64d9;
+            white-space: nowrap;
+        }
+        .top-brand-text {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: flex-start;
+            line-height: 1.1;
+        }
+        .top-brand-subtitle {
+            margin: 2px 0 0;
+            font-size: 13px;
+            font-weight: 500;
+            color: #6f7487;
+            white-space: nowrap;
+        }
+        .top-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .admin-theme-toggle {
+            border: 1px solid #dbe2ef;
+            background: #fff;
+            color: #5b5b5b;
+            border-radius: 10px;
+            padding: 7px 12px;
+            font-size: 12px;
+            line-height: 1;
+            font-weight: 600;
+        }
+        .admin-theme-toggle:hover {
+            color: #4f64d9;
+            border-color: #cfd8ea;
+        }
+        .top-profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #eef1f8;
+            color: #4f64d9;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 40px;
+        }
+        .top-profile-avatar svg {
+            width: 20px;
+            height: 20px;
+            stroke-width: 2;
+        }
+        .top-profile-info {
+            text-align: right;
+            line-height: 1.2;
+        }
+        .top-profile-name {
+            font-weight: 600;
+            margin: 0;
+            color: #2f3342;
+        }
+        .top-profile-role {
+            font-size: 12px;
+            color: #6b7280;
+            margin: 0;
+            text-transform: uppercase;
+        }
+        .important-strip {
+            min-height: 34px;
+            padding-top: 4px !important;
+            padding-bottom: 4px !important;
+        }
+        .important-strip .badge {
+            padding: 4px 9px;
+            line-height: 1.1;
+        }
+        .page-content {
+            margin-top: 124px !important;
+        }
+        .main-wrapper {
+            min-height: auto;
+        }
+        .page-sidebar {
+            top: 171px !important;
+            height: calc(100% - 201px) !important;
+        }
+        @media (max-width: 1350px) {
+            .page-content {
+                margin-top: 124px !important;
+            }
+        }
+        @media (max-width: 768px) {
+            .top-profile-info {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <?php
+    $path      = service('uri')->getPath();
+    $role      = (string) session()->get('user_role');
+    $isAdmin   = $role === 'admin';
+    $userId    = (int) session()->get('user_id');
+    $todayText = date('d-m-Y');
+    $setting   = (new \App\Models\LetterSettingModel())->first() ?: [];
+    $appIcon   = (string) ($setting['app_icon'] ?? 'home');
+    $brandName = (string) ($setting['village_name'] ?? 'Portal Desa');
+
+    if ($isAdmin) {
+        $docPending = (new \App\Models\DocumentRequestModel())->where('status', 'diajukan')->countAllResults();
+        $complaintNew = (new \App\Models\ComplaintModel())->where('status', 'baru')->countAllResults();
+    } else {
+        $docPending = (new \App\Models\DocumentRequestModel())->where('user_id', $userId)->whereIn('status', ['diajukan', 'diproses'])->countAllResults();
+        $complaintNew = (new \App\Models\ComplaintModel())->where('user_id', $userId)->whereIn('status', ['baru', 'ditindaklanjuti'])->countAllResults();
+    }
+    ?>
+    <div class="page-container">
+        <div class="page-header">
+            <nav class="navbar navbar-expand-lg d-flex justify-content-between">
+                <div class="logo">
+                    <a class="navbar-brand top-brand" href="<?= site_url('dashboard') ?>">
+                        <span class="top-brand-icon"><i data-feather="<?= esc($appIcon) ?>"></i></span>
+                        <span class="top-brand-text">
+                            <span class="top-brand-title"><?= esc($brandName) ?></span>
+                            <span class="top-brand-subtitle">Pelayanan Administrasi Desa</span>
+                        </span>
+                    </a>
+                </div>
+                <div id="headerNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item d-flex align-items-center me-2">
+                            <button id="adminThemeToggle" type="button" class="admin-theme-toggle">Dark Mode</button>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link profile-dropdown top-profile" href="#" id="profileDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="top-profile-info">
+                                    <p class="top-profile-name"><?= esc(session()->get('user_name')) ?></p>
+                                    <p class="top-profile-role"><?= esc(session()->get('user_role')) ?></p>
+                                </span>
+                                <span class="top-profile-avatar" aria-hidden="true"><i data-feather="user"></i></span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end profile-drop-menu" aria-labelledby="profileDropDown">
+                                <span class="dropdown-item-text">
+                                    <strong><?= esc(session()->get('user_name')) ?></strong><br>
+                                    <small><?= esc(session()->get('user_email')) ?> (<?= esc(session()->get('user_role')) ?>)</small>
+                                </span>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="<?= site_url('logout') ?>" data-no-js-nav data-confirm="Yakin ingin logout?"><i data-feather="log-out"></i>Logout</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <div class="important-strip px-4 py-0 border-top bg-light">
+                <div class="d-flex flex-wrap gap-3 align-items-center">
+                    <span><strong>Informasi Penting</strong></span>
+                    <span class="badge bg-primary">Tanggal: <?= esc($todayText) ?></span>
+                    <span class="badge bg-secondary">Role: <?= esc(strtoupper($role)) ?></span>
+                    <span class="badge bg-warning text-dark">Dokumen Aktif: <?= esc((string) $docPending) ?></span>
+                    <span class="badge bg-danger">Pengaduan Aktif: <?= esc((string) $complaintNew) ?></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-sidebar">
+            <ul class="list-unstyled accordion-menu">
+                <?php if (session()->get('user_role') === 'admin') : ?>
+                    <li class="sidebar-title">Fitur Pengguna</li>
+                    <li class="<?= $path === 'dashboard' ? 'active-page' : '' ?>">
+                        <a href="<?= site_url('dashboard') ?>"><i data-feather="home"></i>Dashboard</a>
+                    </li>
+                    <li class="<?= $path === 'profile' ? 'active-page' : '' ?>">
+                        <a href="<?= site_url('profile') ?>"><i data-feather="user"></i>Profil Saya</a>
+                    </li>
+                    <li class="<?= str_starts_with($path, 'documents') ? 'active-page' : '' ?>">
+                        <a href="<?= site_url('documents') ?>"><i data-feather="file-text"></i>Pelayanan Dokumen</a>
+                    </li>
+                    <li class="<?= str_starts_with($path, 'complaints') ? 'active-page' : '' ?>">
+                        <a href="<?= site_url('complaints') ?>"><i data-feather="message-square"></i>Pengaduan Saya</a>
+                    </li>
+                    <li class="sidebar-title mt-2">Fitur Admin</li>
+                    <li class="<?= str_starts_with($path, 'users') ? 'active-page' : '' ?>">
+                        <a href="<?= site_url('users') ?>"><i data-feather="users"></i>Managemen Pengguna</a>
+                    </li>
+                    <li class="<?= $path === 'programs/program' || $path === 'programs' ? 'active-page' : '' ?>">
+                        <a href="<?= site_url('programs/program') ?>"><i data-feather="clipboard"></i>Posting Program Desa</a>
+                    </li>
+                    <li class="<?= $path === 'programs/artikel' ? 'active-page' : '' ?>">
+                        <a href="<?= site_url('programs/artikel') ?>"><i data-feather="file-text"></i>Posting Artikel</a>
+                    </li>
+                    <li class="<?= $path === 'programs/kegiatan' ? 'active-page' : '' ?>">
+                        <a href="<?= site_url('programs/kegiatan') ?>"><i data-feather="calendar"></i>Posting Kegiatan</a>
+                    </li>
+                    <li class="<?= $path === 'documents/settings' ? 'active-page' : '' ?>">
+                        <a href="<?= site_url('documents/settings') ?>"><i data-feather="settings"></i>Kop Surat Desa</a>
+                    </li>
+                    <li>
+                        <a href="<?= site_url('/') ?>" target="_blank"><i data-feather="external-link"></i>Lihat Halaman Utama</a>
+                    </li>
+                <?php else : ?>
+                    <li class="sidebar-title">User Panel</li>
+                    <li class="<?= $path === 'dashboard' ? 'active-page' : '' ?>">
+                        <a href="<?= site_url('dashboard') ?>"><i data-feather="home"></i>Dashboard</a>
+                    </li>
+                    <li class="<?= $path === 'profile' ? 'active-page' : '' ?>">
+                        <a href="<?= site_url('profile') ?>"><i data-feather="user"></i>Profil Saya</a>
+                    </li>
+                    <li class="<?= str_starts_with($path, 'documents') ? 'active-page' : '' ?>">
+                        <a href="<?= site_url('documents') ?>"><i data-feather="file-text"></i>Pelayanan Dokumen</a>
+                    </li>
+                    <li class="<?= str_starts_with($path, 'complaints') ? 'active-page' : '' ?>">
+                        <a href="<?= site_url('complaints') ?>"><i data-feather="message-square"></i>Pengaduan Saya</a>
+                    </li>
+                <?php endif; ?>
+                <li class="sidebar-title mt-2">Akun</li>
+                <li>
+                    <a href="<?= site_url('logout') ?>" data-no-js-nav data-confirm="Yakin ingin logout?"><i data-feather="log-out"></i>Logout</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="page-content">
+            <div class="main-wrapper">
+                <?php if (session()->getFlashdata('success')) : ?>
+                    <div class="alert alert-success"><?= esc(session()->getFlashdata('success')) ?></div>
+                <?php endif; ?>
+                <?php if (session()->getFlashdata('error')) : ?>
+                    <div class="alert alert-danger"><?= esc(session()->getFlashdata('error')) ?></div>
+                <?php endif; ?>
+
+                <?= $this->renderSection('content') ?>
+            </div>
+        </div>
+    </div>
+
+    <script src="<?= base_url('assets/plugins/jquery/jquery-3.4.1.min.js') ?>" defer></script>
+    <script src="<?= base_url('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') ?>" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
+    <script src="https://unpkg.com/feather-icons" defer></script>
+    <script src="<?= base_url('assets/plugins/perfectscroll/perfect-scrollbar.min.js') ?>" defer></script>
+    <script src="<?= base_url('assets/js/main.min.js') ?>" defer></script>
+    <script src="<?= base_url('assets/js/app-lite.js') ?>" defer></script>
+    <script>
+        (function () {
+            var darkCss = document.getElementById('adminDarkThemeCss');
+            var toggle = document.getElementById('adminThemeToggle');
+            if (!darkCss || !toggle) {
+                return;
+            }
+
+            var mode = window.__adminThemeMode || localStorage.getItem('admin-theme');
+            if (mode !== 'dark' && mode !== 'light') {
+                mode = 'light';
+            }
+
+            function applyTheme(nextMode) {
+                darkCss.disabled = nextMode !== 'dark';
+                toggle.textContent = nextMode === 'dark' ? 'Light Mode' : 'Dark Mode';
+                localStorage.setItem('admin-theme', nextMode);
+            }
+
+            applyTheme(mode);
+
+            toggle.addEventListener('click', function () {
+                mode = (darkCss.disabled ? 'dark' : 'light');
+                applyTheme(mode);
+            });
+        })();
+    </script>
+</body>
+</html>

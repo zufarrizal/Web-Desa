@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Responsive Admin Dashboard Template">
+        <meta name="keywords" content="admin,dashboard">
+        <meta name="author" content="stacks">
+        <!-- The above 6 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        
+        <!-- Title -->
+        <title>Circl - Responsive Admin Dashboard Template</title>
+
+        <!-- Styles -->
+        <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,700,800&display=swap" rel="stylesheet">
+        <link href="../../circl/theme/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../circl/theme/assets/plugins/font-awesome/css/all.min.css" rel="stylesheet">
+        <link href="../../circl/theme/assets/plugins/perfectscroll/perfect-scrollbar.css" rel="stylesheet">
+
+      
+        <!-- Theme Styles -->
+        <link href="../../circl/theme/assets/css/main.min.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+      <div class='loader'>
+        <div class='spinner-grow text-primary' role='status'>
+          <span class='sr-only'>Loading...</span>
+        </div>
+      </div>
+
+        <div class="page-container">
+          <div class="page-header">
+            <nav class="navbar navbar-expand-lg d-flex justify-content-center">
+                <div class="logo">
+                  <a class="navbar-brand" href="index.html"></a>
+                </div>
+                
+            </nav>
+        </div>
+            <div class="page-sidebar">
+                <ul class="list-unstyled accordion-menu">
+                  <li>
+                    <a href="#introduction"><i data-feather="home"></i>Introduction</a>
+                  </li>
+                  
+                  <li>
+                    <a href="#"><i data-feather="code"></i>Structure<i class="fas fa-chevron-right dropdown-icon"></i></a>
+                    <ul class="">
+                      <li><a href="#folder"><i class="far fa-circle"></i>Folder Structure</a></li>
+                      <li><a href="#html"><i class="far fa-circle"></i>HTML Structure</a></li>
+                    </ul>
+                  </li>
+                  <li>
+                    <a href="#"><i data-feather="git-merge"></i>Customization<i class="fas fa-chevron-right dropdown-icon"></i></a>
+                    <ul class="">
+                      <li><a href="#code"><i class="far fa-circle"></i>Code</a></li>
+                      <li><a href="#fonts"><i class="far fa-circle"></i>Fonts</a></li>
+                      <li><a href="#css"><i class="far fa-circle"></i>CSS Utilities</a></li>
+                    </ul>
+                  </li>
+                  <li>
+                    <a href="#darktheme"><i data-feather="aperture"></i>Dark Theme</a>
+                  </li>
+                  <li>
+                    <a href="#newpage"><i data-feather="edit-2"></i>New Page</a>
+                  </li>
+                  <li>
+                    <a href="#plugins"><i data-feather="codesandbox"></i>Plugins</a>
+                  </li>
+                  <li>
+                    <a href="#support"><i data-feather="help-circle"></i>Support</a>
+                  </li>
+                </ul>
+            </div>
+            <div class="page-content">
+                <div class="main-wrapper">
+                  <div class="row">
+                    <div class="col">
+                      <div class="card" id="introduction">
+                        <div class="card-body">
+                          <h5 class="card-title">Introduction</h5>
+                          <p>
+                            Circl is a creative admin theme, based on the latest Bootstrap 5 Framework.<br><br>
+                            It was created to be the most functional, clean and well designed template for any types of backend applications. We have carefully designed all common elements.<br><br>
+                            If you have any questions that are beyond the scope of this help file, please feel free to mail us via our user page contact form <a href="https://themeforest.net/user/stacks">here</a>. Thank you so much!
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <div class="card" id="folder">
+                        <div class="card-body">
+                          <h5 class="card-title">Folder Structure</h5>
+                          <pre class="no-m">
+theme/
+├─ assets/
+│    ├─ css/
+│    ├─ images/
+│    ├─ js/
+│    │    └─ pages/
+│    └─ plugins/
+└─ templates/
+     └─ admin1/
+    </pre>
+                        </div>
+                      </div>
+                    </div>
+                    
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <div class="card" id="html">
+                        <div class="card-body">
+                          <h5 class="card-title">HTML Structure</h5>
+                          <p>Header</p>
+                          <pre class="no-m">
+&lt;head&gt;
+&lt;meta charset="utf-8"&gt;
+&lt;meta http-equiv="X-UA-Compatible" content="IE=edge"&gt;
+&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+&lt;meta name="description" content="Responsive Admin Dashboard Template"&gt;
+&lt;meta name="keywords" content="admin,dashboard"&gt;
+&lt;meta name="author" content="stacks"&gt;
+&lt;!-- The above 6 meta tags *must* come first in the head; any other head content must come *after* these tags --&gt;
+                              
+&lt;!-- Title --&gt;
+&lt;title&gt;Circl - Responsive Admin Dashboard Template&lt;/title&gt;
+                      
+&lt;!-- Styles --&gt;
+&lt;link href="https://fonts.googleapis.com/css?family=Poppins:400,500,700,800&display=swap" rel="stylesheet"&gt;
+&lt;link href="../../assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet"&gt;
+&lt;link href="../../assets/plugins/font-awesome/css/all.min.css" rel="stylesheet"&gt;
+&lt;link href="../../assets/plugins/perfectscroll/perfect-scrollbar.css" rel="stylesheet"&gt;
+                      
+                            
+&lt;!-- Theme Styles --&gt;
+&lt;link href="../../assets/css/main.min.css" rel="stylesheet"&gt;
+&lt;link href="../../assets/css/custom.css" rel="stylesheet"&gt;
+                      
+&lt;!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries --&gt;
+&lt;!-- WARNING: Respond.js doesn't work if you view the page via file:// --&gt;
+&lt;!--[if lt IE 9]&gt;
+&lt;script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"&gt;&lt;/script&gt;
+&lt;script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"&gt;&lt;/script&gt;
+&lt;![endif]--&gt;
+&lt;/head&gt;
+                          </pre>
+
+                          <p class="m-b-md m-t-md">Body</p>
+
+                          <pre>
+&lt;body&gt;
+&lt;div class='loader'&gt;
+&lt;div class='spinner-grow text-primary' role='status'&gt;
+&lt;span class='sr-only'&gt;Loading...&lt;/span&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+                        
+&lt;div class="page-container"&gt;
+&lt;div class="page-header"&gt;
+&lt;nav class="navbar navbar-expand-lg d-flex justify-content-between"&gt;
+&lt;div class="" id="navbarNav"&gt;
+&lt;ul class="navbar-nav" id="leftNav"&gt;
+&lt;li class="nav-item"&gt;
+&lt;a class="nav-link" id="sidebar-toggle" href="#"&gt;&lt;i class="material-icons"&gt;arrow_back&lt;/i&gt;&lt;/a&gt;
+&lt;/li&gt;
+&lt;li class="nav-item"&gt;
+&lt;a class="nav-link" href="#"&gt;Home&lt;/a&gt;
+&lt;/li&gt;
+&lt;li class="nav-item"&gt;
+&lt;a class="nav-link" href="#"&gt;Settings&lt;/a&gt;
+&lt;/li&gt;
+&lt;li class="nav-item"&gt;
+&lt;a class="nav-link" href="#"&gt;Help&lt;/a&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class="logo"&gt;
+&lt;a class="navbar-brand" href="index.html"&gt;&lt;/a&gt;
+&lt;/div&gt;
+&lt;div class="" id="headerNav"&gt;
+&lt;ul class="navbar-nav"&gt;
+&lt;li class="nav-item dropdown"&gt;
+&lt;a class="nav-link search-dropdown" href="#" id="searchDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false"&gt;&lt;i class="material-icons"&gt;search&lt;/i&gt;&lt;/a&gt;
+&lt;div class="dropdown-menu dropdown-menu-end dropdown-lg search-drop-menu" aria-labelledby="navbarDropdownMenuLink"&gt;
+&lt;form&gt;
+&lt;input class="form-control" type="text" placeholder="Type something.." aria-label="Search"&gt;
+&lt;/form&gt;
+&lt;h6 class="dropdown-header"&gt;Recent Searches&lt;/h6&gt;
+&lt;a class="dropdown-item" href="#"&gt;charts&lt;/a&gt;
+&lt;a class="dropdown-item" href="#"&gt;new orders&lt;/a&gt;
+&lt;a class="dropdown-item" href="#"&gt;file manager&lt;/a&gt;
+&lt;a class="dropdown-item" href="#"&gt;new users&lt;/a&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li class="nav-item dropdown"&gt;
+&lt;a class="nav-link notifications-dropdown" href="#" id="notificationsDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false"&gt;3&lt;/a&gt;
+&lt;div class="dropdown-menu dropdown-menu-end notif-drop-menu" aria-labelledby="navbarDropdownMenuLink"&gt;
+&lt;h6 class="dropdown-header"&gt;Notifications&lt;/h6&gt;
+&lt;a href="#"&gt;
+&lt;div class="header-notif"&gt;
+&lt;div class="notif-image"&gt;
+&lt;span class="notification-badge bg-info text-white"&gt;
+&lt;i class="fas fa-bullhorn"&gt;&lt;/i&gt;
+&lt;/span&gt;
+&lt;/div&gt;
+&lt;div class="notif-text"&gt;
+&lt;p class="bold-notif-text"&gt;faucibus dolor in commodo lectus mattis&lt;/p&gt;
+&lt;small&gt;19:00&lt;/small&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/a&gt;
+&lt;a href="#"&gt;
+&lt;div class="header-notif"&gt;
+&lt;div class="notif-image"&gt;
+&lt;span class="notification-badge bg-primary text-white"&gt;
+&lt;i class="fas fa-bolt"&gt;&lt;/i&gt;
+&lt;/span&gt;
+&lt;/div&gt;
+&lt;div class="notif-text"&gt;
+&lt;p class="bold-notif-text"&gt;faucibus dolor in commodo lectus mattis&lt;/p&gt;
+&lt;small&gt;18:00&lt;/small&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/a&gt;
+&lt;a href="#"&gt;
+&lt;div class="header-notif"&gt;
+&lt;div class="notif-image"&gt;
+&lt;span class="notification-badge bg-success text-white"&gt;
+&lt;i class="fas fa-at"&gt;&lt;/i&gt;
+&lt;/span&gt;
+&lt;/div&gt;
+&lt;div class="notif-text"&gt;
+&lt;p&gt;faucibus dolor in commodo lectus mattis&lt;/p&gt;
+&lt;small&gt;yesterday&lt;/small&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/a&gt;
+&lt;a href="#"&gt;
+&lt;div class="header-notif"&gt;
+&lt;iv class="notif-image"&gt;
+&lt;span class="notification-badge"&gt;
+&lt;img src="../../assets/images/avatars/profile-image.png"&gt;
+&lt;/span&gt;
+&lt;/div&gt;
+&lt;div class="notif-text"&gt;
+&lt;p&gt;faucibus dolor in commodo lectus mattis&lt;/p&gt;
+&lt;small&gt;yesterday&lt;/small&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/a&gt;
+&lt;a href="#"&gt;
+&lt;div class="header-notif"&gt;
+&lt;div class="notif-image"&gt;
+&lt;span class="notification-badge"&gt;
+&lt;img src="../../assets/images/avatars/profile-image-3.jpg"&gt;
+&lt;/span&gt;
+&lt;/div&gt;
+&lt;div class="notif-text"&gt;
+&lt;p&gt;faucibus dolor in commodo lectus mattis&lt;/p&gt;
+&lt;small&gt;yesterday&lt;/small&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/a&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li class="nav-item dropdown"&gt;
+&lt;a class="nav-link profile-dropdown" href="#" id="profileDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false"&gt;&lt;img src="../../assets/images/avatars/profile-image-1.png"&gt;&lt;/a&gt;
+&lt;div class="dropdown-menu dropdown-menu-end profile-drop-menu" aria-labelledby="navbarDropdownMenuLink"&gt;
+&lt;a class="dropdown-item" href="#"&gt;&lt;i data-feather="user"&gt;&lt;/i&gt;Profile&lt;/a&gt;
+&lt;a class="dropdown-item" href="#"&gt;&lt;i data-feather="inbox"&gt;&lt;/i&gt;Messages&lt;/a&gt;
+&lt;a class="dropdown-item" href="#"&gt;&lt;i data-feather="edit"&gt;&lt;/i&gt;Activities&lt;span class="badge rounded-pill bg-success"&gt;12&lt;/span&gt;&lt;/a&gt;
+&lt;a class="dropdown-item" href="#"&gt;&lt;i data-feather="check-circle"&gt;&lt;/i&gt;Tasks&lt;/a&gt;
+&lt;div class="dropdown-divider"&gt;&lt;/div&gt;
+&lt;a class="dropdown-item" href="#"&gt;&lt;i data-feather="settings"&gt;&lt;/i&gt;Settings&lt;/a&gt;
+&lt;a class="dropdown-item" href="#"&gt;&lt;i data-feather="unlock"&gt;&lt;/i&gt;Lock&lt;/a&gt;
+&lt;a class="dropdown-item" href="#"&gt;&lt;i data-feather="log-out"&gt;&lt;/i&gt;Logout&lt;/a&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/nav&gt;
+&lt;/div&gt;
+&lt;div class="page-sidebar"&gt;
+&lt;ul class="list-unstyled accordion-menu"&gt;
+&lt;li class="sidebar-title"&gt;
+Main
+&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="index.html"&gt;&lt;i data-feather="home"&gt;&lt;/i&gt;Dashboard&lt;/a&gt;
+&lt;/li&gt;
+&lt;li class="sidebar-title"&gt;
+Apps
+&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="email.html"&gt;&lt;i data-feather="inbox"&gt;&lt;/i&gt;Email&lt;/a&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="calendar.html"&gt;&lt;i data-feather="calendar"&gt;&lt;/i&gt;Calendar&lt;/a&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="social.html"&gt;&lt;i data-feather="user"&gt;&lt;/i&gt;Social&lt;/a&gt;
+&lt;/li&gt;&lt;li&gt;
+&lt;a href="file-manager.html"&gt;&lt;i data-feather="message-circle"&gt;&lt;/i&gt;File Manager&lt;/a&gt;
+&lt;/li&gt;
+&lt;li class="sidebar-title"&gt;
+Elements
+&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="index.html"&gt;&lt;i data-feather="code"&gt;&lt;/i&gt;Components&lt;i class="fas fa-chevron-right dropdown-icon"&gt;&lt;/i&gt;&lt;/a&gt;
+&lt;ul class=""&gt;
+&lt;li&gt;&lt;a href="alerts.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Alerts&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="typography.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Typography&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="icons.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Icons&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="badge.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Badge&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="buttons.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Buttons&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="dropdowns.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Dropdowns&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="list-group.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;List Group&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="toasts.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Toasts&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="modal.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Modal&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="pagination.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Pagination&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="popovers.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Popovers&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="progress.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Progress&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="spinners.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Spinners&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="accordion.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Accordion&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="index.html"&gt;&lt;i data-feather="gift"&gt;&lt;/i&gt;Plugins&lt;i class="fas fa-chevron-right dropdown-icon"&gt;&lt;/i&gt;&lt;/a&gt;
+&lt;ul class=""&gt;
+&lt;li&gt;&lt;a href="block-ui.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Block UI&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="session-timeout.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Session Timeout&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="tree-view.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Tree View&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="index.html"&gt;&lt;i data-feather="edit"&gt;&lt;/i&gt;Form&lt;i class="fas fa-chevron-right dropdown-icon"&gt;&lt;/i&gt;&lt;/a&gt;
+&lt;ul class=""&gt;
+&lt;li&gt;&lt;a href="form-elements.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Form Elements&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="form-layout.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Form Layout&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="form-validation.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Form Validation&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="cards.html"&gt;&lt;i data-feather="layers"&gt;&lt;/i&gt;Cards&lt;/a&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="index.html"&gt;&lt;i data-feather="list"&gt;&lt;/i&gt;Tables&lt;i class="fas fa-chevron-right dropdown-icon"&gt;&lt;/i&gt;&lt;/a&gt;
+&lt;ul class=""&gt;
+&lt;li&gt;&lt;a href="tables.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Basic Tables&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="data-tables.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Data Tables&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="charts.html"&gt;&lt;i data-feather="pie-chart"&gt;&lt;/i&gt;Charts&lt;/a&gt;
+&lt;/li&gt;
+&lt;li class="sidebar-title"&gt;
+Other
+&lt;/li&gt;
+&lt;li class="active-page"&gt;
+&lt;a href="index.html" class="active"&gt;&lt;i data-feather="star"&gt;&lt;/i&gt;Pages&lt;i class="fas fa-chevron-right dropdown-icon"&gt;&lt;/i&gt;&lt;/a&gt;
+&lt;ul class=""&gt;
+&lt;li&gt;&lt;a href="invoice.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Invoice&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="404.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;404 Page&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="500.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;500 Page&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="blank-page.html" class="active"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Blank Page&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="login.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Login&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="register.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Register&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="lockscreen.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Lockscreen&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="price.html"&gt;&lt;i class="far fa-circle"&gt;&lt;/i&gt;Price&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;a href="#"&gt;&lt;i data-feather="check-circle"&gt;&lt;/i&gt;Documentation&lt;/a&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class="page-content"&gt;
+&lt;div class="main-wrapper"&gt;
+&lt;/div&gt;
+                                            
+&lt;/div&gt;
+                                      
+&lt;/div&gt;
+                                
+&lt;!-- Javascripts --&gt;
+&lt;script src="../../assets/plugins/jquery/jquery-3.4.1.min.js"&gt;&lt;/script&gt;
+&lt;script src="https://unpkg.com/@popperjs/core@2"&gt;&lt;/script&gt;
+&lt;script src="../../assets/plugins/bootstrap/js/bootstrap.min.js"&gt;&lt;/script&gt;
+&lt;script src="https://unpkg.com/feather-icons"&gt;&lt;/script&gt;
+&lt;script src="../../assets/plugins/perfectscroll/perfect-scrollbar.min.js"&gt;&lt;/script&gt;
+&lt;script src="../../assets/js/main.min.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+</pre>
+                        </div>
+                      </div>
+                    </div>
+                    
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <div class="card" id="code">
+                        <div class="card-body">
+                          <h5 class="card-title">Code</h5>
+                          <p>
+                            All theme CSS files are located in <code>theme/assets/css</code> folder. For your CSS customization you can use <code>theme/assets/css/custom.css</code>. Keep your custom CSS separate. It makes updating the theme easier in future.<br><br>
+
+                            All Javascript files are located in <code>theme/assets/js/</code> folder. Also Page-level Javascript files are located in <code>theme/assets/js/pages/</code> folder and each page has its own Javascript file. For your Javascripts you can use <code>theme/assets/js/custom.js</code>. Keep your custom Javascript separate. It makes updating the theme easier in future.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <div class="card" id="fonts">
+                        <div class="card-body">
+                          <h5 class="card-title">Fonts</h5>
+                          <p>
+                            Circl use Poppins font as primary font for texts. It must be loaded in HTML Head before other CSS files.
+                          </p>
+                          <pre>&lt;link href="https://fonts.googleapis.com/css?family=Poppins:400,500,700,800&display=swap" rel="stylesheet"&gt;</pre>
+                            <p>
+                              We also use FontAwesome and Feather Icons.
+                            </p>
+                            
+                          
+                        </div>
+                      </div>
+                    </div>
+                    
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <div class="card" id="css">
+                        <div class="card-body">
+                          <h5 class="card-title">CSS Utilities</h5>
+                          <p>All available helper classes in Circl:</p>
+                                        <div class="table-responsive m-b-sm">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>Prefix</th>
+                                                        <th>Second Prefix (side)</th>
+                                                        <th>third Prefix</th>
+                                                        <th>Suffix (value)</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Margin</td>
+                                                        <td>m</td>
+                                                        <td>t,r,b,l</td>
+                                                        <td>n (only for negative values)</td>
+                                                        <td>xxs, xs, sm, md, lg, xxl</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Padding</td>
+                                                        <td>p</td>
+                                                        <td>v,h (top &amp; bottom, left &amp; right)</td>
+                                                        <td></td>
+                                                        <td>xxs, xs, sm, md, lg, xxl</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <p><code>.no-s</code> Removes margins &amp; paddings</p>
+                                        <p><code>.no-m</code> Removes margins</p>
+                                        <p><code>.no-p</code> Removes paddings</p>
+                                        <p><code>.no-p-h</code> Removes paddings from left &amp; right</p>
+                                        <p><code>.no-p-v</code> Removes Paddings from top &amp; bottom</p>
+                                        <hr>
+                                        <p><code>.no-b</code> Removes borders</p>
+                                        <p><code>.b</code> Adds border from all sides</p>
+                                        <p><code>.b-t</code>, <code>.b-r</code>, <code>.b-b</code>, <code>.b-l</code> Adds border from top, right, bottom, left</p>
+                                        <p><code>.b-default</code>, <code>.b-primary</code>, <code>.b-success</code>, <code>.b-info</code>, <code>.b-warning</code>, <code>.b-danger</code> Adds border by contextual colors</p>
+                                        <p><code>.b-2</code>, <code>.b-3</code>, <code>.b-4</code> Border size</p>
+                                        <p><code>.b-n-t</code>, <code>.b-n-r</code>, <code>.b-n-b</code>, <code>.b-n-l</code> Removes border from  top, right, bottom, left</p>
+                                        <hr>
+                                        <p><code>.no-r</code> Removes border radius</p>
+                                        <p><code>.r</code> Adds border radius</p>
+                                        <p><code>.r-t-l</code>, <code>.r-t-r</code>, <code>.r-b-l</code>, <code>.r-b-r</code> Adds border radius From top-left, top-right, bottom-left, bottom-right sides.</p>
+                                        <p class="no-m"><code>.no-r-t-l</code>, <code>.no-r-t-r</code>, <code>.no-r-b-l</code>, <code>.no-r-b-r</code> Removes border radius From top-left, top-right, bottom-left, bottom-right sides.</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <div class="card" id="darktheme">
+                        <div class="card-body">
+                          <h5 class="card-title">Dark Theme</h5>
+                          <p>
+                            If you you want to use dark theme, simply add <code>&lt;link href="../../assets/css/dark-theme.css" rel="stylesheet"&gt;</code> after <code>&lt;link href="../../assets/css/main.min.css" rel="stylesheet"&gt;</code> in Header
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <div class="card" id="newpage">
+                        <div class="card-body">
+                          <h5 class="card-title">New Page</h5>
+                          <p>
+                            It's very easy to make a new page with Circl.<br><br>You can use all components that are shown in the live preview. Note, all content should be placed in <code>.main-wrapper</code> to fit the page correctly.<br><br>If you use component that needs some JS codes which are included in component demo page at the end of the HTML body tag, you can just include the same JS file. If you use component that needs an extra plugin to work, you have to include files of this plugins as they are included in the preview page.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <div class="card" id="plugins">
+                        <div class="card-body">
+                          <h5 class="card-title">Plugins</h5>
+                          <div class="table-resposive">
+                            <table class="table">
+                              <thead>
+                                <tr>
+                                  <th scope="col">Plugin</th>
+                                  <th scope="col">Website</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td>Apex Charts</td>
+                                  <td><a href="https://apexcharts.com/">https://apexcharts.com/</a></td>
+                                </tr>
+                                <tr>
+                                  <td>BlockUI</td>
+                                  <td><a href="http://malsup.com/jquery/block/">http://malsup.com/jquery/block/</a></td>
+                                </tr>
+                                <tr>
+                                  <td>Bootstrap</td>
+                                  <td><a href="https://getbootstrap.com/">https://getbootstrap.com/</a></td>
+                                </tr>
+                                <tr>
+                                  <td>Chartjs</td>
+                                  <td><a href="https://www.chartjs.org/">https://www.chartjs.org/</a></td>
+                                </tr>
+                                <tr>
+                                  <td>DataTables</td>
+                                  <td><a href="https://datatables.net/">https://datatables.net/</a></td>
+                                </tr>
+                                <tr>
+                                  <td>FontAwesome</td>
+                                  <td><a href="https://fontawesome.com/">https://fontawesome.com/</a></td>
+                                </tr>
+                                <tr>
+                                  <td>FullCalendar</td>
+                                  <td><a href="https://fullcalendar.io/docs">https://fullcalendar.io/docs</a></td>
+                                </tr>
+                                <tr>
+                                  <td>Idle Timer</td>
+                                  <td><a href="https://github.com/thorst/jquery-idletimer/">https://github.com/thorst/jquery-idletimer/</a></td>
+                                </tr>
+                                <tr>
+                                  <td>Jquery</td>
+                                  <td><a href="https://jquery.com/">https://jquery.com/</a></td>
+                                </tr>
+                                <tr>
+                                  <td>PerfectScroll</td>
+                                  <td><a href="https://github.com/mdbootstrap/perfect-scrollbar">https://github.com/mdbootstrap/perfect-scrollbar</a></td>
+                                </tr>
+                                <tr>
+                                  <td>Popper</td>
+                                  <td><a href="https://popper.js.org/">https://popper.js.org/</a></td>
+                                </tr>
+                                <tr>
+                                  <td>TreeJs</td>
+                                  <td><a href="https://www.jstree.com/">https://www.jstree.com/</a></td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <div class="card" id="support">
+                        <div class="card-body">
+                          <h5 class="card-title">Support</h5>
+                          <p>
+                            Once again, thank you so much for purchasing this theme. As mentioned at the beginning, we'd be glad to help you if you have any questions relating to this theme. No guarantees, but we'll do our best to assist. If you have a more general question relating to the themes on ThemeForest, you might consider visiting the forums and asking your question in the "Item Discussion" section.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                  </div>
+                </div>
+                                  
+                </div>
+              
+            </div>
+        
+        <!-- Javascripts -->
+        <script src="../../circl/theme/assets/plugins/jquery/jquery-3.4.1.min.js"></script>
+        <script src="https://unpkg.com/@popperjs/core@2"></script>
+        <script src="../../circl/theme/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+        <script src="https://unpkg.com/feather-icons"></script>
+        <script src="../../circl/theme/assets/plugins/perfectscroll/perfect-scrollbar.min.js"></script>
+        <script src="../../circl/theme/assets/js/main.min.js"></script>
+
+        <script>
+        $( document ).ready(function() {
+          "use strict";
+          $('a[href^="#"]').on('click',function (e) {
+            e.preventDefault();
+        
+            var target = this.hash;
+            var $target = $(target);
+            var scrollTo = $target.offset().top - 118
+
+            $('html, body').stop().animate({
+              'scrollTop': scrollTo
+            }, 100);
+          });
+          $('pre').addClass('prettyprint');
+          prettyPrint();
+        });
+        </script>
+    </body>
+</html>
