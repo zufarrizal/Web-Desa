@@ -1,9 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">`r`n    <meta name="robots" content="noindex,nofollow,noarchive">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow,noarchive">
     <title>Login - Dashboard Desa</title>
 
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,700,800&display=swap" rel="stylesheet">
@@ -14,7 +15,8 @@
     <link href="<?= base_url('assets/css/custom.css') ?>" rel="stylesheet">
     <style>
         body.login-page { min-height: 100vh; display: flex; flex-direction: column; }
-        body.login-page > .container { flex: 1; display: flex; align-items: center; }
+        body.login-page > .container { flex: 1; display: flex; align-items: center; justify-content: center; }
+        body.login-page > .container > .row { width: 100%; margin-left: 0; margin-right: 0; }
     </style>
 </head>
 <body class="login-page">
@@ -82,3 +84,5 @@
     <script src="<?= base_url('assets/js/app-lite.js') ?>" defer></script>
 </body>
 </html>
+
+

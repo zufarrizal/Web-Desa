@@ -3,6 +3,7 @@
 namespace Config;
 
 use App\Filters\AuthFilter;
+use App\Filters\BotShieldFilter;
 use App\Filters\LinkTokenFilter;
 use App\Filters\RequestThrottleFilter;
 use App\Filters\RoleFilter;
@@ -29,6 +30,7 @@ class Filters extends BaseConfig
         'invalidchars'  => InvalidChars::class,
         'secureheaders' => SecureHeaders::class,
         'auth'          => AuthFilter::class,
+        'botshield'     => BotShieldFilter::class,
         'role'          => RoleFilter::class,
         'throttle'      => RequestThrottleFilter::class,
         'linktoken'     => LinkTokenFilter::class,
@@ -42,14 +44,14 @@ class Filters extends BaseConfig
      */
     public array $globals = [
         'before' => [
-            // 'honeypot',
             'csrf',
+            'botshield',
             // 'invalidchars',
             'throttle',
         ],
         'after' => [
             // 'toolbar',
-            // 'honeypot',
+            'honeypot',
             // 'secureheaders',
         ],
     ];
