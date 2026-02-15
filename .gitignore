@@ -129,6 +129,7 @@ nb-configuration.xml
 
 # Visual Studio Code
 .vscode/
+.vs/
 
 /results/
 /phpunit*.xml
@@ -139,6 +140,17 @@ nb-configuration.xml
 *.tmp
 *.temp
 *.pid
+*.seed
+*.pid.lock
+*.stackdump
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.eslintcache
+.stylelintcache
+.php-cs-fixer.cache
+node_modules/
 
 # OS / editor extras
 .fleet/

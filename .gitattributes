@@ -5,6 +5,9 @@
 *.bat text eol=crlf
 *.cmd text eol=crlf
 *.ps1 text eol=crlf
+*.sln text eol=crlf
+*.vcxproj text eol=crlf
+*.vcxproj.filters text eol=crlf
 
 # Common binary assets
 *.png binary
@@ -19,3 +22,14 @@
 *.ttf binary
 *.eot binary
 *.zip binary
+*.7z binary
+*.rar binary
+*.mp4 binary
+*.mov binary
+*.avi binary
+*.mp3 binary
+*.wav binary
+
+# Minified bundles are generated assets
+*.min.css linguist-generated=true
+*.min.js linguist-generated=true
