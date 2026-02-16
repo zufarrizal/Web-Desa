@@ -19,8 +19,10 @@ $kontakUrl = $homePage ? '#kontak' : $homeUrl . '#kontak';
 <nav class="navbar navbar-expand-lg guest-navbar">
     <div class="container">
         <a class="navbar-brand" href="<?= site_url('/') ?>">Portal Desa</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#guestNavbar" aria-controls="guestNavbar" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+        <button class="navbar-toggler border-0 shadow-none p-1" style="color: inherit;" type="button" data-bs-toggle="collapse" data-bs-target="#guestNavbar" aria-controls="guestNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true" focusable="false">
+                <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
         </button>
         <div class="collapse navbar-collapse" id="guestNavbar">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">

@@ -19,12 +19,25 @@
     <link id="adminDarkThemeCss" href="<?= base_url('assets/css/dark-theme.css') ?>" rel="stylesheet" disabled>
     <script>
         (function () {
+            var THEME_KEY = 'site-theme';
+            var LEGACY_KEYS = ['admin-theme', 'landing-theme'];
             var mode = 'light';
             try {
-                var stored = localStorage.getItem('admin-theme');
+                var stored = localStorage.getItem(THEME_KEY);
+                if (stored !== 'dark' && stored !== 'light') {
+                    for (var i = 0; i < LEGACY_KEYS.length; i += 1) {
+                        stored = localStorage.getItem(LEGACY_KEYS[i]);
+                        if (stored === 'dark' || stored === 'light') {
+                            break;
+                        }
+                    }
+                }
                 if (stored === 'dark' || stored === 'light') {
                     mode = stored;
                 }
+                localStorage.setItem(THEME_KEY, mode);
+                localStorage.setItem('admin-theme', mode);
+                localStorage.setItem('landing-theme', mode);
             } catch (e) {}
 
             window.__adminThemeMode = mode;
@@ -442,7 +455,8 @@
                 return;
             }
 
-            var mode = window.__adminThemeMode || localStorage.getItem('admin-theme');
+            var THEME_KEY = 'site-theme';
+            var mode = window.__adminThemeMode || localStorage.getItem(THEME_KEY) || localStorage.getItem('admin-theme') || localStorage.getItem('landing-theme');
             if (mode !== 'dark' && mode !== 'light') {
                 mode = 'light';
             }
@@ -450,7 +464,9 @@
             function applyTheme(nextMode) {
                 darkCss.disabled = nextMode !== 'dark';
                 toggle.textContent = nextMode === 'dark' ? 'Light Mode' : 'Dark Mode';
+                localStorage.setItem(THEME_KEY, nextMode);
                 localStorage.setItem('admin-theme', nextMode);
+                localStorage.setItem('landing-theme', nextMode);
             }
 
             applyTheme(mode);

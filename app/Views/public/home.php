@@ -6,7 +6,8 @@
     <script>
         (function () {
             try {
-                if (localStorage.getItem('landing-theme') === 'dark') {
+                var mode = localStorage.getItem('site-theme') || localStorage.getItem('landing-theme') || localStorage.getItem('admin-theme');
+                if (mode === 'dark') {
                     document.documentElement.setAttribute('data-theme', 'dark');
                 }
             } catch (e) {}
@@ -106,9 +107,22 @@
         }
 
         .hero {
-            padding: 76px 0 48px;
+            padding: 52px 0;
             background: var(--hero-grad);
             border-bottom: 1px solid var(--line);
+        }
+        .hero-village-title {
+            font-size: clamp(24px, 3vw, 38px);
+            font-weight: 800;
+            line-height: 1.1;
+            color: var(--text);
+            margin: 0 0 18px;
+            letter-spacing: .2px;
+        }
+        @media (max-width: 767.98px) {
+            .hero-village-title {
+                text-align: center;
+            }
         }
 
         .hero-card {
@@ -174,6 +188,11 @@
         .post-card .card-body {
             padding: 16px;
         }
+        .feature-card .card-body {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
 
         .feature-card h5,
         .post-card h5 {
@@ -194,6 +213,10 @@
         .post-meta {
             color: var(--muted);
         }
+        .feature-card .btn {
+            margin-top: auto;
+            align-self: flex-start;
+        }
 
         .footer {
             background: var(--footer);
@@ -213,6 +236,20 @@
             border: 1px solid var(--line);
             background: var(--surface);
             color: var(--text);
+        }
+        html[data-theme="dark"] .hero .btn-outline-secondary,
+        html[data-theme="dark"] .hero .btn-outline-dark {
+            color: #e6edf9;
+            border-color: #8fa1c4;
+            background-color: transparent;
+        }
+        html[data-theme="dark"] .hero .btn-outline-secondary:hover,
+        html[data-theme="dark"] .hero .btn-outline-secondary:focus,
+        html[data-theme="dark"] .hero .btn-outline-dark:hover,
+        html[data-theme="dark"] .hero .btn-outline-dark:focus {
+            color: #ffffff;
+            border-color: #a9b8d6;
+            background-color: #2a3650;
         }
 
         .post-empty {
@@ -281,6 +318,7 @@ $withToken = static function (string $path) use ($lt): string {
 
 <header id="home" class="hero">
     <div class="container">
+        <h2 class="hero-village-title">Desa <?= esc((string) ($villageName ?? 'Desa')) ?></h2>
         <div class="row g-4 align-items-center">
             <div class="col-lg-8">
                 <div class="hero-card">
@@ -407,7 +445,7 @@ $withToken = static function (string $path) use ($lt): string {
                         >
                         <div class="card-body d-flex flex-column">
                             <h5><a class="post-title-link" href="<?= site_url('program/' . $post['slug']) ?>"><?= esc($post['title']) ?></a></h5>
-                            <p class="post-meta mb-2"><span class="badge bg-secondary">Artikel</span></p>
+                            <p class="post-meta mb-2"><span class="badge bg-primary">Artikel</span></p>
                             <p class="post-meta mb-2">Dipublikasikan: <?= esc(date('d M Y H:i', strtotime((string) $post['published_at']))) ?></p>
                             <p class="mb-3"><?= esc($post['excerpt'] ?: mb_strimwidth(strip_tags((string) $post['content']), 0, 140, '...')) ?></p>
                         </div>
@@ -440,7 +478,7 @@ $withToken = static function (string $path) use ($lt): string {
                         >
                         <div class="card-body d-flex flex-column">
                             <h5><a class="post-title-link" href="<?= site_url('program/' . $post['slug']) ?>"><?= esc($post['title']) ?></a></h5>
-                            <p class="post-meta mb-2"><span class="badge bg-info">Kegiatan</span></p>
+                            <p class="post-meta mb-2"><span class="badge bg-primary">Kegiatan</span></p>
                             <p class="post-meta mb-2">Dipublikasikan: <?= esc(date('d M Y H:i', strtotime((string) $post['published_at']))) ?></p>
                             <p class="mb-3"><?= esc($post['excerpt'] ?: mb_strimwidth(strip_tags((string) $post['content']), 0, 140, '...')) ?></p>
                         </div>
@@ -458,7 +496,7 @@ $withToken = static function (string $path) use ($lt): string {
     (function () {
         var root = document.documentElement;
         var btn = document.getElementById('themeToggle');
-        var stored = localStorage.getItem('landing-theme');
+        var stored = localStorage.getItem('site-theme') || localStorage.getItem('landing-theme') || localStorage.getItem('admin-theme');
         var mode = stored === 'dark' ? 'dark' : 'light';
 
         function applyTheme(value) {
@@ -466,6 +504,9 @@ $withToken = static function (string $path) use ($lt): string {
             if (btn) {
                 btn.textContent = value === 'dark' ? 'Light Mode' : 'Dark Mode';
             }
+            localStorage.setItem('site-theme', value);
+            localStorage.setItem('landing-theme', value);
+            localStorage.setItem('admin-theme', value);
         }
 
         applyTheme(mode);
@@ -473,7 +514,6 @@ $withToken = static function (string $path) use ($lt): string {
         if (btn) {
             btn.addEventListener('click', function () {
                 mode = mode === 'dark' ? 'light' : 'dark';
-                localStorage.setItem('landing-theme', mode);
                 applyTheme(mode);
             });
         }

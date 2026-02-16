@@ -64,7 +64,7 @@
                     <img class="post-thumb" src="<?= base_url(! empty($post['image_path']) ? $post['image_path'] : 'assets/images/card-image.png') ?>" alt="<?= esc($post['title']) ?>">
                     <div class="p-3 d-flex flex-column h-100">
                         <h2 class="h6"><?= esc($post['title']) ?></h2>
-                        <p class="mb-2"><span class="badge bg-secondary"><?= esc(ucfirst((string) ($post['post_type'] ?? 'artikel'))) ?></span></p>
+                        <p class="mb-2"><span class="badge bg-primary"><?= esc(ucfirst((string) ($post['post_type'] ?? 'artikel'))) ?></span></p>
                         <p class="text-muted small mb-2"><?= esc(date('d M Y H:i', strtotime((string) $post['published_at']))) ?></p>
                         <p class="small mb-3"><?= esc($post['excerpt'] ?: mb_strimwidth(strip_tags((string) $post['content']), 0, 120, '...')) ?></p>
                     </div>

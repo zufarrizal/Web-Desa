@@ -138,6 +138,7 @@
                             <th>Nama Warga</th>
                             <th>NIK</th>
                             <th>Jenis Surat</th>
+                            <th>Tanggal Dibuat</th>
                             <th>Status</th>
                             <th>Aksi</th>
                         </tr>
@@ -150,6 +151,7 @@
                                 <td><?= esc($row['citizen_name']) ?></td>
                                 <td><?= esc($row['nik']) ?></td>
                                 <td><?= esc($row['document_type']) ?></td>
+                                <td><?= ! empty($row['created_at']) ? esc(date('d/m/Y H:i', strtotime((string) $row['created_at']))) : '-' ?></td>
                                 <td><span class="badge bg-info"><?= esc($row['status']) ?></span></td>
                                 <td class="doc-actions">
                                     <a href="<?= site_url('documents/preview/' . $row['id']) ?>" class="btn btn-sm btn-secondary">Lihat Surat</a>

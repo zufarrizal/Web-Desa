@@ -76,11 +76,16 @@ class DocumentServiceController extends BaseController
         $userId  = (int) session()->get('user_id');
         $model   = new DocumentRequestModel();
         $builder = $model->select('document_requests.*, users.name as user_name')
-            ->join('users', 'users.id = document_requests.user_id', 'left')
-            ->orderBy('document_requests.id', 'DESC');
+            ->join('users', 'users.id = document_requests.user_id', 'left');
 
-        if ($role !== 'admin') {
+        if ($role === 'admin') {
+            $builder
+                ->orderBy("CASE WHEN document_requests.status = 'selesai' THEN 1 ELSE 0 END", 'ASC', false)
+                ->orderBy('document_requests.created_at', 'ASC')
+                ->orderBy('document_requests.id', 'ASC');
+        } else {
             $builder->where('document_requests.user_id', $userId);
+            $builder->orderBy('document_requests.id', 'DESC');
         }
 
         return view('documents/index', [

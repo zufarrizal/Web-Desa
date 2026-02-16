@@ -6,7 +6,8 @@
     <script>
         (function () {
             try {
-                if (localStorage.getItem('landing-theme') === 'dark') {
+                var mode = localStorage.getItem('site-theme') || localStorage.getItem('landing-theme') || localStorage.getItem('admin-theme');
+                if (mode === 'dark') {
                     document.documentElement.setAttribute('data-theme', 'dark');
                 }
             } catch (e) {}
@@ -105,7 +106,7 @@
         (function () {
             var root = document.documentElement;
             var btn = document.getElementById('themeToggle');
-            var stored = localStorage.getItem('landing-theme');
+            var stored = localStorage.getItem('site-theme') || localStorage.getItem('landing-theme') || localStorage.getItem('admin-theme');
             var mode = stored === 'dark' ? 'dark' : 'light';
 
             function applyTheme(value) {
@@ -113,6 +114,9 @@
                 if (btn) {
                     btn.textContent = value === 'dark' ? 'Light Mode' : 'Dark Mode';
                 }
+                localStorage.setItem('site-theme', value);
+                localStorage.setItem('landing-theme', value);
+                localStorage.setItem('admin-theme', value);
             }
 
             applyTheme(mode);
@@ -120,7 +124,6 @@
             if (btn) {
                 btn.addEventListener('click', function () {
                     mode = mode === 'dark' ? 'light' : 'dark';
-                    localStorage.setItem('landing-theme', mode);
                     applyTheme(mode);
                 });
             }

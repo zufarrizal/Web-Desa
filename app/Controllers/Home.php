@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\LetterSettingModel;
 use App\Models\ProgramPostModel;
 
 class Home extends BaseController
@@ -9,7 +10,10 @@ class Home extends BaseController
     public function index(): string
     {
         $programModel = new ProgramPostModel();
+        $settingModel = new LetterSettingModel();
         $posts        = $programModel->orderBy('published_at', 'DESC')->findAll();
+        $setting      = $settingModel->first();
+        $villageName  = trim((string) ($setting['village_name'] ?? ''));
         $programs     = array_values(array_filter($posts, static fn (array $item): bool => ($item['post_type'] ?? '') === 'program'));
         $articles     = array_values(array_filter($posts, static fn (array $item): bool => ($item['post_type'] ?? 'artikel') === 'artikel'));
         $activities   = array_values(array_filter($posts, static fn (array $item): bool => ($item['post_type'] ?? '') === 'kegiatan'));
@@ -19,6 +23,7 @@ class Home extends BaseController
             'programs'   => $programs,
             'articles'   => $articles,
             'activities' => $activities,
+            'villageName'=> $villageName !== '' ? $villageName : 'Desa',
         ]);
     }
 
