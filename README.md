@@ -238,4 +238,7 @@ Pastikan kredensial test valid sebelum menjalankan test.
 - Siapkan prosedur rotasi key enkripsi terencana (karena data lama perlu proses re-encrypt jika key diganti).
 
 ## Lisensi
-Project menggunakan lisensi MIT.
+Project ini menggunakan lisensi komersial/proprietary.
+Penggunaan wajib melalui pembelian lisensi terlebih dahulu.
+Detail hak pakai dan pembatasan ada di `LICENSE` dan `EULA.md`.
+Komponen pihak ketiga tetap mengikuti lisensi masing-masing di `THIRD_PARTY_LICENSES.md`.
