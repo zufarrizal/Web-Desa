@@ -136,7 +136,6 @@
                             <th>No</th>
                             <?php if ($role === 'admin') : ?><th>Akun</th><?php endif; ?>
                             <th>Nama Warga</th>
-                            <th>NIK</th>
                             <th>Jenis Surat</th>
                             <th>Tanggal Dibuat</th>
                             <th>Status</th>
@@ -149,7 +148,6 @@
                                 <td data-row-no><?= esc((string) ($index + 1)) ?></td>
                                 <?php if ($role === 'admin') : ?><td><?= esc($row['user_name'] ?? '-') ?></td><?php endif; ?>
                                 <td><?= esc($row['citizen_name']) ?></td>
-                                <td><?= esc($row['nik']) ?></td>
                                 <td><?= esc($row['document_type']) ?></td>
                                 <td><?= ! empty($row['created_at']) ? esc(date('d/m/Y H:i', strtotime((string) $row['created_at']))) : '-' ?></td>
                                 <td><span class="badge bg-info"><?= esc($row['status']) ?></span></td>

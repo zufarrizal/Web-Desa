@@ -195,6 +195,8 @@ class DocumentRequestController extends BaseController
         if (! $payload) {
             return redirect()->to('/documents')->with('error', 'Data surat tidak ditemukan atau tidak diizinkan.');
         }
+
+        $payload['canPrint'] = $this->isApprovedForPrint($payload['request'] ?? []);
         return view('documents/preview', $payload);
     }
 
@@ -203,6 +205,11 @@ class DocumentRequestController extends BaseController
         $payload = $this->getLetterPayload($id);
         if (! $payload) {
             return redirect()->to('/documents')->with('error', 'Data surat tidak ditemukan atau tidak diizinkan.');
+        }
+
+        if (! $this->isApprovedForPrint($payload['request'] ?? [])) {
+            return redirect()->to('/documents/preview/' . $id)
+                ->with('error', 'Surat belum disetujui admin. Tombol print akan tersedia setelah status surat selesai.');
         }
 
         return view('documents/print', $payload);
@@ -492,5 +499,10 @@ class DocumentRequestController extends BaseController
         }
 
         return $groups;
+    }
+
+    private function isApprovedForPrint(array $request): bool
+    {
+        return (string) ($request['status'] ?? '') === 'selesai';
     }
 }

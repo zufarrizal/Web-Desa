@@ -76,10 +76,19 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="card-title mb-0">Preview Surat</h5>
                     <div class="d-flex gap-2">
-                        <a href="<?= site_url('documents/print/' . $request['id']) ?>" class="btn btn-primary btn-sm" target="_blank">Print Dokumen</a>
+                        <?php if (! empty($canPrint)) : ?>
+                            <a href="<?= site_url('documents/print/' . $request['id']) ?>" class="btn btn-primary btn-sm" target="_blank">Print Dokumen</a>
+                        <?php else : ?>
+                            <button type="button" class="btn btn-secondary btn-sm" disabled title="Surat menunggu persetujuan admin">Print Menunggu Persetujuan</button>
+                        <?php endif; ?>
                         <a href="<?= site_url('documents') ?>" class="btn btn-secondary btn-sm">Kembali</a>
                     </div>
                 </div>
+                <?php if (empty($canPrint)) : ?>
+                    <div class="alert alert-warning py-2">
+                        Surat ini belum disetujui admin. Tombol print akan aktif setelah status surat <strong>selesai</strong>.
+                    </div>
+                <?php endif; ?>
                 <p class="text-muted mb-3">Ukuran dokumen: A4 (Lebar 210 mm x Tinggi 297 mm).</p>
 
                 <div class="preview-canvas">
@@ -114,11 +123,7 @@
                                 <div class="col-md-6 text-center">
                                     <p><?= esc($setting['village_name'] ?? 'Desa') ?>, <?= date('d-m-Y') ?></p>
                                     <p><?= esc($setting['signer_title'] ?? 'Kepala Desa') ?></p>
-                                    <?php if (! empty($setting['signer_signature'])) : ?>
-                                        <p class="mb-1"><img src="<?= base_url($setting['signer_signature']) ?>" alt="Tanda Tangan" style="max-height: 90px; width: auto;"></p>
-                                    <?php else : ?>
-                                        <br><br>
-                                    <?php endif; ?>
+                                    <br><br>
                                     <p><strong><u><?= strtoupper(esc($setting['signer_name'] ?? 'Nama Kepala Desa')) ?></u></strong></p>
                                 </div>
                             </div>
