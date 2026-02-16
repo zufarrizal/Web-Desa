@@ -46,6 +46,14 @@
                         <label class="form-label">WhatsApp Kontak</label>
                         <input type="text" name="contact_whatsapp" class="form-control" value="<?= old('contact_whatsapp', $setting['contact_whatsapp'] ?? '') ?>">
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Plus Codes Google Maps Kantor</label>
+                        <input type="text" name="office_map_plus_code" class="form-control" placeholder="contoh: 6P5Q+23, Kantor Desa Sukamaju" value="<?= old('office_map_plus_code', $setting['office_map_plus_code'] ?? '') ?>">
+                        <small class="text-muted">Format disarankan: Plus Codes, Nama Lokasi. Nama lokasi akan ditampilkan di homepage.</small>
+                    </div>
+                    <div class="mb-1">
+                        <small class="text-muted">Kosongkan jika ingin map tetap menggunakan alamat kantor otomatis.</small>
+                    </div>
 
                     <hr class="my-4">
                     <h6 class="mb-3">Pengaduan</h6>
@@ -61,4 +69,3 @@
     </div>
 </div>
 <?= $this->endSection() ?>
-

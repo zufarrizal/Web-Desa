@@ -1,12 +1,31 @@
+<?php
+$metaTitle = (string) ($title ?? 'Dashboard Desa - Portal Desa');
+$metaDescription = (string) ($metaDescription ?? 'Dashboard Portal Desa untuk layanan dokumen warga, pengaduan, dan manajemen konten desa.');
+$canonicalUrl = (string) ($canonicalUrl ?? current_url(true)->__toString());
+$metaRobots = (string) ($metaRobots ?? 'noindex,nofollow,noarchive');
+$metaImage = (string) ($metaImage ?? base_url('assets/images/card-image.png'));
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="noindex,nofollow,noarchive">
+    <meta name="description" content="<?= esc($metaDescription) ?>">
+    <meta name="robots" content="<?= esc($metaRobots) ?>">
+    <link rel="canonical" href="<?= esc($canonicalUrl) ?>">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Portal Desa">
+    <meta property="og:title" content="<?= esc($metaTitle) ?>">
+    <meta property="og:description" content="<?= esc($metaDescription) ?>">
+    <meta property="og:url" content="<?= esc($canonicalUrl) ?>">
+    <meta property="og:image" content="<?= esc($metaImage) ?>">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<?= esc($metaTitle) ?>">
+    <meta name="twitter:description" content="<?= esc($metaDescription) ?>">
+    <meta name="twitter:image" content="<?= esc($metaImage) ?>">
     <meta name="app-link-token" content="<?= esc((string) session()->get('link_token')) ?>">
-    <title><?= esc($title ?? 'Dashboard Desa') ?></title>
+    <title><?= esc($metaTitle) ?></title>
     <link rel="icon" type="image/svg+xml" href="<?= base_url('favicon.svg') ?>">
     <link rel="alternate icon" href="<?= base_url('assets/images/logo@2x.png') ?>">
 

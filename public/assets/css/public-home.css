@@ -51,13 +51,60 @@
     margin-bottom: 20px;
 }
 
+.hero-lead {
+    max-width: 64ch;
+    font-size: 17px;
+    line-height: 1.6;
+}
+
+.hero-cta .btn {
+    min-height: 44px;
+    padding-inline: 18px;
+    font-weight: 600;
+}
+
 .hero-quick {
     background: var(--surface-2);
     border-radius: 14px;
     border: 1px solid var(--line);
-    padding: 12px 14px;
+    padding: 14px;
     color: var(--muted);
+}
+
+.hero-note-title {
+    margin: 0 0 10px;
     font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.hero-service-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.hero-service-item {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--muted);
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+@media (max-width: 767.98px) {
+    .hero-cta .btn {
+        width: 100%;
+    }
+
+    .hero-lead {
+        font-size: 15px;
+    }
 }
 
 .home-section {
@@ -115,6 +162,22 @@
 .feature-card .btn {
     margin-top: auto;
     align-self: flex-start;
+}
+
+.office-map-wrap {
+    width: 100%;
+    max-width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--surface-2);
+}
+
+.office-map-frame {
+    width: 100%;
+    height: 220px;
+    display: block;
+    border: 0;
 }
 
 .btn-hero-primary {

@@ -6,6 +6,7 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 $routes->get('/', 'Home::index');
+$routes->get('postingan', 'Home::posts');
 $routes->get('program/(:segment)', 'Home::show/$1');
 $routes->get('sitemap.xml', 'Home::sitemapXml');
 $routes->get('robots.txt', 'Home::robotsTxt');

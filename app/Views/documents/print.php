@@ -3,6 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Halaman cetak dokumen administrasi desa.">
+    <meta name="robots" content="noindex,nofollow,noarchive">
     <title>Print <?= esc($request['document_type']) ?></title>
     <link href="<?= base_url('assets/plugins/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
     <style>

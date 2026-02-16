@@ -1,11 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <?php
+    $metaTitle = 'Lupa Password - Portal Desa';
+    $metaDescription = 'Ajukan reset password akun Portal Desa melalui email yang terdaftar.';
+    $canonicalUrl = site_url('forgot-password');
+    $metaImage = base_url('assets/images/card-image.png');
+    ?>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="<?= esc($metaDescription) ?>">
     <meta name="robots" content="noindex,nofollow,noarchive">
-    <title>Lupa Password - Portal Desa</title>
+    <link rel="canonical" href="<?= esc($canonicalUrl) ?>">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Portal Desa">
+    <meta property="og:title" content="<?= esc($metaTitle) ?>">
+    <meta property="og:description" content="<?= esc($metaDescription) ?>">
+    <meta property="og:url" content="<?= esc($canonicalUrl) ?>">
+    <meta property="og:image" content="<?= esc($metaImage) ?>">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<?= esc($metaTitle) ?>">
+    <meta name="twitter:description" content="<?= esc($metaDescription) ?>">
+    <meta name="twitter:image" content="<?= esc($metaImage) ?>">
+    <title><?= esc($metaTitle) ?></title>
     <link rel="icon" type="image/svg+xml" href="<?= base_url('favicon.svg') ?>">
     <link rel="alternate icon" href="<?= base_url('assets/images/logo@2x.png') ?>">
 

@@ -27,6 +27,7 @@
     <?php if ($seoKeywords !== '') : ?><meta name="keywords" content="<?= esc($seoKeywords) ?>"><?php endif; ?>
     <link rel="canonical" href="<?= esc($postUrl) ?>">
     <meta property="og:type" content="article">
+    <meta property="og:locale" content="id_ID">
     <meta property="og:site_name" content="Portal Desa">
     <meta property="og:title" content="<?= esc($seoTitle) ?>">
     <meta property="og:description" content="<?= esc($seoDescription) ?>">

@@ -18,8 +18,10 @@
     <link rel="alternate icon" href="<?= base_url('assets/images/logo@2x.png') ?>">
     <meta name="description" content="Portal Desa untuk layanan administrasi warga, pengaduan masyarakat, artikel, dan kegiatan desa.">
     <meta name="keywords" content="portal desa, pelayanan desa, surat desa, kegiatan desa, artikel desa">
+    <meta name="robots" content="index,follow,max-image-preview:large">
     <link rel="canonical" href="<?= esc(site_url('/')) ?>">
     <meta property="og:type" content="website">
+    <meta property="og:locale" content="id_ID">
     <meta property="og:site_name" content="Portal Desa">
     <meta property="og:title" content="Portal Desa - Pelayanan Administrasi">
     <meta property="og:description" content="Layanan administrasi desa terintegrasi untuk dokumen, pengaduan, artikel, dan kegiatan.">
@@ -56,6 +58,23 @@ $contactEmail = (string) ($setting['contact_email'] ?? '-');
 $contactWhatsapp = (string) ($setting['contact_whatsapp'] ?? '-');
 $complaintInfo = trim((string) ($setting['complaint_info'] ?? '')) !== '' ? (string) $setting['complaint_info'] : 'Sampaikan pengaduan warga dengan jelas agar tim desa dapat menindaklanjuti dengan cepat.';
 $announcements = $announcements ?? [];
+$officeAddressRaw = trim((string) ($setting['office_address'] ?? ''));
+$officeAddress = $officeAddressRaw !== '' ? $officeAddressRaw : '-';
+$officeMapPlusCodeRaw = trim((string) ($setting['office_map_plus_code'] ?? ''));
+$officeMapPlusCode = trim((string) preg_replace('/\s+/', ' ', strip_tags($officeMapPlusCodeRaw)));
+$hasPlusCodeMap = $officeMapPlusCode !== '' && $officeMapPlusCode !== '-';
+$officeMapName = '';
+if ($hasPlusCodeMap && str_contains($officeMapPlusCode, ',')) {
+    $plusCodeParts = explode(',', $officeMapPlusCode, 2);
+    $officeMapName = trim((string) ($plusCodeParts[1] ?? ''));
+}
+$officeLocationTitle = $officeMapName !== '' ? $officeMapName : $officeAddress;
+$officeAddressForMap = trim((string) preg_replace('/\s+/', ' ', strip_tags($officeAddressRaw)));
+$hasAddressMap = $officeAddressForMap !== '' && $officeAddressForMap !== '-';
+$hasOfficeMap = $hasPlusCodeMap || $hasAddressMap;
+$officeMapQuery = $hasPlusCodeMap ? $officeMapPlusCode : $officeAddressForMap;
+$officeMapEmbedUrl = $hasOfficeMap ? 'https://www.google.com/maps?q=' . rawurlencode($officeMapQuery) . '&output=embed' : '';
+$officeMapOpenUrl = $hasOfficeMap ? 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode($officeMapQuery) : '';
 ?>
 <?= view('shared/layout/navbar', ['homePage' => true]) ?>
 
@@ -66,9 +85,9 @@ $announcements = $announcements ?? [];
             <div class="col-lg-8">
                 <div class="hero-card">
                     <span class="hero-badge">Pelayanan Desa Terintegrasi</span>
-                    <h1>Urus Dokumen Warga, Pengaduan, dan Informasi Program dalam Satu Portal</h1>
-                    <p>Portal ini memudahkan warga mengakses layanan administrasi desa dengan lebih cepat, terstruktur, dan transparan.</p>
-                    <div class="d-flex flex-wrap gap-2 mb-3">
+                    <h1>Layanan Administrasi Desa yang Cepat, Jelas, dan Transparan</h1>
+                    <p class="hero-lead">Ajukan surat, laporkan pengaduan, dan pantau informasi program desa dari satu portal yang mudah digunakan oleh warga.</p>
+                    <div class="d-flex flex-wrap gap-2 mb-3 hero-cta">
                         <?php if ($isLoggedIn) : ?>
                             <a class="btn btn-hero-primary" href="<?= $withToken('dashboard') ?>">Lanjut ke Dashboard</a>
                             <a class="btn btn-hero-secondary" href="<?= $withToken('documents') ?>">Buka Pelayanan Dokumen</a>
@@ -77,7 +96,15 @@ $announcements = $announcements ?? [];
                             <a class="btn btn-hero-secondary" href="<?= site_url('register') ?>">Daftar Warga</a>
                         <?php endif; ?>
                     </div>
-                    <div class="hero-quick">Layanan utama: surat keterangan, pengantar kependudukan, dokumen pertanahan, perizinan sederhana, dan bantuan sosial.</div>
+                    <div class="hero-quick">
+                        <p class="hero-note-title">Layanan utama yang tersedia:</p>
+                        <div class="hero-service-grid">
+                            <span class="hero-service-item">Surat keterangan warga</span>
+                            <span class="hero-service-item">Pengantar kependudukan</span>
+                            <span class="hero-service-item">Pengaduan masyarakat</span>
+                            <span class="hero-service-item">Informasi program & kegiatan</span>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-lg-4">
@@ -283,7 +310,22 @@ $announcements = $announcements ?? [];
                 <div class="card feature-card h-100">
                     <div class="card-body">
                         <h5>Alamat Kantor Desa</h5>
-                        <p class="mb-0"><?= esc((string) ($setting['office_address'] ?? '-')) ?></p>
+                        <?php if ($officeAddress !== '-' && mb_strtolower($officeAddress) !== mb_strtolower($officeLocationTitle)) : ?>
+                            <p class="mb-0"><?= esc($officeAddress) ?></p>
+                        <?php endif; ?>
+                        <?php if ($hasOfficeMap) : ?>
+                            <div class="office-map-wrap mt-3">
+                                <iframe
+                                    src="<?= esc($officeMapEmbedUrl) ?>"
+                                    class="office-map-frame"
+                                    loading="lazy"
+                                    referrerpolicy="no-referrer-when-downgrade"
+                                    title="Peta Kantor Desa"
+                                    allowfullscreen
+                                ></iframe>
+                            </div>
+                            <a href="<?= esc($officeMapOpenUrl) ?>" class="btn btn-sm btn-outline-primary mt-3" target="_blank" rel="noopener noreferrer">Buka di Google Maps</a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

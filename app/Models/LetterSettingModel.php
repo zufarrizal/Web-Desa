@@ -28,6 +28,9 @@ class LetterSettingModel extends Model
         'contact_email',
         'contact_whatsapp',
         'complaint_info',
+        'office_latitude',
+        'office_longitude',
+        'office_map_plus_code',
     ];
     protected $useTimestamps = true;
 }

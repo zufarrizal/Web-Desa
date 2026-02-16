@@ -31,6 +31,7 @@ class HomeSettingController extends BaseController
             'contact_phone' => 'permit_empty|max_length[40]',
             'contact_email' => 'permit_empty|valid_email|max_length[120]',
             'contact_whatsapp' => 'permit_empty|max_length[40]',
+            'office_map_plus_code' => 'permit_empty|max_length[80]',
         ];
 
         if (! $this->validate($rules)) {
@@ -48,6 +49,7 @@ class HomeSettingController extends BaseController
             'contact_email'           => (string) $this->request->getPost('contact_email'),
             'contact_whatsapp'        => (string) $this->request->getPost('contact_whatsapp'),
             'complaint_info'          => (string) $this->request->getPost('complaint_info'),
+            'office_map_plus_code'    => trim((string) $this->request->getPost('office_map_plus_code')) ?: null,
         ];
 
         if ($row) {
