@@ -51,7 +51,7 @@ class ActivityController extends BaseController
         $slug = $this->generateSlug($title);
         $imagePath = $this->handleImageUpload();
         if ($imagePath === false) {
-            return redirect()->back()->withInput()->with('errors', ['Gambar wajib format JPG/JPEG/PNG/WEBP dengan ukuran maksimal 1 MB.']);
+            return redirect()->back()->withInput()->with('errors', ['Gambar wajib format JPG/JPEG/PNG/WEBP. Jika ukuran lebih dari 1 MB, sistem akan mencoba kompres otomatis.']);
         }
 
         $model->insert([
@@ -135,7 +135,7 @@ class ActivityController extends BaseController
 
         $newImagePath = $this->handleImageUpload();
         if ($newImagePath === false) {
-            return redirect()->back()->withInput()->with('errors', ['Gambar wajib format JPG/JPEG/PNG/WEBP dengan ukuran maksimal 1 MB.']);
+            return redirect()->back()->withInput()->with('errors', ['Gambar wajib format JPG/JPEG/PNG/WEBP. Jika ukuran lebih dari 1 MB, sistem akan mencoba kompres otomatis.']);
         }
 
         if ($newImagePath !== null) {
@@ -188,28 +188,7 @@ class ActivityController extends BaseController
 
     private function handleImageUpload()
     {
-        $file = $this->request->getFile('image');
-        if (! $file || $file->getError() === UPLOAD_ERR_NO_FILE) {
-            return null;
-        }
-        if (! $file->isValid() || $file->hasMoved()) {
-            return false;
-        }
-        $allowedMime = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-        if (! in_array((string) $file->getMimeType(), $allowedMime, true)) {
-            return false;
-        }
-        if ((int) $file->getSizeByUnit('kb') > 1024) {
-            return false;
-        }
-        $dir = FCPATH . 'uploads/programs';
-        if (! is_dir($dir)) {
-            mkdir($dir, 0755, true);
-        }
-        $ext = strtolower((string) $file->getExtension());
-        $newName = 'program-' . time() . '-' . bin2hex(random_bytes(4)) . '.' . $ext;
-        $file->move($dir, $newName, true);
-        return 'uploads/programs/' . $newName;
+        return $this->processPostImageUpload('image', 'uploads/programs', 'program');
     }
 
     private function removeImageFile(?string $path): void
