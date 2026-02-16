@@ -11,7 +11,8 @@ Aplikasi pelayanan administrasi desa berbasis CodeIgniter 4 untuk kebutuhan warg
   - generate surat,
   - input manual,
   - preview,
-  - print,
+  - persetujuan admin,
+  - print setelah disetujui,
   - update status.
 - Pengaduan masyarakat dengan lampiran gambar.
 - Konten publik terpisah: Program, Artikel, Kegiatan, Pengumuman.
@@ -135,6 +136,17 @@ Untuk Program/Artikel/Kegiatan/Pengumuman:
 
 Catatan:
 - Auto-compress membutuhkan ekstensi PHP `gd` aktif.
+
+## Alur Persetujuan Dokumen (Penting)
+- Setiap surat baru berstatus awal `diajukan`.
+- Surat harus disetujui admin terlebih dahulu (status `selesai`) sebelum bisa diprint.
+- Tombol persetujuan tersedia untuk admin di:
+  - tabel `Riwayat Surat`,
+  - halaman `Preview Surat` (sebelah tombol print).
+- Tombol print untuk user/admin akan aktif hanya jika surat sudah `selesai`.
+- Akses URL print langsung juga divalidasi di backend; jika belum `selesai`, print ditolak.
+- Tampilan preview **tidak** menampilkan tanda tangan.
+- Tanda tangan hanya tampil pada halaman print/final output.
 
 ## Testing
 Jalankan test:

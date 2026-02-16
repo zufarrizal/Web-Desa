@@ -154,12 +154,14 @@
                                 <td class="doc-actions">
                                     <a href="<?= site_url('documents/preview/' . $row['id']) ?>" class="btn btn-sm btn-secondary">Lihat Surat</a>
                                     <?php if ($role === 'admin') : ?>
-                                        <form action="<?= site_url('documents/status/' . $row['id']) ?>" method="post" class="d-inline">
-                                            <?= csrf_field() ?>
-                                            <input type="hidden" name="status" value="selesai">
-                                            <input type="hidden" name="admin_notes" value="Disetujui admin">
-                                            <button class="btn btn-sm btn-success" type="submit">Set Selesai</button>
-                                        </form>
+                                        <?php if (($row['status'] ?? '') !== 'selesai') : ?>
+                                            <form action="<?= site_url('documents/status/' . $row['id']) ?>" method="post" class="d-inline">
+                                                <?= csrf_field() ?>
+                                                <input type="hidden" name="status" value="selesai">
+                                                <input type="hidden" name="admin_notes" value="Disetujui admin">
+                                                <button class="btn btn-sm btn-success" type="submit">Setujui Surat</button>
+                                            </form>
+                                        <?php endif; ?>
                                     <?php endif; ?>
                                     <form action="<?= site_url('documents/delete/' . $row['id']) ?>" method="post" class="d-inline">
                                         <?= csrf_field() ?>

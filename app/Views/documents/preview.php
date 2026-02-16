@@ -73,9 +73,18 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
+                <?php $isAdmin = (string) session()->get('user_role') === 'admin'; ?>
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="card-title mb-0">Preview Surat</h5>
                     <div class="d-flex gap-2">
+                        <?php if ($isAdmin && ($request['status'] ?? '') !== 'selesai') : ?>
+                            <form action="<?= site_url('documents/status/' . $request['id']) ?>" method="post" class="d-inline">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="status" value="selesai">
+                                <input type="hidden" name="admin_notes" value="Disetujui admin dari preview">
+                                <button class="btn btn-sm btn-success" type="submit">Setujui Surat</button>
+                            </form>
+                        <?php endif; ?>
                         <?php if (! empty($canPrint)) : ?>
                             <a href="<?= site_url('documents/print/' . $request['id']) ?>" class="btn btn-primary btn-sm" target="_blank">Print Dokumen</a>
                         <?php else : ?>
