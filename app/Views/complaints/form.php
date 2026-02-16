@@ -14,8 +14,11 @@
                         <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
+                <?php if (session()->getFlashdata('error')) : ?>
+                    <div class="alert alert-danger"><?= esc(session()->getFlashdata('error')) ?></div>
+                <?php endif; ?>
 
-                <form method="post" action="<?= $mode === 'create' ? site_url('complaints/store') : site_url('complaints/update/' . $complaint['id']) ?>">
+                <form id="complaintForm" method="post" enctype="multipart/form-data" action="<?= $mode === 'create' ? site_url('complaints/store') : site_url('complaints/update/' . $complaint['id']) ?>">
                     <?= csrf_field() ?>
 
                     <div class="mb-3">
@@ -29,6 +32,18 @@
                     <div class="mb-3">
                         <label class="form-label">Isi Pengaduan</label>
                         <textarea class="form-control" name="content" rows="5" required><?= old('content', $complaint['content'] ?? '') ?></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Foto Pendukung (Opsional, maks 1MB)</label>
+                        <input id="complaintImage" type="file" class="form-control" name="image" accept="image/jpeg,image/png,image/webp">
+                        <small class="text-muted">Maksimal 1MB. Jika lebih besar, sistem akan coba kompres otomatis sebelum upload.</small>
+                        <?php if (! empty($complaint['image_path'])) : ?>
+                            <div class="mt-2">
+                                <a href="<?= base_url($complaint['image_path']) ?>" target="_blank" rel="noopener">
+                                    <img src="<?= base_url($complaint['image_path']) ?>" alt="Foto pengaduan" style="max-width: 180px; border-radius: 8px;">
+                                </a>
+                            </div>
+                        <?php endif; ?>
                     </div>
 
                     <?php if ($role === 'admin') : ?>
@@ -46,6 +61,19 @@
                             <label class="form-label">Respon Admin</label>
                             <textarea class="form-control" name="response" rows="4"><?= old('response', $complaint['response'] ?? '') ?></textarea>
                         </div>
+                    <?php elseif ($mode === 'edit') : ?>
+                        <?php $statusUser = (string) ($complaint['status'] ?? 'baru'); ?>
+                        <?php $responseUser = trim((string) ($complaint['response'] ?? '')); ?>
+                        <div class="mb-3">
+                            <label class="form-label">Status Pengaduan</label>
+                            <input type="text" class="form-control" value="<?= esc($statusUser) ?>" readonly>
+                        </div>
+                        <?php if (in_array($statusUser, ['ditindaklanjuti', 'selesai', 'ditolak'], true)) : ?>
+                            <div class="mb-3">
+                                <label class="form-label">Jawaban Admin</label>
+                                <textarea class="form-control" rows="4" readonly><?= esc($responseUser !== '' ? $responseUser : 'Belum ada jawaban admin.') ?></textarea>
+                            </div>
+                        <?php endif; ?>
                     <?php endif; ?>
 
                     <button type="submit" class="btn btn-primary">Simpan</button>
@@ -55,4 +83,103 @@
         </div>
     </div>
 </div>
+<script>
+    (function () {
+        var form = document.getElementById('complaintForm');
+        var fileInput = document.getElementById('complaintImage');
+        if (!form || !fileInput) {
+            return;
+        }
+
+        var maxBytes = 1024 * 1024; // 1MB
+        var isSubmitting = false;
+
+        function compressImageToJpeg(file, maxSize) {
+            return new Promise(function (resolve, reject) {
+                var url = URL.createObjectURL(file);
+                var img = new Image();
+
+                img.onload = function () {
+                    URL.revokeObjectURL(url);
+
+                    var maxDim = 1800;
+                    var scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+                    var width = Math.max(1, Math.round(img.width * scale));
+                    var height = Math.max(1, Math.round(img.height * scale));
+
+                    var canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    var ctx = canvas.getContext('2d');
+                    if (!ctx) {
+                        reject(new Error('Canvas tidak tersedia'));
+                        return;
+                    }
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, width, height);
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    var quality = 0.86;
+
+                    function exportStep() {
+                        canvas.toBlob(function (blob) {
+                            if (!blob) {
+                                reject(new Error('Gagal memproses gambar'));
+                                return;
+                            }
+
+                            if (blob.size <= maxSize || quality <= 0.45) {
+                                resolve(blob);
+                                return;
+                            }
+
+                            quality -= 0.08;
+                            exportStep();
+                        }, 'image/jpeg', quality);
+                    }
+
+                    exportStep();
+                };
+
+                img.onerror = function () {
+                    URL.revokeObjectURL(url);
+                    reject(new Error('Format gambar tidak valid'));
+                };
+
+                img.src = url;
+            });
+        }
+
+        form.addEventListener('submit', function (event) {
+            if (isSubmitting) {
+                return;
+            }
+
+            var file = fileInput.files && fileInput.files[0] ? fileInput.files[0] : null;
+            if (!file || file.size <= maxBytes) {
+                return;
+            }
+
+            event.preventDefault();
+            isSubmitting = true;
+
+            compressImageToJpeg(file, maxBytes).then(function (blob) {
+                if (blob.size > maxBytes) {
+                    throw new Error('Gambar tetap lebih dari 1MB setelah kompresi.');
+                }
+
+                var nameBase = (file.name || 'pengaduan').replace(/\.[^.]+$/, '');
+                var compressedFile = new File([blob], nameBase + '.jpg', {type: 'image/jpeg'});
+                var dt = new DataTransfer();
+                dt.items.add(compressedFile);
+                fileInput.files = dt.files;
+                form.submit();
+            }).catch(function (error) {
+                isSubmitting = false;
+                alert(error && error.message ? error.message : 'Gagal kompres gambar. Gunakan file yang lebih kecil.');
+            });
+        });
+    })();
+</script>
 <?= $this->endSection() ?>

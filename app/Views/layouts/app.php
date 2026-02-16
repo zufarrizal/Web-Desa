@@ -268,7 +268,7 @@
                         <a href="<?= site_url('documents/settings') ?>"><i data-feather="settings"></i>Kop Surat Desa</a>
                     </li>
                     <li>
-                        <a href="<?= site_url('/') ?>" target="_blank"><i data-feather="external-link"></i>Lihat Halaman Utama</a>
+                        <a href="<?= site_url('/') ?>"><i data-feather="external-link"></i>Lihat Halaman Utama</a>
                     </li>
                 <?php else : ?>
                     <li class="sidebar-title">User Panel</li>
@@ -283,6 +283,9 @@
                     </li>
                     <li class="<?= str_starts_with($path, 'complaints') ? 'active-page' : '' ?>">
                         <a href="<?= site_url('complaints') ?>"><i data-feather="message-square"></i>Pengaduan Saya</a>
+                    </li>
+                    <li>
+                        <a href="<?= site_url('/') ?>"><i data-feather="external-link"></i>Lihat Halaman Utama</a>
                     </li>
                 <?php endif; ?>
                 <li class="sidebar-title mt-2">Akun</li>

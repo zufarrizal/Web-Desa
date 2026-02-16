@@ -14,6 +14,7 @@ class ComplaintModel extends Model
         'title',
         'content',
         'location',
+        'image_path',
         'status',
         'response',
     ];

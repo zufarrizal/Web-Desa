@@ -20,10 +20,13 @@ class BotShieldFilter implements FilterInterface
             return null;
         }
 
-        // Honeypot trap for automated form submissions.
-        if (Services::honeypot()->hasContent($request)) {
-            session()->setFlashdata('error', 'Aktivitas tidak valid terdeteksi. Silakan coba lagi.');
-            return redirect()->back()->withInput();
+        // Honeypot trap for automated form submissions (public forms).
+        // Skip this trap for authenticated area to avoid false positives
+        // from browser/password-manager autofill on hidden fields.
+        if (! session()->get('logged_in') && Services::honeypot()->hasContent($request)) {
+            return service('response')
+                ->setStatusCode(400)
+                ->setBody('Aktivitas tidak valid terdeteksi. Silakan muat ulang halaman dan coba lagi.');
         }
 
         // Extra POST throttling to reduce spam floods on forms.
@@ -53,4 +56,3 @@ class BotShieldFilter implements FilterInterface
         return null;
     }
 }
-

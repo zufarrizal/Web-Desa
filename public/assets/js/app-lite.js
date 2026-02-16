@@ -1,4 +1,113 @@
 (function () {
+    var prefetched = {};
+
+    function navigateTo(url) {
+        if (!url) {
+            return;
+        }
+
+        document.body.classList.add('is-page-leaving');
+        window.setTimeout(function () {
+            window.location.assign(url);
+        }, 80);
+    }
+
+    function normalizePrefetchUrl(rawUrl) {
+        if (!rawUrl || rawUrl.charAt(0) === '#') {
+            return '';
+        }
+
+        if (
+            rawUrl.indexOf('javascript:') === 0 ||
+            rawUrl.indexOf('mailto:') === 0 ||
+            rawUrl.indexOf('tel:') === 0
+        ) {
+            return '';
+        }
+
+        try {
+            var url = new URL(rawUrl, window.location.href);
+            if (url.origin !== window.location.origin) {
+                return '';
+            }
+
+            var path = (url.pathname || '').toLowerCase().replace(/^\/+/, '');
+            var blockedPaths = [
+                'documents/generate/',
+                'documents/store-manual/',
+                'documents/status/',
+                'documents/delete/',
+                'complaints/delete/',
+                'users/delete/',
+                'programs/delete/',
+            ];
+
+            // Never prefetch state-changing/sensitive endpoints.
+            if (
+                path === 'logout' ||
+                path.indexOf('logout/') === 0 ||
+                path === 'login' ||
+                path === 'register' ||
+                path === 'forgot-password' ||
+                path.indexOf('reset-password/') === 0
+            ) {
+                return '';
+            }
+            for (var i = 0; i < blockedPaths.length; i += 1) {
+                if (path.indexOf(blockedPaths[i]) === 0) {
+                    return '';
+                }
+            }
+
+            return url.pathname + url.search;
+        } catch (e) {
+            return '';
+        }
+    }
+
+    function prefetchUrl(rawUrl) {
+        var url = normalizePrefetchUrl(rawUrl);
+        if (!url || prefetched[url]) {
+            return;
+        }
+
+        prefetched[url] = true;
+        var link = document.createElement('link');
+        link.rel = 'prefetch';
+        link.as = 'document';
+        link.href = url;
+        document.head.appendChild(link);
+    }
+
+    function initLinkPrefetch() {
+        var anchors = document.querySelectorAll('a[data-nav-url], a[href]');
+        if (!anchors.length) {
+            return;
+        }
+
+        anchors.forEach(function (anchor) {
+            if (
+                anchor.hasAttribute('download') ||
+                anchor.hasAttribute('data-confirm') ||
+                anchor.hasAttribute('data-no-js-nav') ||
+                anchor.hasAttribute('data-no-prefetch')
+            ) {
+                return;
+            }
+
+            var triggerPrefetch = function () {
+                var candidate = anchor.getAttribute('data-nav-url') || anchor.getAttribute('href') || '';
+                prefetchUrl(candidate);
+            };
+
+            anchor.addEventListener('mouseenter', triggerPrefetch, { passive: true });
+            anchor.addEventListener('focus', triggerPrefetch, { passive: true });
+            anchor.addEventListener('touchstart', triggerPrefetch, { passive: true });
+        });
+
+        // No auto prefetch loop. Prefetch only when user interacts with links.
+    }
+
     function appendLinkToken() {
         var meta = document.querySelector('meta[name="app-link-token"]');
         if (!meta) {
@@ -123,7 +232,7 @@
                         window.open(navUrl, '_blank', 'noopener');
                         return;
                     }
-                    window.location.assign(navUrl);
+                    navigateTo(navUrl);
                 }
             });
         });
@@ -151,7 +260,7 @@
                         window.open(href, '_blank', 'noopener');
                         return;
                     }
-                    window.location.assign(href);
+                    navigateTo(href);
                 });
                 return;
             }
@@ -212,12 +321,14 @@
         document.addEventListener('DOMContentLoaded', function () {
             appendLinkToken();
             initJsNavigation();
+            initLinkPrefetch();
             initConfirmActions();
             autoDismissAlerts();
         });
     } else {
         appendLinkToken();
         initJsNavigation();
+        initLinkPrefetch();
         initConfirmActions();
         autoDismissAlerts();
     }

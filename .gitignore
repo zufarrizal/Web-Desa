@@ -67,6 +67,8 @@ public/uploads/programs/*
 !public/uploads/programs/.gitkeep
 public/uploads/signatures/*
 !public/uploads/signatures/.gitkeep
+public/uploads/complaints/*
+!public/uploads/complaints/.gitkeep
 
 writable/debugbar/*
 !writable/debugbar/.gitkeep

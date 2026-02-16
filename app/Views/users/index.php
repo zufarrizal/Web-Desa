@@ -13,7 +13,7 @@
                     <table class="table">
                         <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>No</th>
                             <th>Nama</th>
                             <th>Email</th>
                             <th>Role</th>
@@ -21,9 +21,9 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <?php foreach ($users as $user) : ?>
+                        <?php foreach ($users as $index => $user) : ?>
                             <tr>
-                                <td><?= esc((string) $user['id']) ?></td>
+                                <td><?= esc((string) ($index + 1)) ?></td>
                                 <td><?= esc($user['name']) ?></td>
                                 <td><?= esc($user['email']) ?></td>
                                 <td><span class="badge bg-info"><?= esc($user['role'] ?? 'user') ?></span></td>

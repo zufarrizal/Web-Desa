@@ -1,4 +1,13 @@
 /* Write your custom CSS here */
+body {
+    transition: opacity 0.12s ease, filter 0.12s ease;
+}
+
+body.is-page-leaving {
+    opacity: 0.94;
+    filter: saturate(0.96);
+}
+
 .floating-alert-container {
     position: fixed;
     bottom: 18px;
