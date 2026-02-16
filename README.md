@@ -72,9 +72,15 @@ database.default.port = 3306
 ```bash
 php spark migrate
 ```
-5. (Opsional) seed data awal konten:
+5. (Opsional) isi data awal (seed):
 ```bash
-php spark db:seed ProgramPostSeeder
+php spark db:seed UserSeeder
+php spark db:seed LetterSettingSeeder
+php spark db:seed ProgramSeeder
+php spark db:seed ArticleSeeder
+php spark db:seed ActivitySeeder
+php spark db:seed AnnouncementSeeder
+php spark db:seed ComplaintSeeder
 ```
 
 ## Menjalankan Aplikasi
@@ -88,6 +94,38 @@ Default: `http://localhost:8080`
 - Arahkan `DocumentRoot` ke folder `public`.
 - Aktifkan `mod_rewrite`.
 - Pastikan `AllowOverride All` aktif.
+
+## Database Seed (Lengkap)
+Seeder yang tersedia di `app/Database/Seeds`:
+- `UserSeeder`:
+  - membuat/memperbarui akun admin default `admin@example.com` (password: `Admin123!`).
+- `LetterSettingSeeder`:
+  - mengisi konfigurasi default profil desa, kontak, penandatangan, dan konten homepage.
+- `ProgramSeeder`:
+  - mengisi data dummy khusus Program.
+- `ArticleSeeder`:
+  - mengisi data dummy khusus Artikel.
+- `ActivitySeeder`:
+  - mengisi data dummy khusus Kegiatan.
+- `AnnouncementSeeder`:
+  - mengisi data dummy khusus Pengumuman.
+- `ComplaintSeeder`:
+  - mengisi data dummy pengaduan dengan beberapa status.
+
+Urutan seed yang disarankan:
+```bash
+php spark db:seed UserSeeder
+php spark db:seed LetterSettingSeeder
+php spark db:seed ProgramSeeder
+php spark db:seed ArticleSeeder
+php spark db:seed ActivitySeeder
+php spark db:seed AnnouncementSeeder
+php spark db:seed ComplaintSeeder
+```
+
+Catatan:
+- Jalankan `php spark migrate` terlebih dahulu sebelum seed.
+- Beberapa seeder melakukan reset data tabel dummy agar hasil seed konsisten saat dijalankan ulang.
 
 ## Routing Utama
 ### Publik
