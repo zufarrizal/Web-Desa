@@ -23,6 +23,12 @@
         text-transform: uppercase;
         letter-spacing: .3px;
     }
+    .docs-intro {
+        margin-bottom: 14px !important;
+    }
+    .docs-groups {
+        margin-top: 6px;
+    }
     .doc-item .card-body {
         padding: 12px;
     }
@@ -39,13 +45,24 @@
         --bs-gutter-x: 10px;
         --bs-gutter-y: 10px;
     }
+    .doc-history-table {
+        min-width: 1080px;
+    }
+    .doc-history-table td,
+    .doc-history-table th {
+        vertical-align: middle;
+    }
+    .doc-history-table .doc-actions {
+        white-space: nowrap;
+        min-width: 240px;
+    }
 </style>
 <div class="row">
     <div class="col-md-12">
         <div class="card docs-compact">
             <div class="card-body">
                 <h5 class="card-title mb-1">Pelayanan Pengurusan Dokumen</h5>
-                <p class="text-muted mb-2">Pilih jenis surat, lalu pilih sumber data: sesuai profil atau manual.</p>
+                <p class="text-muted docs-intro">Pilih jenis surat, lalu pilih sumber data: sesuai profil atau manual.</p>
 
                 <?php if (! $hasProfile) : ?>
                     <div class="alert alert-warning">
@@ -53,6 +70,7 @@
                     </div>
                 <?php endif; ?>
 
+                <div class="docs-groups">
                 <?php foreach ($docGroups as $groupName => $items) : ?>
                     <div class="docs-group">
                         <div class="docs-group-title"><?= esc($groupName) ?></div>
@@ -88,6 +106,7 @@
                         </div>
                     </div>
                 <?php endforeach; ?>
+                </div>
             </div>
         </div>
     </div>
@@ -98,8 +117,20 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title mb-3">Riwayat Surat</h5>
+                <div class="table-tools mb-3">
+                    <div class="table-tools-group">
+                        <label for="documentsPageSize" class="mb-0">Tampil</label>
+                        <select id="documentsPageSize" class="form-select form-select-sm" data-page-size-for="documentsHistoryTable">
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table doc-history-table" id="documentsHistoryTable" data-table-paginate="true">
                         <thead>
                         <tr>
                             <th>No</th>
@@ -114,13 +145,13 @@
                         <tbody>
                         <?php foreach ($requests as $index => $row) : ?>
                             <tr>
-                                <td><?= esc((string) ($index + 1)) ?></td>
+                                <td data-row-no><?= esc((string) ($index + 1)) ?></td>
                                 <?php if ($role === 'admin') : ?><td><?= esc($row['user_name'] ?? '-') ?></td><?php endif; ?>
                                 <td><?= esc($row['citizen_name']) ?></td>
                                 <td><?= esc($row['nik']) ?></td>
                                 <td><?= esc($row['document_type']) ?></td>
                                 <td><span class="badge bg-info"><?= esc($row['status']) ?></span></td>
-                                <td>
+                                <td class="doc-actions">
                                     <a href="<?= site_url('documents/preview/' . $row['id']) ?>" class="btn btn-sm btn-secondary">Lihat Surat</a>
                                     <?php if ($role === 'admin') : ?>
                                         <form action="<?= site_url('documents/status/' . $row['id']) ?>" method="post" class="d-inline">
@@ -140,6 +171,7 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="table-pager" data-pager-for="documentsHistoryTable"></div>
             </div>
         </div>
     </div>

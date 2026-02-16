@@ -317,6 +317,149 @@
         }, timeoutMs);
     }
 
+    function initTablePagination() {
+        var tables = document.querySelectorAll('table[data-table-paginate]');
+        if (!tables.length) {
+            return;
+        }
+
+        function createPagerButton(label, disabled, active, onClick) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'table-pager-btn' + (active ? ' active' : '');
+            btn.textContent = label;
+            btn.disabled = !!disabled;
+            btn.addEventListener('click', onClick);
+            return btn;
+        }
+
+        tables.forEach(function (table) {
+            var tableId = table.getAttribute('id');
+            if (!tableId) {
+                return;
+            }
+
+            var rows = Array.prototype.slice.call(table.querySelectorAll('tbody tr'));
+            if (!rows.length) {
+                return;
+            }
+
+            var sizeSelect = document.querySelector('[data-page-size-for="' + tableId + '"]');
+            var pagerHost = document.querySelector('[data-pager-for="' + tableId + '"]');
+            var statusFilter = document.querySelector('[data-status-filter-for="' + tableId + '"]');
+            var currentPage = 1;
+
+            function getPageSize() {
+                if (!sizeSelect) {
+                    return 10;
+                }
+                var value = parseInt(sizeSelect.value || '10', 10);
+                if (isNaN(value) || value < 1) {
+                    return 10;
+                }
+                return value;
+            }
+
+            function getFilteredRows() {
+                if (!statusFilter) {
+                    return rows.slice();
+                }
+
+                var selected = (statusFilter.value || 'all').toLowerCase();
+                if (selected === 'all') {
+                    return rows.slice();
+                }
+
+                return rows.filter(function (row) {
+                    var status = (row.getAttribute('data-status') || '').toLowerCase();
+                    return status === selected;
+                });
+            }
+
+            function render() {
+                var filtered = getFilteredRows();
+                var pageSize = getPageSize();
+                var totalRows = filtered.length;
+                var totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
+                if (currentPage > totalPages) {
+                    currentPage = totalPages;
+                }
+                if (currentPage < 1) {
+                    currentPage = 1;
+                }
+
+                var startIndex = (currentPage - 1) * pageSize;
+                var endIndex = startIndex + pageSize;
+
+                rows.forEach(function (row) {
+                    row.style.display = 'none';
+                });
+
+                filtered.forEach(function (row, index) {
+                    var isVisible = index >= startIndex && index < endIndex;
+                    row.style.display = isVisible ? '' : 'none';
+                    if (isVisible) {
+                        var noCell = row.querySelector('[data-row-no]');
+                        if (noCell) {
+                            noCell.textContent = String(index + 1);
+                        }
+                    }
+                });
+
+                if (!pagerHost) {
+                    return;
+                }
+
+                pagerHost.innerHTML = '';
+                if (totalRows <= 0) {
+                    var empty = document.createElement('span');
+                    empty.className = 'table-pager-empty';
+                    empty.textContent = 'Tidak ada data';
+                    pagerHost.appendChild(empty);
+                    return;
+                }
+
+                pagerHost.appendChild(createPagerButton('Prev', currentPage === 1, false, function () {
+                    if (currentPage > 1) {
+                        currentPage -= 1;
+                        render();
+                    }
+                }));
+
+                for (var p = 1; p <= totalPages; p += 1) {
+                    (function (pageNum) {
+                        pagerHost.appendChild(createPagerButton(String(pageNum), false, currentPage === pageNum, function () {
+                            currentPage = pageNum;
+                            render();
+                        }));
+                    })(p);
+                }
+
+                pagerHost.appendChild(createPagerButton('Next', currentPage === totalPages, false, function () {
+                    if (currentPage < totalPages) {
+                        currentPage += 1;
+                        render();
+                    }
+                }));
+            }
+
+            if (sizeSelect) {
+                sizeSelect.addEventListener('change', function () {
+                    currentPage = 1;
+                    render();
+                });
+            }
+            if (statusFilter) {
+                statusFilter.addEventListener('change', function () {
+                    currentPage = 1;
+                    render();
+                });
+            }
+
+            render();
+        });
+    }
+
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function () {
             appendLinkToken();
@@ -324,6 +467,7 @@
             initLinkPrefetch();
             initConfirmActions();
             autoDismissAlerts();
+            initTablePagination();
         });
     } else {
         appendLinkToken();
@@ -331,5 +475,6 @@
         initLinkPrefetch();
         initConfirmActions();
         autoDismissAlerts();
+        initTablePagination();
     }
 })();

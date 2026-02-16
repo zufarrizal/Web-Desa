@@ -9,8 +9,20 @@
                     <h5 class="card-title mb-0">Kelola <?= esc($typeLabel ?? 'Program Desa') ?></h5>
                     <a href="<?= site_url('programs/create/' . ($type ?? 'program')) ?>" class="btn btn-primary">Tambah <?= esc($typeLabel ?? 'Postingan') ?></a>
                 </div>
+                <div class="table-tools mb-3">
+                    <div class="table-tools-group">
+                        <label for="programsPageSize" class="mb-0">Tampil</label>
+                        <select id="programsPageSize" class="form-select form-select-sm" data-page-size-for="programsTable">
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table" id="programsTable" data-table-paginate="true">
                         <thead>
                         <tr>
                             <th>Judul</th>
@@ -38,6 +50,7 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="table-pager" data-pager-for="programsTable"></div>
             </div>
         </div>
     </div>

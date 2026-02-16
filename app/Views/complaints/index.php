@@ -9,18 +9,30 @@
                     <h5 class="card-title mb-0">Pengaduan Masyarakat</h5>
                     <a href="<?= site_url('complaints/create') ?>" class="btn btn-primary">Buat Pengaduan</a>
                 </div>
-                <div class="mb-3 d-flex align-items-center gap-2">
-                    <label for="statusFilter" class="mb-0">Filter Status:</label>
-                    <select id="statusFilter" class="form-select form-select-sm" style="max-width: 240px;">
-                        <option value="all">Semua</option>
-                        <option value="baru">Baru</option>
-                        <option value="ditindaklanjuti">Ditindaklanjuti</option>
-                        <option value="selesai">Selesai</option>
-                        <option value="ditolak">Ditolak</option>
-                    </select>
+                <div class="table-tools mb-3">
+                    <div class="table-tools-group">
+                        <label for="statusFilter" class="mb-0">Status</label>
+                        <select id="statusFilter" class="form-select form-select-sm" data-status-filter-for="complaintsTable">
+                            <option value="all">Semua</option>
+                            <option value="baru">Baru</option>
+                            <option value="ditindaklanjuti">Ditindaklanjuti</option>
+                            <option value="selesai">Selesai</option>
+                            <option value="ditolak">Ditolak</option>
+                        </select>
+                    </div>
+                    <div class="table-tools-group">
+                        <label for="complaintsPageSize" class="mb-0">Tampil</label>
+                        <select id="complaintsPageSize" class="form-select form-select-sm" data-page-size-for="complaintsTable">
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="table-responsive">
-                    <table class="table" id="complaintsTable">
+                    <table class="table" id="complaintsTable" data-table-paginate="true">
                         <thead>
                         <tr>
                             <th>No</th>
@@ -55,41 +67,9 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="table-pager" data-pager-for="complaintsTable"></div>
             </div>
         </div>
     </div>
 </div>
-<script>
-    (function () {
-        var filter = document.getElementById('statusFilter');
-        var table = document.getElementById('complaintsTable');
-        if (!filter || !table) {
-            return;
-        }
-
-        var rows = Array.prototype.slice.call(table.querySelectorAll('tbody tr'));
-
-        function applyFilter() {
-            var selected = (filter.value || 'all').toLowerCase();
-            var no = 0;
-
-            rows.forEach(function (row) {
-                var status = (row.getAttribute('data-status') || '').toLowerCase();
-                var visible = selected === 'all' || status === selected;
-                row.style.display = visible ? '' : 'none';
-
-                if (visible) {
-                    no += 1;
-                    var noCell = row.querySelector('[data-row-no]');
-                    if (noCell) {
-                        noCell.textContent = String(no);
-                    }
-                }
-            });
-        }
-
-        filter.addEventListener('change', applyFilter);
-        applyFilter();
-    })();
-</script>
 <?= $this->endSection() ?>

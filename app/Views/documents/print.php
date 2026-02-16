@@ -59,6 +59,11 @@
     </style>
 </head>
 <body>
+    <?php
+        $birthDateRaw = (string) ($citizen['birth_date'] ?? '');
+        $birthTs = $birthDateRaw !== '' ? strtotime($birthDateRaw) : false;
+        $birthDateFormatted = $birthTs ? date('d/m/Y', $birthTs) : ($birthDateRaw !== '' ? $birthDateRaw : '-');
+    ?>
     <div class="container sheet">
         <div class="no-print mb-3">
             <button onclick="window.print()" class="btn btn-primary btn-sm">Print Sekarang</button>
@@ -80,7 +85,7 @@
             <table class="table table-borderless table-sm">
                 <tr><td width="180">Nama</td><td>: <?= esc($citizen['name'] ?? '-') ?></td></tr>
                 <tr><td>NIK</td><td>: <?= esc($citizen['nik'] ?? '-') ?></td></tr>
-                <tr><td>Tempat/Tanggal Lahir</td><td>: <?= esc(($citizen['birth_place'] ?? '-') . ', ' . ($citizen['birth_date'] ?? '-')) ?></td></tr>
+                <tr><td>Tempat/Tanggal Lahir</td><td>: <?= esc(($citizen['birth_place'] ?? '-') . ', ' . $birthDateFormatted) ?></td></tr>
                 <tr><td>Jenis Kelamin</td><td>: <?= esc($citizen['gender'] ?? '-') ?></td></tr>
                 <tr><td>Pekerjaan</td><td>: <?= esc($citizen['occupation'] ?? '-') ?></td></tr>
                 <tr><td>Alamat</td><td>: <?= esc($citizen['address'] ?? '-') ?></td></tr>

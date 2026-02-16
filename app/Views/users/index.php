@@ -9,8 +9,20 @@
                     <h5 class="card-title mb-0">Kelola User</h5>
                     <a href="<?= site_url('users/create') ?>" class="btn btn-primary">Tambah User</a>
                 </div>
+                <div class="table-tools mb-3">
+                    <div class="table-tools-group">
+                        <label for="usersPageSize" class="mb-0">Tampil</label>
+                        <select id="usersPageSize" class="form-select form-select-sm" data-page-size-for="usersTable">
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table" id="usersTable" data-table-paginate="true">
                         <thead>
                         <tr>
                             <th>No</th>
@@ -23,7 +35,7 @@
                         <tbody>
                         <?php foreach ($users as $index => $user) : ?>
                             <tr>
-                                <td><?= esc((string) ($index + 1)) ?></td>
+                                <td data-row-no><?= esc((string) ($index + 1)) ?></td>
                                 <td><?= esc($user['name']) ?></td>
                                 <td><?= esc($user['email']) ?></td>
                                 <td><span class="badge bg-info"><?= esc($user['role'] ?? 'user') ?></span></td>
@@ -39,6 +51,7 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="table-pager" data-pager-for="usersTable"></div>
             </div>
         </div>
     </div>

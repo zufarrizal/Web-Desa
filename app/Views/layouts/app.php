@@ -92,6 +92,19 @@
             align-items: center;
             gap: 10px;
         }
+        .mobile-sidebar-toggle {
+            display: none;
+            border: 1px solid #dbe2ef;
+            background: #fff;
+            color: #5b5b5b;
+            border-radius: 10px;
+            padding: 7px 10px;
+            line-height: 1;
+        }
+        .mobile-sidebar-toggle svg {
+            width: 18px;
+            height: 18px;
+        }
         .admin-theme-toggle {
             border: 1px solid #dbe2ef;
             background: #fff;
@@ -156,14 +169,111 @@
             top: 171px !important;
             height: calc(100% - 201px) !important;
         }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(16, 24, 40, 0.35);
+            z-index: 998;
+        }
         @media (max-width: 1350px) {
             .page-content {
                 margin-top: 124px !important;
             }
         }
         @media (max-width: 768px) {
+            .page-container {
+                padding: 10px;
+            }
+            .page-header {
+                position: relative;
+                width: 100%;
+            }
+            .page-header::before {
+                display: none;
+            }
+            .mobile-sidebar-toggle {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .page-header .navbar {
+                flex-direction: column;
+                align-items: center !important;
+                gap: 10px;
+                padding-top: 12px;
+                padding-bottom: 12px;
+            }
+            .page-header .navbar .logo {
+                width: 100%;
+                justify-content: center;
+                display: flex !important;
+                flex: none;
+            }
+            #headerNav {
+                width: 100%;
+                align-items: center !important;
+            }
+            #headerNav > ul {
+                width: 100%;
+                justify-content: center;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+            #headerNav > ul > li {
+                margin: 0 !important;
+            }
+            .top-brand {
+                justify-content: center;
+            }
+            .top-brand-text {
+                align-items: center;
+                text-align: center;
+            }
+            .top-brand-title {
+                font-size: 18px;
+            }
+            .top-brand-subtitle {
+                font-size: 11px;
+                margin-top: 1px;
+            }
+            .admin-theme-toggle {
+                padding: 7px 10px;
+                font-size: 11px;
+            }
             .top-profile-info {
                 display: none;
+            }
+            .top-profile {
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .page-sidebar {
+                left: 0;
+                top: 0 !important;
+                transform: translateX(-108%) !important;
+                transition: transform .22s ease-in-out !important;
+                z-index: 1000;
+                width: 260px;
+                height: 100% !important;
+                border-radius: 0;
+            }
+            body.mobile-sidebar-open .page-sidebar {
+                transform: translateX(0) !important;
+            }
+            body.mobile-sidebar-open .sidebar-overlay {
+                display: block;
+            }
+            .page-content {
+                margin-top: 10px !important;
+                margin-left: 0 !important;
+                transform: none !important;
+            }
+            body.mobile-sidebar-open .page-content {
+                transform: none !important;
+            }
+            body.mobile-sidebar-open {
+                overflow: hidden;
             }
         }
     </style>
@@ -202,6 +312,11 @@
                 <div id="headerNav">
                     <ul class="navbar-nav">
                         <li class="nav-item d-flex align-items-center me-2">
+                            <button id="mobileSidebarToggle" type="button" class="mobile-sidebar-toggle" aria-label="Toggle menu">
+                                <i data-feather="menu"></i>
+                            </button>
+                        </li>
+                        <li class="nav-item d-flex align-items-center me-2">
                             <button id="adminThemeToggle" type="button" class="admin-theme-toggle">Dark Mode</button>
                         </li>
                         <li class="nav-item dropdown">
@@ -234,6 +349,7 @@
                 </div>
             </div>
         </div>
+        <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
         <div class="page-sidebar">
             <ul class="list-unstyled accordion-menu">
@@ -340,6 +456,46 @@
             toggle.addEventListener('click', function () {
                 mode = (darkCss.disabled ? 'dark' : 'light');
                 applyTheme(mode);
+            });
+        })();
+
+        (function () {
+            var toggleBtn = document.getElementById('mobileSidebarToggle');
+            var overlay = document.getElementById('sidebarOverlay');
+            var sidebar = document.querySelector('.page-sidebar');
+            if (!toggleBtn || !overlay || !sidebar) {
+                return;
+            }
+
+            function closeSidebar() {
+                document.body.classList.remove('mobile-sidebar-open');
+            }
+
+            function toggleSidebar() {
+                document.body.classList.toggle('mobile-sidebar-open');
+            }
+
+            toggleBtn.addEventListener('click', function (event) {
+                event.preventDefault();
+                toggleSidebar();
+            });
+
+            overlay.addEventListener('click', closeSidebar);
+
+            sidebar.addEventListener('click', function (event) {
+                var link = event.target.closest('a[href]');
+                if (!link) {
+                    return;
+                }
+                if (window.matchMedia('(max-width: 768px)').matches) {
+                    closeSidebar();
+                }
+            });
+
+            window.addEventListener('resize', function () {
+                if (!window.matchMedia('(max-width: 768px)').matches) {
+                    closeSidebar();
+                }
             });
         })();
     </script>

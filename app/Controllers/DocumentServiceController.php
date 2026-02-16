@@ -512,17 +512,53 @@ class DocumentServiceController extends BaseController
         ];
 
         $code = $codeMap[$documentType] ?? 'SURAT';
-        $number = str_pad((string) ((int) ($request['id'] ?? 0)), 4, '0', STR_PAD_LEFT);
 
         $year = date('Y');
+        $month = (int) date('n');
         if (! empty($request['created_at'])) {
             $ts = strtotime((string) $request['created_at']);
             if ($ts !== false) {
                 $year = date('Y', $ts);
+                $month = (int) date('n', $ts);
             }
         }
 
-        return $code . '-' . $number . '/' . $year;
+        // Reset nomor urut setiap bulan (per jenis surat).
+        $sequence = (new DocumentRequestModel())
+            ->where('document_type', $documentType)
+            ->where('id <=', (int) ($request['id'] ?? 0))
+            ->where('YEAR(created_at) = ' . (int) $year, null, false)
+            ->where('MONTH(created_at) = ' . $month, null, false)
+            ->countAllResults();
+
+        if ($sequence < 1) {
+            $sequence = 1;
+        }
+
+        $number = str_pad((string) $sequence, 4, '0', STR_PAD_LEFT);
+        $monthRoman = $this->monthToRoman($month);
+
+        return $code . '-' . $number . '/' . $monthRoman . '/' . $year;
+    }
+
+    private function monthToRoman(int $month): string
+    {
+        $map = [
+            1 => 'I',
+            2 => 'II',
+            3 => 'III',
+            4 => 'IV',
+            5 => 'V',
+            6 => 'VI',
+            7 => 'VII',
+            8 => 'VIII',
+            9 => 'IX',
+            10 => 'X',
+            11 => 'XI',
+            12 => 'XII',
+        ];
+
+        return $map[$month] ?? (string) $month;
     }
 
     private function groupedDocTypes(): array
