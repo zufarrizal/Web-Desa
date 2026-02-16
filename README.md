@@ -58,7 +58,7 @@ composer install
 ```ini
 CI_ENVIRONMENT = production
 
-app.baseURL = 'http://localhost:8081/'
+app.baseURL = 'http://localhost:8080/'
 
 database.default.hostname = localhost
 database.default.database = web_desa
