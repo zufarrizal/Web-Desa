@@ -1,24 +1,52 @@
 # Web Desa (CodeIgniter 4)
 
-Aplikasi pelayanan administrasi desa berbasis CodeIgniter 4 dengan role `admin` dan `user`, layanan surat warga, pengaduan, dan publikasi konten desa.
+Aplikasi pelayanan administrasi desa berbasis CodeIgniter 4 untuk kebutuhan warga dan admin desa: pengelolaan dokumen, pengaduan, publikasi konten, dan halaman publik desa.
 
-## Fitur Utama
-- Autentikasi warga: login, registrasi, lupa password, reset password via email
-- Role & otorisasi: `admin` dan `user`
-- Dashboard admin/user dengan pemisahan menu fitur
-- Managemen Pengguna (CRUD user oleh admin)
-- Pelayanan pengurusan dokumen warga + preview/print surat
-- Pengaduan masyarakat
-- Posting konten terpisah: Program Desa, Artikel, Kegiatan
-- Halaman publik (landing page) + dark mode/light mode
-- SEO dasar: meta tags, Open Graph, Twitter Card, `sitemap.xml`, `robots.txt`
-- URL bersih tanpa `index.php`
+## Ringkasan Fitur
+- Autentikasi warga: login, register, lupa password, reset password via email token.
+- Role dan otorisasi: `admin` dan `user`.
+- Dashboard terpisah untuk admin dan user.
+- Manajemen pengguna oleh admin.
+- Pelayanan dokumen warga:
+  - generate surat,
+  - input manual,
+  - preview,
+  - print,
+  - update status.
+- Pengaduan masyarakat dengan lampiran gambar.
+- Konten publik terpisah: Program, Artikel, Kegiatan, Pengumuman.
+- Halaman publik desa dengan dark/light mode.
+- Halaman listing publik: `/postingan` + filter kategori.
+- SEO dasar:
+  - meta tags,
+  - Open Graph,
+  - Twitter Card,
+  - `sitemap.xml`,
+  - `robots.txt`.
+- Halaman error kustom 404 dan 500 (production).
+
+## Fitur Tambahan Terbaru
+- Peta Google Maps di section alamat kantor desa pada homepage.
+  - Bisa diatur dari admin via Plus Codes Google Maps.
+  - Jika Plus Codes kosong, fallback ke alamat kantor.
+- Auto-compress gambar postingan (Program/Artikel/Kegiatan/Pengumuman):
+  - Jika file > 1 MB, sistem mencoba kompres otomatis.
+  - Jika kompres gagal atau ekstensi GD tidak aktif, upload ditolak.
 
 ## Stack
-- PHP 8.x
-- CodeIgniter 4.4.x
+- PHP `^7.4 || ^8.0` (disarankan PHP 8.x)
+- CodeIgniter `4.4.8`
 - MySQL / MariaDB
-- Apache (XAMPP) atau `php spark serve`
+- PHPUnit 9
+
+## Struktur Direktori Penting
+- `app/Controllers`: logic controller.
+- `app/Models`: model database.
+- `app/Views`: tampilan admin/auth/publik.
+- `app/Database/Migrations`: skema database.
+- `app/Database/Seeds`: data seed.
+- `app/Filters`: auth, role, security filters.
+- `public/uploads`: file upload runtime.
 
 ## Instalasi
 1. Clone repository.
@@ -26,8 +54,12 @@ Aplikasi pelayanan administrasi desa berbasis CodeIgniter 4 dengan role `admin` 
 ```bash
 composer install
 ```
-3. Buat file `.env` dari `env`, lalu isi koneksi database:
+3. Copy `env` menjadi `.env`, lalu sesuaikan koneksi database:
 ```ini
+CI_ENVIRONMENT = production
+
+app.baseURL = 'http://localhost:8081/'
+
 database.default.hostname = localhost
 database.default.database = web_desa
 database.default.username = root
@@ -39,7 +71,7 @@ database.default.port = 3306
 ```bash
 php spark migrate
 ```
-5. (Opsional) isi data dummy konten:
+5. (Opsional) seed data awal konten:
 ```bash
 php spark db:seed ProgramPostSeeder
 ```
@@ -49,29 +81,142 @@ php spark db:seed ProgramPostSeeder
 ```bash
 php spark serve
 ```
-Akses: `http://localhost:8080`
+Default: `http://localhost:8080`
 
 ### Opsi B: Apache / XAMPP
-- Arahkan `DocumentRoot` ke folder `public`
-- Pastikan `mod_rewrite` aktif
-- Pastikan `AllowOverride All` aktif agar `.htaccess` bekerja
+- Arahkan `DocumentRoot` ke folder `public`.
+- Aktifkan `mod_rewrite`.
+- Pastikan `AllowOverride All` aktif.
+
+## Routing Utama
+### Publik
+- `GET /`: homepage.
+- `GET /postingan`: listing semua postingan + filter `type`.
+- `GET /program/{slug}`: detail posting.
+- `GET /sitemap.xml`
+- `GET /robots.txt`
+
+### Auth
+- `GET|POST /login`
+- `GET|POST /register`
+- `GET|POST /forgot-password`
+- `GET|POST /reset-password/{token}`
+
+### Protected (login)
+- `/dashboard`
+- `/profile`
+- `/documents/*`
+- `/complaints/*`
+
+### Admin only
+- `/users/*`
+- `/programs/*`
+- `/settings/home`
+
+## Pengaturan Homepage oleh Admin
+Menu: `Pengaturan Halaman Utama` (`/settings/home`)
+
+Bisa mengatur:
+- profil desa,
+- kontak desa,
+- info pengaduan,
+- Plus Codes Google Maps kantor.
+
+Format Plus Codes yang disarankan:
+- `PLUSCODE, Nama Lokasi`
+- Contoh: `6P5Q+23, Kantor Desa Sukamaju`
+
+## Perilaku Upload Gambar Postingan
+Untuk Program/Artikel/Kegiatan/Pengumuman:
+- Format diterima: JPG, JPEG, PNG, WEBP.
+- Jika ukuran <= 1 MB: disimpan normal.
+- Jika ukuran > 1 MB: sistem kompres otomatis ke JPG sampai target <= 1 MB.
+- Jika kompres gagal: upload dibatalkan.
+
+Catatan:
+- Auto-compress membutuhkan ekstensi PHP `gd` aktif.
+
+## Testing
+Jalankan test:
+```bash
+vendor/bin/phpunit
+```
+
+Konfigurasi test database memakai grup `database.tests.*` di `.env`.
+Pastikan kredensial test valid sebelum menjalankan test.
 
 ## Keamanan yang Sudah Diaktifkan
-- CSRF protection untuk request form
-- Honeypot otomatis pada form
-- Rate limiting/throttling request dan submit form
-- Link token filter untuk endpoint internal yang dilindungi
-- Hardening `.htaccess` di root project dan `public/`
-- Header keamanan dasar di `public/.htaccess`
+- CSRF protection.
+- Honeypot untuk form.
+- Request throttle / rate limiting.
+- Link token filter untuk endpoint internal.
+- Header keamanan dasar (`public/.htaccess`).
+- Hardening `.htaccess` di root dan folder `public`.
 
-## Struktur Direktori Ringkas
-- `app/Controllers` controller aplikasi
-- `app/Views` tampilan admin, auth, publik
-- `app/Database/Migrations` skema database
-- `app/Database/Seeds` data dummy
-- `app/Filters` filter keamanan/autentikasi
-- `public/uploads` file upload runtime (tidak di-commit)
+## Penjelasan Fitur Keamanan Penting
+### 1. Autentikasi dan sesi
+- Login wajib untuk semua fitur internal (`dashboard`, `documents`, `complaints`, dan lainnya).
+- Session user dipakai untuk identitas dan role (`admin`/`user`).
+- Endpoint internal penting menggunakan link token (`_lt`) untuk mengurangi akses tidak sah dari URL yang disalin sembarangan.
 
-## Catatan Git
-- File sensitif seperti `.env`, log, cache, session, dan upload runtime tidak di-commit
-- Line ending dinormalisasi melalui `.gitattributes`
+### 2. Otorisasi berbasis role
+- Route admin dilindungi filter role (`role:admin`), jadi user biasa tidak bisa akses manajemen user, posting admin, dan pengaturan.
+- Route yang butuh login dilindungi filter `auth`.
+- Validasi otorisasi juga dilakukan di beberapa controller agar tidak hanya bergantung pada route.
+
+### 3. Proteksi form dan anti-bot
+- CSRF aktif untuk request form agar mencegah serangan cross-site request forgery.
+- Honeypot dipakai untuk menahan bot form sederhana.
+- Throttle/rate limit menurunkan risiko spam submit (misalnya login brute force ringan atau spam form).
+
+### 4. Keamanan upload file
+- Upload gambar dibatasi MIME/type tertentu (JPG/JPEG/PNG/WEBP).
+- Untuk postingan, file besar dicoba dikompres otomatis; jika gagal diproses, upload ditolak.
+- File runtime disimpan di `public/uploads` dengan nama file acak untuk menurunkan risiko tebakan path file.
+
+### 5. Enkripsi data sensitif (at-rest)
+- Data profil sensitif pada tabel `users` disimpan terenkripsi otomatis (contoh: NIK, alamat, tempat/tanggal lahir, dan field profil lain).
+- Field `nik` pada tabel `document_requests` juga disimpan terenkripsi otomatis.
+- Mekanisme enkripsi memakai:
+  - `AES-256-CBC` untuk enkripsi isi data,
+  - `HMAC-SHA256` untuk verifikasi integritas data (deteksi modifikasi/corrupt).
+- Proses enkripsi/dekripsi berjalan di layer model (`beforeInsert`/`beforeUpdate`/`afterFind`), jadi controller tetap menerima nilai plaintext yang sudah didekripsi aman.
+- Kunci enkripsi diambil dari `.env`:
+  - prioritas: `app.profileDataKey`,
+  - fallback: `encryption.key`.
+- Jika key tidak diset, proses enkripsi akan gagal (runtime exception), jadi pengisian key ini wajib pada environment aktif.
+
+### 6. Hardening server level
+- `.htaccess` di root dan `public/` digunakan untuk pembatasan akses langsung file sensitif.
+- Security headers dasar diterapkan untuk menambah proteksi browser-side.
+- URL bersih tanpa `index.php` membantu konsistensi rule akses dan routing.
+
+### 7. Error handling
+- Halaman error kustom 404 dan 500 disediakan.
+- Untuk production, detail sensitif error tidak ditampilkan ke user.
+
+## Checklist Keamanan Sebelum Go-Live
+- Set `CI_ENVIRONMENT=production`.
+- Pastikan `.env` tidak pernah di-commit ke repository publik.
+- Gunakan kredensial database kuat (jangan default kosong).
+- Aktifkan HTTPS di server/reverse proxy.
+- Pastikan permission folder `writable` dan `public/uploads` aman (hanya yang perlu write).
+- Batasi ukuran upload di level PHP/web server sesuai kebutuhan (`upload_max_filesize`, `post_max_size`).
+- Aktifkan ekstensi `gd` jika ingin fitur auto-compress gambar berjalan optimal.
+- Pastikan `app.profileDataKey` terisi dan kuat (jangan gunakan key pendek/lemah).
+- Monitoring log error di `writable/logs` secara berkala.
+
+## Rekomendasi Lanjutan (Opsional)
+- Tambahkan reCAPTCHA pada form sensitif (login, register, pengaduan) jika traffic publik tinggi.
+- Terapkan pembatasan IP atau WAF di level infrastruktur.
+- Tambahkan audit trail aktivitas admin (siapa mengubah apa dan kapan).
+- Jadwalkan backup database harian + uji restore berkala.
+- Siapkan prosedur rotasi key enkripsi terencana (karena data lama perlu proses re-encrypt jika key diganti).
+
+## Catatan Deployment
+- Jangan commit `.env` produksi.
+- Folder runtime (`writable`, `public/uploads`) harus writable.
+- Gunakan `CI_ENVIRONMENT=production` di server live.
+
+## Lisensi
+Project mengikuti lisensi pada file `LICENSE`.
