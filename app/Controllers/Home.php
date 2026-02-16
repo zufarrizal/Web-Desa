@@ -2,50 +2,89 @@
 
 namespace App\Controllers;
 
+use App\Models\ActivityModel;
+use App\Models\AnnouncementModel;
+use App\Models\ArticleModel;
 use App\Models\LetterSettingModel;
-use App\Models\ProgramPostModel;
+use App\Models\ProgramModel;
 
 class Home extends BaseController
 {
     public function index(): string
     {
-        $programModel = new ProgramPostModel();
+        $programModel = new ProgramModel();
+        $articleModel = new ArticleModel();
+        $activityModel = new ActivityModel();
+        $announcementModel = new AnnouncementModel();
         $settingModel = new LetterSettingModel();
-        $posts        = $programModel->orderBy('published_at', 'DESC')->findAll();
-        $setting      = $settingModel->first();
+        $programs = $programModel->orderBy('published_at', 'DESC')->findAll();
+        $articles = $articleModel->orderBy('published_at', 'DESC')->findAll();
+        $activities = $activityModel->orderBy('published_at', 'DESC')->findAll();
+        $announcements = $announcementModel->orderBy('published_at', 'DESC')->findAll();
+        $posts = array_merge($programs, $articles, $activities, $announcements);
+        usort($posts, static function (array $a, array $b): int {
+            $left = strtotime((string) ($a['published_at'] ?? '1970-01-01 00:00:00'));
+            $right = strtotime((string) ($b['published_at'] ?? '1970-01-01 00:00:00'));
+            return $right <=> $left;
+        });
+        $setting      = $settingModel->first() ?: [];
         $villageName  = trim((string) ($setting['village_name'] ?? ''));
-        $programs     = array_values(array_filter($posts, static fn (array $item): bool => ($item['post_type'] ?? '') === 'program'));
-        $articles     = array_values(array_filter($posts, static fn (array $item): bool => ($item['post_type'] ?? 'artikel') === 'artikel'));
-        $activities   = array_values(array_filter($posts, static fn (array $item): bool => ($item['post_type'] ?? '') === 'kegiatan'));
 
         return view('public/home', [
             'posts'      => $posts,
             'programs'   => $programs,
             'articles'   => $articles,
             'activities' => $activities,
+            'announcements' => $announcements,
+            'setting'    => $setting,
             'villageName'=> $villageName !== '' ? $villageName : 'Desa',
         ]);
     }
 
     public function posts(): string
     {
-        $programModel = new ProgramPostModel();
         $type         = (string) ($this->request->getGet('type') ?? '');
-        $builder      = $programModel->orderBy('published_at', 'DESC');
-        if (in_array($type, ['program', 'artikel', 'kegiatan'], true)) {
-            $builder->where('post_type', $type);
+
+        if ($type === 'program') {
+            $posts = (new ProgramModel())->orderBy('published_at', 'DESC')->findAll();
+        } elseif ($type === 'artikel') {
+            $posts = (new ArticleModel())->orderBy('published_at', 'DESC')->findAll();
+        } elseif ($type === 'kegiatan') {
+            $posts = (new ActivityModel())->orderBy('published_at', 'DESC')->findAll();
+        } elseif ($type === 'pengumuman') {
+            $posts = (new AnnouncementModel())->orderBy('published_at', 'DESC')->findAll();
+        } else {
+            $posts = array_merge(
+                (new ProgramModel())->orderBy('published_at', 'DESC')->findAll(),
+                (new ArticleModel())->orderBy('published_at', 'DESC')->findAll(),
+                (new ActivityModel())->orderBy('published_at', 'DESC')->findAll(),
+                (new AnnouncementModel())->orderBy('published_at', 'DESC')->findAll()
+            );
+            usort($posts, static function (array $a, array $b): int {
+                $left = strtotime((string) ($a['published_at'] ?? '1970-01-01 00:00:00'));
+                $right = strtotime((string) ($b['published_at'] ?? '1970-01-01 00:00:00'));
+                return $right <=> $left;
+            });
         }
 
         return view('public/posts', [
-            'posts' => $builder->findAll(),
+            'posts' => $posts,
             'type'  => $type,
         ]);
     }
 
     public function show(string $slug): string
     {
-        $programModel = new ProgramPostModel();
-        $post         = $programModel->where('slug', $slug)->first();
+        $post = (new ProgramModel())->where('slug', $slug)->first();
+        if (! $post) {
+            $post = (new ArticleModel())->where('slug', $slug)->first();
+        }
+        if (! $post) {
+            $post = (new ActivityModel())->where('slug', $slug)->first();
+        }
+        if (! $post) {
+            $post = (new AnnouncementModel())->where('slug', $slug)->first();
+        }
 
         if (! $post) {
             throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound('Program tidak ditemukan.');
@@ -58,8 +97,17 @@ class Home extends BaseController
 
     public function sitemapXml()
     {
-        $programModel = new ProgramPostModel();
-        $posts        = $programModel->select('slug, updated_at, published_at')->orderBy('published_at', 'DESC')->findAll();
+        $posts = array_merge(
+            (new ProgramModel())->select('slug, updated_at, published_at')->orderBy('published_at', 'DESC')->findAll(),
+            (new ArticleModel())->select('slug, updated_at, published_at')->orderBy('published_at', 'DESC')->findAll(),
+            (new ActivityModel())->select('slug, updated_at, published_at')->orderBy('published_at', 'DESC')->findAll(),
+            (new AnnouncementModel())->select('slug, updated_at, published_at')->orderBy('published_at', 'DESC')->findAll()
+        );
+        usort($posts, static function (array $a, array $b): int {
+            $left = strtotime((string) ($a['published_at'] ?? '1970-01-01 00:00:00'));
+            $right = strtotime((string) ($b['published_at'] ?? '1970-01-01 00:00:00'));
+            return $right <=> $left;
+        });
 
         return response()
             ->setContentType('application/xml')

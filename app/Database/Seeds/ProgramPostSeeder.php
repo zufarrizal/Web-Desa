@@ -8,7 +8,24 @@ class ProgramPostSeeder extends Seeder
 {
     public function run()
     {
-        $table = $this->db->table('program_posts');
+        if (! $this->db->tableExists('programs')
+            || ! $this->db->tableExists('articles')
+            || ! $this->db->tableExists('activities')
+            || ! $this->db->tableExists('announcements')) {
+            return;
+        }
+
+        $programTable = $this->db->table('programs');
+        $articleTable = $this->db->table('articles');
+        $activityTable = $this->db->table('activities');
+        $announcementTable = $this->db->table('announcements');
+
+        // Reset data supaya seed ulang selalu konsisten.
+        $programTable->truncate();
+        $articleTable->truncate();
+        $activityTable->truncate();
+        $announcementTable->truncate();
+
         $user  = $this->db->table('users')->select('id')->orderBy('id', 'ASC')->get()->getRowArray();
         if (! $user) {
             return;
@@ -17,52 +34,94 @@ class ProgramPostSeeder extends Seeder
         $authorId = (int) $user['id'];
         $now      = time();
 
-        $rows = [
-            ['Program Ketahanan Pangan Desa', 'dummy-program-ketahanan-pangan-desa', 'program'],
-            ['Program Peningkatan Jalan Lingkungan', 'dummy-program-peningkatan-jalan-lingkungan', 'program'],
-            ['Program Sanitasi dan Air Bersih', 'dummy-program-sanitasi-dan-air-bersih', 'program'],
-            ['Program Pemberdayaan UMKM Desa', 'dummy-program-pemberdayaan-umkm-desa', 'program'],
-            ['Program Digitalisasi Pelayanan Desa', 'dummy-program-digitalisasi-pelayanan-desa', 'program'],
-
-            ['Artikel: Cara Mengurus Surat Domisili', 'dummy-artikel-cara-mengurus-surat-domisili', 'artikel'],
-            ['Artikel: Panduan Lengkapi Profil Warga', 'dummy-artikel-panduan-lengkapi-profil-warga', 'artikel'],
-            ['Artikel: Manfaat Pelayanan Online Desa', 'dummy-artikel-manfaat-pelayanan-online-desa', 'artikel'],
-            ['Artikel: Alur Pengajuan Pengaduan Warga', 'dummy-artikel-alur-pengajuan-pengaduan-warga', 'artikel'],
-            ['Artikel: Transparansi Program Desa', 'dummy-artikel-transparansi-program-desa', 'artikel'],
-
-            ['Kegiatan Gotong Royong Bersih Desa', 'dummy-kegiatan-gotong-royong-bersih-desa', 'kegiatan'],
-            ['Kegiatan Posyandu Bulanan Balita', 'dummy-kegiatan-posyandu-bulanan-balita', 'kegiatan'],
-            ['Kegiatan Pelatihan UMKM Pemuda', 'dummy-kegiatan-pelatihan-umkm-pemuda', 'kegiatan'],
-            ['Kegiatan Musyawarah Perencanaan Desa', 'dummy-kegiatan-musyawarah-perencanaan-desa', 'kegiatan'],
-            ['Kegiatan Sosialisasi Layanan Administrasi', 'dummy-kegiatan-sosialisasi-layanan-administrasi', 'kegiatan'],
+        $seedMap = [
+            'program' => [
+                'Program Ketahanan Pangan Desa',
+                'Program Peningkatan Jalan Lingkungan',
+                'Program Sanitasi dan Air Bersih',
+                'Program Pemberdayaan UMKM Desa',
+                'Program Digitalisasi Pelayanan Desa',
+                'Program Renovasi Posyandu',
+                'Program Beasiswa Anak Desa',
+                'Program Pelatihan Literasi Digital',
+                'Program Penguatan Karang Taruna',
+                'Program Pengelolaan Sampah Terpadu',
+            ],
+            'artikel' => [
+                'Artikel: Cara Mengurus Surat Domisili',
+                'Artikel: Panduan Lengkapi Profil Warga',
+                'Artikel: Manfaat Pelayanan Online Desa',
+                'Artikel: Alur Pengajuan Pengaduan Warga',
+                'Artikel: Transparansi Program Desa',
+                'Artikel: Tips Menjaga Kebersihan Lingkungan',
+                'Artikel: Pentingnya Data Kependudukan Akurat',
+                'Artikel: Panduan Mengurus Surat Keterangan Usaha',
+                'Artikel: Peran Warga dalam Musyawarah Desa',
+                'Artikel: Edukasi Cegah Stunting di Desa',
+            ],
+            'kegiatan' => [
+                'Kegiatan Gotong Royong Bersih Desa',
+                'Kegiatan Posyandu Bulanan Balita',
+                'Kegiatan Pelatihan UMKM Pemuda',
+                'Kegiatan Musyawarah Perencanaan Desa',
+                'Kegiatan Sosialisasi Layanan Administrasi',
+                'Kegiatan Senam Sehat Lansia',
+                'Kegiatan Donor Darah Desa',
+                'Kegiatan Pelatihan Pertanian Organik',
+                'Kegiatan Lomba Kebersihan Antar RT',
+                'Kegiatan Edukasi Mitigasi Bencana',
+            ],
+            'pengumuman' => [
+                'Pengumuman Jadwal Pelayanan Akhir Pekan',
+                'Pengumuman Pembayaran Iuran Kebersihan',
+                'Pengumuman Jadwal Posyandu Bulan Ini',
+                'Pengumuman Penyaluran Bantuan Sosial',
+                'Pengumuman Rapat Warga Dusun Utara',
+                'Pengumuman Pendaftaran Kegiatan Karang Taruna',
+                'Pengumuman Imbauan Keamanan Lingkungan',
+                'Pengumuman Perbaikan Jalan Desa',
+                'Pengumuman Jadwal Vaksinasi Massal',
+                'Pengumuman Libur Pelayanan Administrasi',
+            ],
         ];
 
-        foreach ($rows as $i => $row) {
-            [$title, $slug, $type] = $row;
-            $exists = $table->where('slug', $slug)->get()->getRowArray();
-            if ($exists) {
+        $typeTableMap = [
+            'program' => $programTable,
+            'artikel' => $articleTable,
+            'kegiatan' => $activityTable,
+            'pengumuman' => $announcementTable,
+        ];
+
+        $index = 0;
+        foreach ($seedMap as $type => $titles) {
+            $table = $typeTableMap[$type] ?? null;
+            if (! $table) {
                 continue;
             }
 
-            $publishedAt = date('Y-m-d H:i:s', $now - (($i + 1) * 3600));
-            $excerpt = "Dummy {$type}: {$title}.";
-            $content = "{$title}\n\nIni adalah konten dummy untuk {$type} desa. Data ini digunakan untuk kebutuhan demo tampilan halaman publik, SEO, dan pengujian fitur posting.";
+            foreach ($titles as $title) {
+                $index++;
+                $slug = 'dummy-' . $type . '-' . url_title($title, '-', true);
+                $publishedAt = date('Y-m-d H:i:s', $now - ($index * 3600));
+                $excerpt = "Dummy {$type}: {$title}.";
+                $content = "{$title}\n\nIni adalah konten dummy untuk {$type} desa. Data ini digunakan untuk kebutuhan demo tampilan halaman publik, SEO, dan pengujian fitur posting.";
 
-            $table->insert([
-                'user_id'          => $authorId,
-                'title'            => $title,
-                'post_type'        => $type,
-                'slug'             => $slug,
-                'excerpt'          => $excerpt,
-                'image_path'       => null,
-                'content'          => $content,
-                'seo_title'        => $title . ' | Portal Desa',
-                'seo_description'  => mb_strimwidth($excerpt, 0, 155, '...'),
-                'seo_keywords'     => "{$type}, desa, portal desa",
-                'published_at'     => $publishedAt,
-                'created_at'       => $publishedAt,
-                'updated_at'       => $publishedAt,
-            ]);
+                $table->insert([
+                    'user_id'          => $authorId,
+                    'title'            => $title,
+                    'post_type'        => $type,
+                    'slug'             => $slug,
+                    'excerpt'          => $excerpt,
+                    'image_path'       => null,
+                    'content'          => $content,
+                    'seo_title'        => $title . ' | Portal Desa',
+                    'seo_description'  => mb_strimwidth($excerpt, 0, 155, '...'),
+                    'seo_keywords'     => "{$type}, desa, portal desa",
+                    'published_at'     => $publishedAt,
+                    'created_at'       => $publishedAt,
+                    'updated_at'       => $publishedAt,
+                ]);
+            }
         }
     }
 }

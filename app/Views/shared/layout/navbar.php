@@ -12,9 +12,10 @@ $withToken = static function (string $path) use ($lt): string {
 
 $homeUrl = site_url('/');
 $berandaUrl = $homePage ? '#home' : $homeUrl;
-$layananUrl = $homePage ? '#fitur' : $homeUrl . '#fitur';
-$programUrl = $homePage ? '#program' : $homeUrl . '#program';
+$profilDesaUrl = $homePage ? '#profil-desa' : $homeUrl . '#profil-desa';
+$announcementUrl = $homePage ? '#pengumuman' : $homeUrl . '#pengumuman';
 $kontakUrl = $homePage ? '#kontak' : $homeUrl . '#kontak';
+$pengaduanUrl = $homePage ? '#pengaduan' : $homeUrl . '#pengaduan';
 ?>
 <nav class="navbar navbar-expand-lg guest-navbar">
     <div class="container">
@@ -27,9 +28,10 @@ $kontakUrl = $homePage ? '#kontak' : $homeUrl . '#kontak';
         <div class="collapse navbar-collapse" id="guestNavbar">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item"><a class="nav-link" href="<?= esc($berandaUrl) ?>">Beranda</a></li>
-                <li class="nav-item"><a class="nav-link" href="<?= esc($layananUrl) ?>">Layanan</a></li>
-                <li class="nav-item"><a class="nav-link" href="<?= esc($programUrl) ?>">Program Desa</a></li>
+                <li class="nav-item"><a class="nav-link" href="<?= esc($profilDesaUrl) ?>">Profil Desa</a></li>
+                <li class="nav-item"><a class="nav-link" href="<?= esc($announcementUrl) ?>">Pengumuman</a></li>
                 <li class="nav-item"><a class="nav-link" href="<?= esc($kontakUrl) ?>">Kontak</a></li>
+                <li class="nav-item"><a class="nav-link" href="<?= esc($pengaduanUrl) ?>">Pengaduan</a></li>
             </ul>
             <div class="d-flex align-items-center gap-2">
                 <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle theme">Dark Mode</button>

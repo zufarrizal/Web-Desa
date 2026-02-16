@@ -4,9 +4,9 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class ProgramPostModel extends Model
+class ProgramModel extends Model
 {
-    protected $table         = 'program_posts';
+    protected $table         = 'programs';
     protected $primaryKey    = 'id';
     protected $returnType    = 'array';
     protected $allowedFields = [

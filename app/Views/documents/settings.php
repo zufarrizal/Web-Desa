@@ -30,7 +30,7 @@
                         <input type="text" name="village_name" class="form-control" value="<?= old('village_name', $setting['village_name'] ?? '') ?>" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Alamat Kantor (contoh: Jl. [Nama Jalan/Alamat Lengkap Kantor Desa])</label>
+                        <label class="form-label">Alamat Kantor (contoh: [Nama Jalan/Alamat Lengkap Kantor Desa])</label>
                         <textarea name="office_address" rows="4" class="form-control" required><?= old('office_address', $setting['office_address'] ?? ($setting['letterhead_address'] ?? '')) ?></textarea>
                     </div>
                     <div class="mb-3">

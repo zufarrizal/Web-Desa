@@ -2,13 +2,13 @@
 
 namespace App\Controllers;
 
-use App\Models\ProgramModel as ProgramPostModel;
+use App\Models\AnnouncementModel as ProgramPostModel;
 use CodeIgniter\I18n\Time;
 
-class ProgramController extends BaseController
+class AnnouncementController extends BaseController
 {
-    private const TYPE = 'program';
-    private const TYPE_LABEL = 'Program Desa';
+    private const TYPE = 'pengumuman';
+    private const TYPE_LABEL = 'Pengumuman';
 
     public function index()
     {

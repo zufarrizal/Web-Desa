@@ -30,14 +30,7 @@
     <meta name="twitter:image" content="<?= esc(base_url('assets/images/card-image.png')) ?>">
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,700,800&display=swap" rel="stylesheet">
     <link href="<?= base_url('assets/plugins/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
-    <style>
-        body { font-family: 'Poppins', sans-serif; background: #f4f6f9; color: #111827; min-height: 100vh; display: flex; flex-direction: column; }
-        main.container { flex: 1; }
-        .main-nav { background: rgba(255,255,255,.95); border-bottom: 1px solid #e5e7eb; }
-        .post-card { border: 1px solid #e7ebf3; border-radius: 14px; background: #fff; }
-        .post-thumb { width: 100%; height: 180px; object-fit: cover; border-top-left-radius: 14px; border-top-right-radius: 14px; }
-        .footer { background: #1f2937; color: #dbe4f5; border-top: 1px solid #e5e7eb; }
-    </style>
+    <link href="<?= base_url('assets/css/public-posts.css') ?>" rel="stylesheet">
 </head>
 <body>
 <nav class="navbar navbar-expand-lg sticky-top main-nav">

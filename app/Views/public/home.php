@@ -32,280 +32,14 @@
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,700,800&display=swap" rel="stylesheet">
     <link href="<?= base_url('assets/plugins/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
     <link href="<?= base_url('assets/css/main.min.css') ?>" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #f3f6f9;
-            --surface: #ffffff;
-            --surface-2: #eef3fb;
-            --text: #2c3447;
-            --muted: #6b7385;
-            --line: #dde4f0;
-            --primary: #7888fc;
-            --primary-2: #4f64d9;
-            --hero-grad: linear-gradient(135deg, #eef3ff 0%, #f2fbf6 100%);
-            --footer: #1f2937;
-            --footer-text: #dbe4f5;
-            --shadow: 0 14px 32px rgba(21, 33, 63, 0.08);
-        }
-
-        html[data-theme="dark"] {
-            --bg: #131926;
-            --surface: #1b2435;
-            --surface-2: #222d41;
-            --text: #e6edf9;
-            --muted: #9eabc4;
-            --line: #2d3a54;
-            --primary: #95a4ff;
-            --primary-2: #7a89ff;
-            --hero-grad: linear-gradient(135deg, #1a2235 0%, #1f2a3a 100%);
-            --footer: #0f1522;
-            --footer-text: #b5c0d8;
-            --shadow: 0 14px 32px rgba(0, 0, 0, 0.32);
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            padding-top: 74px;
-        }
-        main.container { flex: 1; }
-
-        .guest-navbar {
-            background: color-mix(in srgb, var(--surface) 92%, transparent);
-            border-bottom: 1px solid var(--line);
-            backdrop-filter: blur(8px);
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1100;
-        }
-
-        .guest-navbar .navbar-brand {
-            color: var(--primary-2);
-            font-weight: 800;
-            letter-spacing: .3px;
-        }
-
-        .guest-navbar .nav-link {
-            color: var(--text);
-            font-weight: 500;
-        }
-
-        .theme-toggle {
-            border: 1px solid var(--line);
-            background: var(--surface);
-            color: var(--text);
-            border-radius: 10px;
-            padding: 7px 12px;
-            font-size: 13px;
-            line-height: 1;
-        }
-
-        .hero {
-            padding: 24px 0 52px;
-            background: var(--hero-grad);
-            border-bottom: 1px solid var(--line);
-        }
-        .hero-village-title {
-            font-size: clamp(24px, 3vw, 38px);
-            font-weight: 800;
-            line-height: 1.1;
-            color: var(--text);
-            margin: 0 0 18px;
-            letter-spacing: .2px;
-        }
-        @media (max-width: 767.98px) {
-            .hero-village-title {
-                text-align: center;
-            }
-        }
-
-        .hero-card {
-            background: var(--surface);
-            border: 1px solid var(--line);
-            border-radius: 18px;
-            box-shadow: var(--shadow);
-            padding: 24px;
-        }
-
-        .hero-badge {
-            display: inline-block;
-            padding: 7px 12px;
-            border-radius: 99px;
-            background: color-mix(in srgb, var(--primary) 14%, var(--surface));
-            color: var(--primary-2);
-            font-size: 12px;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-
-        .hero h1 {
-            font-size: clamp(30px, 4vw, 42px);
-            font-weight: 800;
-            line-height: 1.12;
-            margin-bottom: 12px;
-            color: var(--text);
-        }
-
-        .hero p {
-            color: var(--muted);
-            margin-bottom: 20px;
-        }
-
-        .hero-quick {
-            background: var(--surface-2);
-            border-radius: 14px;
-            border: 1px solid var(--line);
-            padding: 12px 14px;
-            color: var(--muted);
-            font-size: 13px;
-        }
-
-        .home-section {
-            padding: 28px 0;
-        }
-
-        .section-title {
-            font-size: 22px;
-            font-weight: 800;
-            margin-bottom: 14px;
-            color: var(--text);
-        }
-
-        .feature-card, .post-card {
-            border: 1px solid var(--line);
-            border-radius: 14px;
-            background: var(--surface);
-            box-shadow: var(--shadow);
-        }
-
-        .feature-card .card-body,
-        .post-card .card-body {
-            padding: 16px;
-        }
-        .feature-card .card-body {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .feature-card h5,
-        .post-card h5 {
-            color: var(--text);
-            margin-bottom: 10px;
-        }
-        .post-title-link {
-            color: inherit;
-            text-decoration: none;
-        }
-        .post-title-link:hover {
-            color: var(--primary-2);
-            text-decoration: underline;
-        }
-
-        .feature-card p,
-        .post-card p,
-        .post-meta {
-            color: var(--muted);
-        }
-        .feature-card .btn {
-            margin-top: auto;
-            align-self: flex-start;
-        }
-
-        .footer {
-            background: var(--footer);
-            color: var(--footer-text);
-            border-top: 1px solid var(--line);
-        }
-
-        .btn-hero-primary {
-            background: var(--primary);
-            color: #fff;
-            border: 0;
-        }
-
-        .btn-hero-primary:hover { color: #fff; opacity: .92; }
-
-        .btn-hero-secondary {
-            border: 1px solid var(--line);
-            background: var(--surface);
-            color: var(--text);
-        }
-        html[data-theme="dark"] .hero .btn-outline-secondary,
-        html[data-theme="dark"] .hero .btn-outline-dark {
-            color: #e6edf9;
-            border-color: #8fa1c4;
-            background-color: transparent;
-        }
-        html[data-theme="dark"] .hero .btn-outline-secondary:hover,
-        html[data-theme="dark"] .hero .btn-outline-secondary:focus,
-        html[data-theme="dark"] .hero .btn-outline-dark:hover,
-        html[data-theme="dark"] .hero .btn-outline-dark:focus {
-            color: #ffffff;
-            border-color: #a9b8d6;
-            background-color: #2a3650;
-        }
-
-        .post-empty {
-            border: 1px dashed var(--line);
-            border-radius: 12px;
-            background: var(--surface);
-            color: var(--muted);
-            padding: 14px;
-        }
-        .post-thumb {
-            width: 100%;
-            height: 170px;
-            object-fit: cover;
-            border-top-left-radius: 14px;
-            border-top-right-radius: 14px;
-            border-bottom: 1px solid var(--line);
-        }
-        .pager {
-            margin-top: 14px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .pager-btn {
-            border: 1px solid var(--line);
-            background: var(--surface);
-            color: var(--text);
-            border-radius: 8px;
-            min-width: 36px;
-            height: 34px;
-            padding: 0 10px;
-            font-size: 13px;
-            font-weight: 600;
-            transition: .2s ease;
-        }
-        .pager-btn:hover {
-            border-color: var(--primary);
-            color: var(--primary-2);
-        }
-        .pager-btn.active {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: #fff;
-        }
-        .pager-btn:disabled {
-            opacity: .45;
-            cursor: not-allowed;
-        }
-    </style>
+    <link href="<?= base_url('assets/css/public-theme.css') ?>" rel="stylesheet">
+    <link href="<?= base_url('assets/css/public-home.css') ?>" rel="stylesheet">
 </head>
 <body>
 <?php
 $isLoggedIn = (bool) session()->get('logged_in');
 $lt = (string) session()->get('link_token');
+$setting = $setting ?? [];
 $withToken = static function (string $path) use ($lt): string {
     $url = site_url($path);
     if ($lt === '') {
@@ -313,12 +47,21 @@ $withToken = static function (string $path) use ($lt): string {
     }
     return $url . (str_contains($url, '?') ? '&' : '?') . '_lt=' . rawurlencode($lt);
 };
+
+$profileTitle = trim((string) ($setting['village_profile_title'] ?? '')) !== '' ? (string) $setting['village_profile_title'] : 'Profil Desa';
+$profileContent = trim((string) ($setting['village_profile_content'] ?? '')) !== '' ? (string) $setting['village_profile_content'] : 'Profil desa belum diatur oleh admin.';
+$contactPerson = (string) ($setting['contact_person'] ?? '-');
+$contactPhone = (string) ($setting['contact_phone'] ?? '-');
+$contactEmail = (string) ($setting['contact_email'] ?? '-');
+$contactWhatsapp = (string) ($setting['contact_whatsapp'] ?? '-');
+$complaintInfo = trim((string) ($setting['complaint_info'] ?? '')) !== '' ? (string) $setting['complaint_info'] : 'Sampaikan pengaduan warga dengan jelas agar tim desa dapat menindaklanjuti dengan cepat.';
+$announcements = $announcements ?? [];
 ?>
 <?= view('shared/layout/navbar', ['homePage' => true]) ?>
 
 <header id="home" class="hero">
     <div class="container">
-        <h2 class="hero-village-title">Desa <?= esc((string) ($villageName ?? 'Desa')) ?></h2>
+        <h2 class="hero-village-title">Pemerintah Desa <?= esc((string) ($villageName ?? 'Desa')) ?></h2>
         <div class="row g-4 align-items-center">
             <div class="col-lg-8">
                 <div class="hero-card">
@@ -357,6 +100,39 @@ $withToken = static function (string $path) use ($lt): string {
 </header>
 
 <main class="container">
+    <section id="profil-desa" class="home-section">
+        <h3 class="section-title"><?= esc($profileTitle) ?></h3>
+        <div class="post-empty">
+            <?= nl2br(esc($profileContent)) ?>
+        </div>
+    </section>
+
+    <section id="pengumuman" class="home-section pt-0">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h3 class="section-title mb-0">Pengumuman</h3>
+            <small class="text-muted"><?= count($announcements) ?> posting</small>
+        </div>
+        <?php if ($announcements === []) : ?>
+            <div class="post-empty">Belum ada postingan pengumuman.</div>
+        <?php else : ?>
+            <div class="row g-3" data-paginated-list="pengumuman" data-page-size="3">
+                <?php foreach ($announcements as $post) : ?>
+                    <div class="col-12" data-page-item>
+                        <article class="card post-card h-100">
+                            <div class="card-body d-flex flex-column">
+                                <h5><a class="post-title-link" href="<?= site_url('program/' . $post['slug']) ?>"><?= esc($post['title']) ?></a></h5>
+                                <p class="post-meta mb-2"><span class="badge bg-primary">Pengumuman</span></p>
+                                <p class="post-meta mb-2">Dipublikasikan: <?= esc(date('d M Y H:i', strtotime((string) $post['published_at']))) ?></p>
+                                <p class="mb-0"><?= esc($post['excerpt'] ?: mb_strimwidth(strip_tags((string) $post['content']), 0, 140, '...')) ?></p>
+                            </div>
+                        </article>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <div class="pager" data-pager="pengumuman"></div>
+        <?php endif; ?>
+    </section>
+
     <section id="fitur" class="home-section">
         <h3 class="section-title">Fitur Pelayanan</h3>
         <div class="row g-3">
@@ -487,6 +263,43 @@ $withToken = static function (string $path) use ($lt): string {
             <?php endforeach; ?>
         </div>
         <div class="pager" data-pager="kegiatan"></div>
+    </section>
+
+    <section id="kontak" class="home-section pt-0">
+        <h3 class="section-title">Kontak Desa</h3>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="card feature-card h-100">
+                    <div class="card-body">
+                        <h5>Kontak Resmi</h5>
+                        <p class="mb-2"><strong>PIC:</strong> <?= esc($contactPerson) ?></p>
+                        <p class="mb-2"><strong>Telepon:</strong> <?= esc($contactPhone) ?></p>
+                        <p class="mb-2"><strong>Email:</strong> <?= esc($contactEmail) ?></p>
+                        <p class="mb-0"><strong>WhatsApp:</strong> <?= esc($contactWhatsapp) ?></p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card feature-card h-100">
+                    <div class="card-body">
+                        <h5>Alamat Kantor Desa</h5>
+                        <p class="mb-0"><?= esc((string) ($setting['office_address'] ?? '-')) ?></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="pengaduan" class="home-section pt-0">
+        <h3 class="section-title">Pengaduan Warga</h3>
+        <div class="card feature-card">
+            <div class="card-body">
+                <p class="mb-3"><?= nl2br(esc($complaintInfo)) ?></p>
+                <a href="<?= $isLoggedIn ? $withToken('complaints') : site_url('login') ?>" class="btn btn-sm btn-primary">
+                    <?= $isLoggedIn ? 'Buka Pengaduan Saya' : 'Login untuk Mengadu' ?>
+                </a>
+            </div>
+        </div>
     </section>
 </main>
 

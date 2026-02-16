@@ -89,7 +89,7 @@
                                 <p class="letter-head-line-1">PEMERINTAH KABUPATEN <?= strtoupper(esc($setting['regency_name'] ?? 'NAMA KABUPATEN')) ?></p>
                                 <p class="letter-head-line-2">KECAMATAN <?= strtoupper(esc($setting['subdistrict_name'] ?? 'NAMA KECAMATAN')) ?></p>
                                 <p class="letter-head-line-1">DESA <?= strtoupper(esc($setting['village_name'] ?? 'NAMA DESA')) ?></p>
-                                <p class="letter-meta">Jl. <?= esc($setting['office_address'] ?? ($setting['letterhead_address'] ?? '[Nama Jalan/Alamat Lengkap Kantor Desa]')) ?></p>
+                                <p class="letter-meta"><?= esc($setting['office_address'] ?? ($setting['letterhead_address'] ?? '[Nama Jalan/Alamat Lengkap Kantor Desa]')) ?></p>
                                 <hr>
                                 <p class="letter-title mt-3 text-decoration-underline"><?= esc($request['document_type']) ?></p>
                                 <p class="letter-meta">Nomor: <?= esc($letterNumber ?? '-') ?></p>

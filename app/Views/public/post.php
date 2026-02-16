@@ -40,52 +40,8 @@
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,700,800&display=swap" rel="stylesheet">
     <link href="<?= base_url('assets/plugins/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
     <link href="<?= base_url('assets/css/main.min.css') ?>" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #f3f6f9;
-            --surface: #ffffff;
-            --text: #2c3447;
-            --muted: #6b7385;
-            --line: #dde4f0;
-            --primary: #7888fc;
-            --primary-2: #4f64d9;
-        }
-        html[data-theme="dark"] {
-            --bg: #131926;
-            --surface: #1b2435;
-            --text: #e6edf9;
-            --muted: #9eabc4;
-            --line: #2d3a54;
-            --primary: #95a4ff;
-            --primary-2: #7a89ff;
-        }
-        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; padding-top: 74px; }
-        body > .container { flex: 1; }
-        .guest-navbar {
-            background: color-mix(in srgb, var(--surface) 92%, transparent);
-            border-bottom: 1px solid var(--line);
-            backdrop-filter: blur(8px);
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1100;
-        }
-        .guest-navbar .navbar-brand { color: var(--primary-2); font-weight: 800; letter-spacing: .3px; }
-        .guest-navbar .nav-link { color: var(--text); font-weight: 500; }
-        .theme-toggle {
-            border: 1px solid var(--line);
-            background: var(--surface);
-            color: var(--text);
-            border-radius: 10px;
-            padding: 7px 12px;
-            font-size: 13px;
-            line-height: 1;
-        }
-        .article-wrap { max-width: 900px; margin: 32px auto; background: var(--surface); border-radius: 16px; padding: 28px; border: 1px solid var(--line); }
-        .article-image { width: 100%; max-height: 420px; object-fit: cover; border-radius: 12px; margin-bottom: 20px; }
-        .footer { background: #1f2937; color: #dbe4f5; border-top: 1px solid #e5e7eb; }
-    </style>
+    <link href="<?= base_url('assets/css/public-theme.css') ?>" rel="stylesheet">
+    <link href="<?= base_url('assets/css/public-post.css') ?>" rel="stylesheet">
 </head>
 <body>
     <?= view('shared/layout/navbar', ['homePage' => false]) ?>

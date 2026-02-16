@@ -19,6 +19,15 @@ class LetterSettingModel extends Model
         'signer_name',
         'signer_signature',
         'letterhead_address',
+        'village_profile_title',
+        'village_profile_content',
+        'announcement_title',
+        'announcement_content',
+        'contact_person',
+        'contact_phone',
+        'contact_email',
+        'contact_whatsapp',
+        'complaint_info',
     ];
     protected $useTimestamps = true;
 }

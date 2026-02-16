@@ -15,7 +15,7 @@
                     </div>
                 <?php endif; ?>
 
-                <form method="post" enctype="multipart/form-data" action="<?= $mode === 'create' ? site_url('programs/store/' . ($type ?? 'program')) : site_url('programs/update/' . $post['id']) ?>">
+                <form method="post" enctype="multipart/form-data" action="<?= $mode === 'create' ? site_url('programs/store/' . ($type ?? 'program')) : site_url('programs/' . ($type ?? 'program') . '/update/' . $post['id']) ?>">
                     <?= csrf_field() ?>
                     <div class="mb-3">
                         <label class="form-label">Judul</label>
@@ -30,7 +30,7 @@
                         <textarea class="form-control" name="excerpt" rows="2"><?= old('excerpt', $post['excerpt'] ?? '') ?></textarea>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Gambar Program (JPG/JPEG/PNG/WEBP, max 1 MB)</label>
+                        <label class="form-label">Gambar Postingan (JPG/JPEG/PNG/WEBP, max 1 MB)</label>
                         <input type="file" class="form-control" name="image" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
                         <?php if (! empty($post['image_path'])) : ?>
                             <div class="mt-2">
@@ -61,7 +61,7 @@
                         <input type="text" class="form-control" name="seo_keywords" maxlength="255" value="<?= old('seo_keywords', $post['seo_keywords'] ?? '') ?>">
                     </div>
                     <button type="submit" class="btn btn-primary">Simpan</button>
-                    <a href="<?= site_url('programs') ?>" class="btn btn-secondary">Kembali</a>
+                    <a href="<?= site_url('programs/' . ($type ?? 'program')) ?>" class="btn btn-secondary">Kembali</a>
                 </form>
             </div>
         </div>

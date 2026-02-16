@@ -395,8 +395,14 @@
                     <li class="<?= $path === 'programs/kegiatan' ? 'active-page' : '' ?>">
                         <a href="<?= site_url('programs/kegiatan') ?>"><i data-feather="calendar"></i>Posting Kegiatan</a>
                     </li>
+                    <li class="<?= $path === 'programs/pengumuman' ? 'active-page' : '' ?>">
+                        <a href="<?= site_url('programs/pengumuman') ?>"><i data-feather="bell"></i>Posting Pengumuman</a>
+                    </li>
                     <li class="<?= $path === 'documents/settings' ? 'active-page' : '' ?>">
                         <a href="<?= site_url('documents/settings') ?>"><i data-feather="settings"></i>Kop Surat Desa</a>
+                    </li>
+                    <li class="<?= $path === 'settings/home' ? 'active-page' : '' ?>">
+                        <a href="<?= site_url('settings/home') ?>"><i data-feather="layout"></i>Pengaturan Halaman Utama</a>
                     </li>
                     <li>
                         <a href="<?= site_url('/') ?>"><i data-feather="external-link"></i>Lihat Halaman Utama</a>

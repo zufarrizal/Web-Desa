@@ -39,8 +39,8 @@
                                 <td><?= esc($post['published_at'] ?? '-') ?></td>
                                 <td>
                                     <a class="btn btn-sm btn-info" target="_blank" href="<?= site_url('program/' . $post['slug']) ?>">Lihat</a>
-                                    <a class="btn btn-sm btn-warning" href="<?= site_url('programs/edit/' . $post['id']) ?>">Edit</a>
-                                    <form action="<?= site_url('programs/delete/' . $post['id']) ?>" method="post" class="d-inline">
+                                    <a class="btn btn-sm btn-warning" href="<?= site_url('programs/' . ($type ?? 'program') . '/edit/' . $post['id']) ?>">Edit</a>
+                                    <form action="<?= site_url('programs/' . ($type ?? 'program') . '/delete/' . $post['id']) ?>" method="post" class="d-inline">
                                         <?= csrf_field() ?>
                                         <button class="btn btn-sm btn-danger" type="submit" data-confirm="Hapus postingan ini?">Hapus</button>
                                     </form>
