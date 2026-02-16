@@ -26,14 +26,6 @@ Aplikasi pelayanan administrasi desa berbasis CodeIgniter 4 untuk kebutuhan warg
   - `robots.txt`.
 - Halaman error kustom 404 dan 500 (production).
 
-## Fitur Tambahan Terbaru
-- Peta Google Maps di section alamat kantor desa pada homepage.
-  - Bisa diatur dari admin via Plus Codes Google Maps.
-  - Jika Plus Codes kosong, fallback ke alamat kantor.
-- Auto-compress gambar postingan (Program/Artikel/Kegiatan/Pengumuman):
-  - Jika file > 1 MB, sistem mencoba kompres otomatis.
-  - Jika kompres gagal atau ekstensi GD tidak aktif, upload ditolak.
-
 ## Stack
 - PHP `^7.4 || ^8.0` (disarankan PHP 8.x)
 - CodeIgniter `4.4.8`
@@ -72,16 +64,7 @@ database.default.port = 3306
 ```bash
 php spark migrate
 ```
-5. (Opsional) isi data awal (seed):
-```bash
-php spark db:seed UserSeeder
-php spark db:seed LetterSettingSeeder
-php spark db:seed ProgramSeeder
-php spark db:seed ArticleSeeder
-php spark db:seed ActivitySeeder
-php spark db:seed AnnouncementSeeder
-php spark db:seed ComplaintSeeder
-```
+5. (Opsional) isi data awal (seed), lihat bagian **Database Seed (Lengkap)**.
 
 ## Menjalankan Aplikasi
 ### Opsi A: Built-in Server
@@ -195,14 +178,6 @@ vendor/bin/phpunit
 Konfigurasi test database memakai grup `database.tests.*` di `.env`.
 Pastikan kredensial test valid sebelum menjalankan test.
 
-## Keamanan yang Sudah Diaktifkan
-- CSRF protection.
-- Honeypot untuk form.
-- Request throttle / rate limiting.
-- Link token filter untuk endpoint internal.
-- Header keamanan dasar (`public/.htaccess`).
-- Hardening `.htaccess` di root dan folder `public`.
-
 ## Penjelasan Fitur Keamanan Penting
 ### 1. Autentikasi dan sesi
 - Login wajib untuk semua fitur internal (`dashboard`, `documents`, `complaints`, dan lainnya).
@@ -220,9 +195,8 @@ Pastikan kredensial test valid sebelum menjalankan test.
 - Throttle/rate limit menurunkan risiko spam submit (misalnya login brute force ringan atau spam form).
 
 ### 4. Keamanan upload file
-- Upload gambar dibatasi MIME/type tertentu (JPG/JPEG/PNG/WEBP).
-- Untuk postingan, file besar dicoba dikompres otomatis; jika gagal diproses, upload ditolak.
-- File runtime disimpan di `public/uploads` dengan nama file acak untuk menurunkan risiko tebakan path file.
+- Validasi upload aktif dan penyimpanan file runtime memakai nama acak di `public/uploads` untuk menurunkan risiko tebakan path file.
+- Detail format/ukuran/kompres upload dijelaskan pada bagian **Perilaku Upload Gambar Postingan**.
 
 ### 5. Enkripsi data sensitif (at-rest)
 - Data profil sensitif pada tabel `users` disimpan terenkripsi otomatis (contoh: NIK, alamat, tempat/tanggal lahir, dan field profil lain).
@@ -262,11 +236,6 @@ Pastikan kredensial test valid sebelum menjalankan test.
 - Tambahkan audit trail aktivitas admin (siapa mengubah apa dan kapan).
 - Jadwalkan backup database harian + uji restore berkala.
 - Siapkan prosedur rotasi key enkripsi terencana (karena data lama perlu proses re-encrypt jika key diganti).
-
-## Catatan Deployment
-- Jangan commit `.env` produksi.
-- Folder runtime (`writable`, `public/uploads`) harus writable.
-- Gunakan `CI_ENVIRONMENT=production` di server live.
 
 ## Lisensi
 Project mengikuti lisensi pada file `LICENSE`.
