@@ -238,4 +238,4 @@ Pastikan kredensial test valid sebelum menjalankan test.
 - Siapkan prosedur rotasi key enkripsi terencana (karena data lama perlu proses re-encrypt jika key diganti).
 
 ## Lisensi
-Project menggunakan lisensi MIT: https://github.com/zufarrizal/Web-Desa?tab=MIT-1-ov-file
+Project menggunakan lisensi MIT.
