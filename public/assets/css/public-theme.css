@@ -75,6 +75,19 @@ body > .container {
     line-height: 1;
 }
 
+html[data-theme="dark"] .guest-navbar .btn-outline-secondary {
+    color: #e6edf9;
+    border-color: #8fa1c4;
+    background-color: transparent;
+}
+
+html[data-theme="dark"] .guest-navbar .btn-outline-secondary:hover,
+html[data-theme="dark"] .guest-navbar .btn-outline-secondary:focus {
+    color: #ffffff;
+    border-color: #a9b8d6;
+    background-color: #2a3650;
+}
+
 .footer {
     background: var(--footer);
     color: var(--footer-text);
