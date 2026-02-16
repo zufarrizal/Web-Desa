@@ -197,6 +197,28 @@
     color: var(--text);
 }
 
+.btn-hero-secondary:hover,
+.btn-hero-secondary:focus,
+.btn-hero-secondary:active {
+    border-color: var(--primary);
+    background: color-mix(in srgb, var(--primary) 10%, var(--surface));
+    color: var(--text);
+}
+
+html[data-theme="dark"] .btn-hero-secondary {
+    color: #e6edf9;
+    border-color: #8fa1c4;
+    background: #1f2a3d;
+}
+
+html[data-theme="dark"] .btn-hero-secondary:hover,
+html[data-theme="dark"] .btn-hero-secondary:focus,
+html[data-theme="dark"] .btn-hero-secondary:active {
+    color: #ffffff;
+    border-color: #a9b8d6;
+    background: #2a3650;
+}
+
 html[data-theme="dark"] .hero .btn-outline-secondary,
 html[data-theme="dark"] .hero .btn-outline-dark {
     color: #e6edf9;
