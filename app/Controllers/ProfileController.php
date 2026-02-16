@@ -33,7 +33,7 @@ class ProfileController extends BaseController
             'email'          => 'required|valid_email|is_unique[users.email,id,' . $userId . ']',
             'nik'            => 'required|min_length[8]',
             'birth_place'    => 'required',
-            'birth_date'     => 'required|valid_date[Y-m-d]',
+            'birth_date'     => 'required|regex_match[/^\d{2}\/\d{2}\/\d{4}$/]',
             'gender'         => 'required|in_list[Laki-laki,Perempuan]',
             'religion'       => 'permit_empty',
             'occupation'     => 'required',
@@ -52,12 +52,20 @@ class ProfileController extends BaseController
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
+        $birthDateInput = (string) $this->request->getPost('birth_date');
+        $birthDateDb = $this->toDatabaseDate($birthDateInput);
+        if ($birthDateDb === null) {
+            return redirect()->back()->withInput()->with('errors', [
+                'birth_date' => 'Format tanggal lahir harus dd/mm/yyyy.',
+            ]);
+        }
+
         $userModel->update($userId, [
             'name'           => (string) $this->request->getPost('name'),
             'email'          => (string) $this->request->getPost('email'),
             'nik'            => (string) $this->request->getPost('nik'),
             'birth_place'    => (string) $this->request->getPost('birth_place'),
-            'birth_date'     => (string) $this->request->getPost('birth_date'),
+            'birth_date'     => $birthDateDb,
             'gender'         => (string) $this->request->getPost('gender'),
             'religion'       => (string) $this->request->getPost('religion'),
             'occupation'     => (string) $this->request->getPost('occupation'),
@@ -73,5 +81,20 @@ class ProfileController extends BaseController
         ]);
 
         return redirect()->to('/profile')->with('success', 'Profil berhasil diperbarui.');
+    }
+
+    private function toDatabaseDate(string $dateInput): ?string
+    {
+        $dateInput = trim($dateInput);
+        if ($dateInput === '') {
+            return null;
+        }
+
+        $dt = \DateTime::createFromFormat('d/m/Y', $dateInput);
+        if (! $dt || $dt->format('d/m/Y') !== $dateInput) {
+            return null;
+        }
+
+        return $dt->format('Y-m-d');
     }
 }

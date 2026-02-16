@@ -14,6 +14,8 @@
     }
     ?>
     <title><?= esc($titleText) ?> - Portal Desa</title>
+    <link rel="icon" type="image/svg+xml" href="<?= base_url('favicon.svg') ?>">
+    <link rel="alternate icon" href="<?= base_url('assets/images/logo@2x.png') ?>">
     <meta name="description" content="<?= esc($titleText) ?> terbaru dari Portal Desa.">
     <link rel="canonical" href="<?= esc(site_url('postingan' . ($type ? '?type=' . $type : ''))) ?>">
     <meta property="og:type" content="website">

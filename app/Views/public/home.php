@@ -13,6 +13,8 @@
         })();
     </script>
     <title>Portal Desa - Pelayanan Administrasi</title>
+    <link rel="icon" type="image/svg+xml" href="<?= base_url('favicon.svg') ?>">
+    <link rel="alternate icon" href="<?= base_url('assets/images/logo@2x.png') ?>">
     <meta name="description" content="Portal Desa untuk layanan administrasi warga, pengaduan masyarakat, artikel, dan kegiatan desa.">
     <meta name="keywords" content="portal desa, pelayanan desa, surat desa, kegiatan desa, artikel desa">
     <link rel="canonical" href="<?= esc(site_url('/')) ?>">

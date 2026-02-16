@@ -25,6 +25,8 @@ $pageStyles      = $pageStyles ?? '';
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= esc($pageTitle) ?></title>
+    <link rel="icon" type="image/svg+xml" href="<?= base_url('favicon.svg') ?>">
+    <link rel="alternate icon" href="<?= base_url('assets/images/logo@2x.png') ?>">
     <?php if ($metaDescription !== '') : ?><meta name="description" content="<?= esc($metaDescription) ?>"><?php endif; ?>
     <?php if ($metaKeywords !== '') : ?><meta name="keywords" content="<?= esc($metaKeywords) ?>"><?php endif; ?>
     <link rel="canonical" href="<?= esc($canonical) ?>">

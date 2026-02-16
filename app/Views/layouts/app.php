@@ -7,6 +7,8 @@
     <meta name="robots" content="noindex,nofollow,noarchive">
     <meta name="app-link-token" content="<?= esc((string) session()->get('link_token')) ?>">
     <title><?= esc($title ?? 'Dashboard Desa') ?></title>
+    <link rel="icon" type="image/svg+xml" href="<?= base_url('favicon.svg') ?>">
+    <link rel="alternate icon" href="<?= base_url('assets/images/logo@2x.png') ?>">
 
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,700,800&display=swap" rel="stylesheet">
     <link href="<?= base_url('assets/plugins/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">

@@ -1,6 +1,11 @@
 <?= $this->extend('layouts/app') ?>
 
 <?= $this->section('content') ?>
+<?php
+    $birthDateRaw = (string) ($user['birth_date'] ?? '');
+    $birthTs = $birthDateRaw !== '' ? strtotime($birthDateRaw) : false;
+    $birthDateDisplay = $birthTs ? date('d/m/Y', $birthTs) : $birthDateRaw;
+?>
 <div class="row">
     <div class="col-md-10">
         <div class="card">
@@ -41,7 +46,7 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Tanggal Lahir</label>
-                            <input type="date" name="birth_date" class="form-control" value="<?= old('birth_date', $user['birth_date'] ?? '') ?>" required>
+                            <input type="text" name="birth_date" class="form-control" value="<?= old('birth_date', $birthDateDisplay) ?>" placeholder="dd/mm/yyyy" inputmode="numeric" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Jenis Kelamin</label>

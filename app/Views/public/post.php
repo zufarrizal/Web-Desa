@@ -20,6 +20,8 @@
     $postImage = base_url(! empty($post['image_path']) ? $post['image_path'] : 'assets/images/card-image.png');
     ?>
     <title><?= esc($seoTitle) ?> - Portal Desa</title>
+    <link rel="icon" type="image/svg+xml" href="<?= base_url('favicon.svg') ?>">
+    <link rel="alternate icon" href="<?= base_url('assets/images/logo@2x.png') ?>">
     <meta name="description" content="<?= esc($seoDescription) ?>">
     <?php if ($seoKeywords !== '') : ?><meta name="keywords" content="<?= esc($seoKeywords) ?>"><?php endif; ?>
     <link rel="canonical" href="<?= esc($postUrl) ?>">
