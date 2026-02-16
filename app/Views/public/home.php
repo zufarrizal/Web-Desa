@@ -107,7 +107,7 @@
         }
 
         .hero {
-            padding: 52px 0;
+            padding: 24px 0 52px;
             background: var(--hero-grad);
             border-bottom: 1px solid var(--line);
         }
