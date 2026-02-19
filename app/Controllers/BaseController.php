@@ -3,12 +3,14 @@
 namespace App\Controllers;
 
 use App\Models\UserModel;
+use App\Models\LetterSettingModel;
 use CodeIgniter\Controller;
 use CodeIgniter\HTTP\CLIRequest;
 use CodeIgniter\HTTP\IncomingRequest;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
 use Psr\Log\LoggerInterface;
+use Throwable;
 
 /**
  * Class BaseController
@@ -38,7 +40,7 @@ abstract class BaseController extends Controller
      *
      * @var list<string>
      */
-    protected $helpers = ['url', 'form'];
+    protected $helpers = ['url', 'form', 'asset'];
 
     /**
      * Be sure to declare properties for any property fetch you initialized.
@@ -177,5 +179,193 @@ abstract class BaseController extends Controller
         imagedestroy($canvas);
 
         return is_file($targetPath);
+    }
+
+    protected function recaptchaIsEnabled(): bool
+    {
+        $setting = $this->recaptchaSettingFromDb();
+        if ($setting !== null) {
+            $enabled = (int) ($setting['recaptcha_enabled'] ?? 0) === 1;
+            return $enabled
+                && trim((string) ($setting['recaptcha_site_key'] ?? '')) !== ''
+                && trim((string) ($setting['recaptcha_secret_key'] ?? '')) !== '';
+        }
+
+        $enabledEnv = strtolower(trim((string) env('recaptcha.enabled', 'false')));
+        if (! in_array($enabledEnv, ['1', 'true', 'yes', 'on'], true)) {
+            return false;
+        }
+
+        return trim((string) env('recaptcha.siteKey', '')) !== ''
+            && trim((string) env('recaptcha.secretKey', '')) !== '';
+    }
+
+    protected function recaptchaSiteKey(): string
+    {
+        $setting = $this->recaptchaSettingFromDb();
+        if ($setting !== null) {
+            return trim((string) ($setting['recaptcha_site_key'] ?? ''));
+        }
+
+        return trim((string) env('recaptcha.siteKey', ''));
+    }
+
+    protected function verifyRecaptcha(?string &$errorMessage = null, string $expectedAction = 'submit'): bool
+    {
+        if (! $this->recaptchaIsEnabled()) {
+            return true;
+        }
+
+        $token = trim((string) $this->request->getPost('g-recaptcha-response'));
+        if ($token === '') {
+            $errorMessage = 'Verifikasi reCAPTCHA wajib diisi.';
+            return false;
+        }
+
+        $secretKey = '';
+        $setting = $this->recaptchaSettingFromDb();
+        if ($setting !== null) {
+            $secretKey = trim((string) ($setting['recaptcha_secret_key'] ?? ''));
+        }
+        if ($secretKey === '') {
+            $secretKey = trim((string) env('recaptcha.secretKey', ''));
+        }
+        if ($secretKey === '') {
+            $errorMessage = 'Konfigurasi reCAPTCHA belum lengkap di server.';
+            return false;
+        }
+
+        try {
+            $client = service('curlrequest', [
+                'timeout' => 10,
+                'http_errors' => false,
+            ]);
+            $response = $client->post('https://www.google.com/recaptcha/api/siteverify', [
+                'form_params' => [
+                    'secret'   => $secretKey,
+                    'response' => $token,
+                    'remoteip' => (string) $this->request->getIPAddress(),
+                ],
+            ]);
+
+            $body = (string) $response->getBody();
+            $result = json_decode($body, true);
+            if (! is_array($result) || ($result['success'] ?? false) !== true) {
+                $errorCodes = [];
+                if (is_array($result['error-codes'] ?? null)) {
+                    $errorCodes = array_values(array_filter($result['error-codes'], static fn ($v): bool => is_string($v) && $v !== ''));
+                }
+                log_message('error', 'reCAPTCHA verify failed result: {result}', [
+                    'result' => json_encode($result),
+                ]);
+                if (in_array('invalid-input-secret', $errorCodes, true)) {
+                    $errorMessage = 'Secret key reCAPTCHA tidak valid. Periksa pengaturan admin.';
+                    return false;
+                }
+                if (in_array('missing-input-secret', $errorCodes, true)) {
+                    $errorMessage = 'Secret key reCAPTCHA belum diisi.';
+                    return false;
+                }
+                if (in_array('invalid-input-response', $errorCodes, true) || in_array('missing-input-response', $errorCodes, true)) {
+                    $errorMessage = 'Token reCAPTCHA tidak valid. Muat ulang halaman lalu coba lagi.';
+                    return false;
+                }
+                $errorMessage = 'Verifikasi reCAPTCHA gagal. Coba lagi.';
+                return false;
+            }
+
+            // reCAPTCHA v3 verification: score and action must match.
+            $score = isset($result['score']) ? (float) $result['score'] : -1.0;
+            if ($score < 0) {
+                $errorMessage = 'Skor verifikasi reCAPTCHA tidak valid.';
+                log_message('error', 'reCAPTCHA score missing/invalid: {result}', [
+                    'result' => json_encode($result),
+                ]);
+                return false;
+            }
+            if ($score < $this->recaptchaMinScore()) {
+                $errorMessage = 'Aktivitas terdeteksi mencurigakan. Coba lagi.';
+                log_message('error', 'reCAPTCHA score too low ({score}) expected min {min}', [
+                    'score' => (string) $score,
+                    'min' => (string) $this->recaptchaMinScore(),
+                ]);
+                return false;
+            }
+
+            $hostname = trim((string) ($result['hostname'] ?? ''));
+            if ($hostname !== '' && ! $this->isAllowedRecaptchaHostname($hostname)) {
+                $errorMessage = 'Domain reCAPTCHA tidak cocok dengan konfigurasi key.';
+                log_message('error', 'reCAPTCHA hostname mismatch: {hostname}', ['hostname' => $hostname]);
+                return false;
+            }
+
+            $action = trim((string) ($result['action'] ?? ''));
+            if ($expectedAction !== '' && $action !== $expectedAction) {
+                $errorMessage = 'Aksi reCAPTCHA tidak sesuai. Muat ulang halaman lalu coba lagi.';
+                log_message('error', 'reCAPTCHA action mismatch. expected={expected} actual={actual}', [
+                    'expected' => $expectedAction,
+                    'actual' => $action,
+                ]);
+                return false;
+            }
+        } catch (Throwable $e) {
+            log_message('error', 'reCAPTCHA verify failed: {message}', ['message' => $e->getMessage()]);
+            $errorMessage = 'Layanan verifikasi keamanan sedang bermasalah. Coba beberapa saat lagi.';
+            return false;
+        }
+
+        return true;
+    }
+
+    private function recaptchaSettingFromDb(): ?array
+    {
+        try {
+            $setting = (new LetterSettingModel())
+                ->select('recaptcha_enabled,recaptcha_site_key,recaptcha_secret_key')
+                ->first();
+
+            if (! is_array($setting)) {
+                return null;
+            }
+
+            $hasAnyValue = isset($setting['recaptcha_enabled'])
+                || ! empty($setting['recaptcha_site_key'])
+                || ! empty($setting['recaptcha_secret_key']);
+            return $hasAnyValue ? $setting : null;
+        } catch (Throwable $e) {
+            log_message('error', 'reCAPTCHA setting load failed: {message}', ['message' => $e->getMessage()]);
+            return null;
+        }
+    }
+
+    private function recaptchaMinScore(): float
+    {
+        $raw = trim((string) env('recaptcha.scoreThreshold', '0.5'));
+        $value = is_numeric($raw) ? (float) $raw : 0.5;
+        if ($value < 0.1) {
+            return 0.1;
+        }
+        if ($value > 0.9) {
+            return 0.9;
+        }
+
+        return $value;
+    }
+
+    private function isAllowedRecaptchaHostname(string $hostname): bool
+    {
+        $host = strtolower(trim($hostname));
+        if ($host === '') {
+            return false;
+        }
+
+        $allowed = [
+            strtolower((string) parse_url(base_url('/'), PHP_URL_HOST)),
+            'localhost',
+            '127.0.0.1',
+        ];
+        $allowed = array_values(array_unique(array_filter($allowed, static fn ($v): bool => is_string($v) && $v !== '')));
+
+        return in_array($host, $allowed, true);
     }
 }

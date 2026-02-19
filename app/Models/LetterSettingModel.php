@@ -31,6 +31,9 @@ class LetterSettingModel extends Model
         'office_latitude',
         'office_longitude',
         'office_map_plus_code',
+        'recaptcha_enabled',
+        'recaptcha_site_key',
+        'recaptcha_secret_key',
     ];
     protected $useTimestamps = true;
 }

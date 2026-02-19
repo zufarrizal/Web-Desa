@@ -12,6 +12,13 @@ class Home extends BaseController
 {
     public function index(): string
     {
+        $cache = cache();
+        $cacheKey = 'public_home_html_v1';
+        $cachedHtml = $cache->get($cacheKey);
+        if (is_string($cachedHtml) && $cachedHtml !== '') {
+            return $cachedHtml;
+        }
+
         $programModel = new ProgramModel();
         $articleModel = new ArticleModel();
         $activityModel = new ActivityModel();
@@ -30,7 +37,7 @@ class Home extends BaseController
         $setting      = $settingModel->first() ?: [];
         $villageName  = trim((string) ($setting['village_name'] ?? ''));
 
-        return view('public/home', [
+        $html = view('public/home', [
             'posts'      => $posts,
             'programs'   => $programs,
             'articles'   => $articles,
@@ -39,6 +46,10 @@ class Home extends BaseController
             'setting'    => $setting,
             'villageName'=> $villageName !== '' ? $villageName : 'Desa',
         ]);
+
+        // Cache render homepage for 3 minutes to reduce first-hit load.
+        $cache->save($cacheKey, $html, 180);
+        return $html;
     }
 
     public function posts(): string

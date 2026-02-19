@@ -56,6 +56,23 @@
                     </div>
 
                     <hr class="my-4">
+                    <h6 class="mb-3">Keamanan Form (reCAPTCHA v3)</h6>
+                    <div class="form-check form-switch mb-3">
+                        <?php $rcEnabled = old('recaptcha_enabled', (string) ($setting['recaptcha_enabled'] ?? '0')) === '1'; ?>
+                        <input class="form-check-input" type="checkbox" id="recaptcha_enabled" name="recaptcha_enabled" value="1" <?= $rcEnabled ? 'checked' : '' ?>>
+                        <label class="form-check-label" for="recaptcha_enabled">Aktifkan reCAPTCHA v3 untuk Login, Register, dan Pengaduan</label>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">reCAPTCHA Site Key</label>
+                        <input type="text" name="recaptcha_site_key" class="form-control" value="<?= old('recaptcha_site_key', $setting['recaptcha_site_key'] ?? '') ?>">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">reCAPTCHA Secret Key</label>
+                        <input type="text" name="recaptcha_secret_key" class="form-control" value="<?= old('recaptcha_secret_key', $setting['recaptcha_secret_key'] ?? '') ?>">
+                        <small class="text-muted">Gunakan key reCAPTCHA v3 standard (bukan Enterprise). Untuk localhost, pastikan domain `localhost` dan `127.0.0.1` sudah didaftarkan di Google reCAPTCHA.</small>
+                    </div>
+
+                    <hr class="my-4">
                     <h6 class="mb-3">Pengaduan</h6>
                     <div class="mb-3">
                         <label class="form-label">Informasi Pengaduan</label>

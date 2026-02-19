@@ -32,6 +32,8 @@ class HomeSettingController extends BaseController
             'contact_email' => 'permit_empty|valid_email|max_length[120]',
             'contact_whatsapp' => 'permit_empty|max_length[40]',
             'office_map_plus_code' => 'permit_empty|max_length[80]',
+            'recaptcha_site_key' => 'permit_empty|max_length[255]',
+            'recaptcha_secret_key' => 'permit_empty|max_length[255]',
         ];
 
         if (! $this->validate($rules)) {
@@ -50,6 +52,9 @@ class HomeSettingController extends BaseController
             'contact_whatsapp'        => (string) $this->request->getPost('contact_whatsapp'),
             'complaint_info'          => (string) $this->request->getPost('complaint_info'),
             'office_map_plus_code'    => trim((string) $this->request->getPost('office_map_plus_code')) ?: null,
+            'recaptcha_enabled'       => $this->request->getPost('recaptcha_enabled') === '1' ? 1 : 0,
+            'recaptcha_site_key'      => trim((string) $this->request->getPost('recaptcha_site_key')) ?: null,
+            'recaptcha_secret_key'    => trim((string) $this->request->getPost('recaptcha_secret_key')) ?: null,
         ];
 
         if ($row) {

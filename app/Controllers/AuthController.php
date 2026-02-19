@@ -14,11 +14,19 @@ class AuthController extends BaseController
             return redirect()->to('/dashboard');
         }
 
-        return view('auth/login');
+        return view('auth/login', [
+            'recaptchaEnabled' => $this->recaptchaIsEnabled(),
+            'recaptchaSiteKey' => $this->recaptchaSiteKey(),
+        ]);
     }
 
     public function attemptLogin()
     {
+        $recaptchaError = null;
+        if (! $this->verifyRecaptcha($recaptchaError, 'login')) {
+            return redirect()->back()->withInput()->with('error', (string) $recaptchaError);
+        }
+
         $rules = [
             'email'    => 'required|valid_email',
             'password' => 'required|min_length[6]',
@@ -80,11 +88,19 @@ class AuthController extends BaseController
             return redirect()->to('/dashboard');
         }
 
-        return view('auth/register');
+        return view('auth/register', [
+            'recaptchaEnabled' => $this->recaptchaIsEnabled(),
+            'recaptchaSiteKey' => $this->recaptchaSiteKey(),
+        ]);
     }
 
     public function attemptRegister()
     {
+        $recaptchaError = null;
+        if (! $this->verifyRecaptcha($recaptchaError, 'register')) {
+            return redirect()->back()->withInput()->with('error', (string) $recaptchaError);
+        }
+
         $rules = [
             'name'             => 'required|min_length[3]|max_length[120]',
             'email'            => 'required|valid_email|is_unique[users.email]',

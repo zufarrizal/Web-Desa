@@ -80,6 +80,25 @@ Default: `http://localhost:8080`
 - Aktifkan `mod_rewrite`.
 - Pastikan `AllowOverride All` aktif.
 
+## Optimasi Performa (Sudah Diterapkan)
+- Homepage (`/`) memakai HTML page cache server-side selama 3 menit untuk menurunkan TTFB pada hit berulang.
+- Query notifikasi di layout admin dibatasi:
+  - hanya untuk role `admin`,
+  - tidak dieksekusi di halaman publik,
+  - hasil ringkasan/notif di-cache pendek (30-60 detik).
+- Aset memakai cache-busting otomatis (`?v=filemtime`) melalui helper `asset_url(...)`.
+- DataTables ditunda (lazy-load) dan hanya dimuat ketika halaman benar-benar memiliki tabel `js-zero-conf-table`.
+- `.htaccess` mengaktifkan kompresi `gzip`/`brotli` (jika modul Apache tersedia) + cache static assets jangka panjang.
+- Index database ditambahkan untuk query terpanas notifikasi:
+  - `users(role, registration_source, created_at)`
+  - `document_requests(status, created_at, user_id)`
+  - `complaints(status, created_at, user_id)`
+
+Jalankan migration terbaru:
+```bash
+php spark migrate
+```
+
 ## Database Seed (Lengkap)
 Seeder yang tersedia di `app/Database/Seeds`:
 - `UserSeeder`:
@@ -200,6 +219,11 @@ Pastikan kredensial test valid sebelum menjalankan test.
 - Tambahan proteksi anti-spam submit massal:
   - burst guard untuk submit terlalu cepat,
   - duplicate payload guard untuk payload identik berulang dalam waktu singkat.
+- reCAPTCHA v3 didukung untuk form sensitif:
+  - login,
+  - register,
+  - pengaduan.
+- reCAPTCHA v3 tidak menampilkan checkbox/captcha visual; token dibuat otomatis saat submit form.
 
 ### 4. Keamanan upload file
 - Validasi upload aktif dan penyimpanan file runtime memakai nama acak di `public/uploads` untuk menurunkan risiko tebakan path file.
@@ -237,6 +261,29 @@ Pastikan kredensial test valid sebelum menjalankan test.
 - Aktifkan ekstensi `gd` jika ingin fitur auto-compress gambar berjalan optimal.
 - Pastikan `app.profileDataKey` terisi dan kuat (jangan gunakan key pendek/lemah).
 - Monitoring log error di `writable/logs` secara berkala.
+- Aktifkan OPcache di server (tersedia default `public/.user.ini` untuk shared hosting yang mendukung).
+
+## Konfigurasi reCAPTCHA v3
+- Buka Google reCAPTCHA Admin (`https://www.google.com/recaptcha/admin`) lalu buat key tipe `reCAPTCHA v3`.
+- Gunakan key `standard` (bukan Enterprise) untuk implementasi aplikasi saat ini.
+- Daftarkan domain sesuai environment:
+  - local: `localhost`, `127.0.0.1`
+  - production: domain final aplikasi Anda.
+- Simpan `Site Key` dan `Secret Key` di menu admin:
+  - `Pengaturan Halaman Utama` (`/settings/home`)
+  - aktifkan toggle `reCAPTCHA v3`.
+- Opsional: atur threshold skor minimum via `.env`:
+```ini
+recaptcha.scoreThreshold = 0.5
+```
+
+## Troubleshooting reCAPTCHA
+- Jika tidak ada kotak captcha di halaman, itu normal untuk v3.
+- Jika verifikasi gagal:
+  - pastikan `Site Key` dan `Secret Key` berpasangan (bukan campuran project lain),
+  - pastikan key bukan `Enterprise`,
+  - pastikan domain request ada di daftar domain reCAPTCHA,
+  - cek log aplikasi di `writable/logs/` untuk detail error reCAPTCHA.
 
 ## Audit Log
 - Tabel: `audit_logs`.
@@ -247,7 +294,7 @@ Pastikan kredensial test valid sebelum menjalankan test.
   - payload tersanitasi (field sensitif di-redact).
 
 ## Rekomendasi Lanjutan (Opsional)
-- Tambahkan reCAPTCHA pada form sensitif (login, register, pengaduan) jika traffic publik tinggi.
+- Aktifkan reCAPTCHA v3 pada form sensitif (login, register, pengaduan) jika traffic publik tinggi.
 - Terapkan pembatasan IP atau WAF di level infrastruktur.
 - Pertimbangkan ekspor arsip audit log berkala (CSV/PDF) untuk kebutuhan kepatuhan.
 - Jadwalkan backup database harian + uji restore berkala.

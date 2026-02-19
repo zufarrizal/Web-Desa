@@ -76,6 +76,11 @@
                         <?php endif; ?>
                     <?php endif; ?>
 
+                    <?php if (! empty($recaptchaEnabled) && ! empty($recaptchaSiteKey)) : ?>
+                        <input type="hidden" name="g-recaptcha-response" id="recaptchaResponseComplaint" value="">
+                        <input type="hidden" name="recaptcha_action" value="complaint">
+                    <?php endif; ?>
+
                     <button type="submit" class="btn btn-primary">Simpan</button>
                     <a href="<?= site_url('complaints') ?>" class="btn btn-secondary">Kembali</a>
                 </form>
@@ -87,6 +92,9 @@
     (function () {
         var form = document.getElementById('complaintForm');
         var fileInput = document.getElementById('complaintImage');
+        var recaptchaEnabled = <?= ! empty($recaptchaEnabled) && ! empty($recaptchaSiteKey) ? 'true' : 'false' ?>;
+        var recaptchaSiteKey = '<?= esc((string) ($recaptchaSiteKey ?? '')) ?>';
+        var recaptchaTokenInput = document.getElementById('recaptchaResponseComplaint');
         if (!form || !fileInput) {
             return;
         }
@@ -175,40 +183,76 @@
             });
         }
 
+        function resolveRecaptchaToken() {
+            return new Promise(function (resolve, reject) {
+                if (!recaptchaEnabled) {
+                    resolve('');
+                    return;
+                }
+                if (!window.grecaptcha || typeof window.grecaptcha.execute !== 'function') {
+                    reject(new Error('reCAPTCHA gagal dimuat. Coba muat ulang halaman.'));
+                    return;
+                }
+
+                window.grecaptcha.ready(function () {
+                    window.grecaptcha.execute(recaptchaSiteKey, {action: 'complaint'}).then(function (token) {
+                        if (!token) {
+                            reject(new Error('Token reCAPTCHA tidak valid.'));
+                            return;
+                        }
+                        resolve(token);
+                    }).catch(function () {
+                        reject(new Error('Verifikasi reCAPTCHA gagal. Coba lagi.'));
+                    });
+                });
+            });
+        }
+
         form.addEventListener('submit', function (event) {
+            event.preventDefault();
             if (isSubmitting) {
                 return;
             }
+            isSubmitting = true;
 
             var file = fileInput.files && fileInput.files[0] ? fileInput.files[0] : null;
             if (file && validMime.indexOf((file.type || '').toLowerCase()) === -1) {
-                event.preventDefault();
+                isSubmitting = false;
                 showFloatingError('Format gambar tidak valid. Gunakan JPG, PNG, atau WEBP.');
                 return;
             }
-            if (!file || file.size <= maxBytes) {
-                return;
+
+            var imageTask = Promise.resolve();
+            if (file && file.size > maxBytes) {
+                imageTask = compressImageToJpeg(file, maxBytes).then(function (blob) {
+                    if (blob.size > maxBytes) {
+                        throw new Error('Gambar tetap lebih dari 1MB setelah kompresi.');
+                    }
+
+                    var nameBase = (file.name || 'pengaduan').replace(/\.[^.]+$/, '');
+                    var compressedFile = new File([blob], nameBase + '.jpg', {type: 'image/jpeg'});
+                    var dt = new DataTransfer();
+                    dt.items.add(compressedFile);
+                    fileInput.files = dt.files;
+                });
             }
 
-            event.preventDefault();
-            isSubmitting = true;
-
-            compressImageToJpeg(file, maxBytes).then(function (blob) {
-                if (blob.size > maxBytes) {
-                    throw new Error('Gambar tetap lebih dari 1MB setelah kompresi.');
-                }
-
-                var nameBase = (file.name || 'pengaduan').replace(/\.[^.]+$/, '');
-                var compressedFile = new File([blob], nameBase + '.jpg', {type: 'image/jpeg'});
-                var dt = new DataTransfer();
-                dt.items.add(compressedFile);
-                fileInput.files = dt.files;
-                form.submit();
-            }).catch(function (error) {
-                isSubmitting = false;
-                showFloatingError(error && error.message ? error.message : 'Gagal kompres gambar. Gunakan file yang lebih kecil.');
-            });
+            imageTask
+                .then(resolveRecaptchaToken)
+                .then(function (token) {
+                    if (recaptchaEnabled && recaptchaTokenInput) {
+                        recaptchaTokenInput.value = token;
+                    }
+                    form.submit();
+                })
+                .catch(function (error) {
+                    isSubmitting = false;
+                    showFloatingError(error && error.message ? error.message : 'Gagal memproses form pengaduan.');
+                });
         });
     })();
 </script>
+<?php if (! empty($recaptchaEnabled) && ! empty($recaptchaSiteKey)) : ?>
+<script src="https://www.google.com/recaptcha/api.js?render=<?= esc((string) $recaptchaSiteKey) ?>"></script>
+<?php endif; ?>
 <?= $this->endSection() ?>

@@ -14,8 +14,8 @@
         })();
     </script>
     <title>Portal Desa - Pelayanan Administrasi</title>
-    <link rel="icon" type="image/svg+xml" href="<?= base_url('favicon.svg') ?>">
-    <link rel="alternate icon" href="<?= base_url('assets/images/logo@2x.png') ?>">
+    <link rel="icon" type="image/svg+xml" href="<?= asset_url('favicon.svg') ?>">
+    <link rel="alternate icon" href="<?= asset_url('assets/images/logo@2x.png') ?>">
     <meta name="description" content="Portal Desa untuk layanan administrasi warga, pengaduan masyarakat, artikel, dan kegiatan desa.">
     <meta name="keywords" content="portal desa, pelayanan desa, surat desa, kegiatan desa, artikel desa">
     <meta name="robots" content="index,follow,max-image-preview:large">
@@ -26,16 +26,19 @@
     <meta property="og:title" content="Portal Desa - Pelayanan Administrasi">
     <meta property="og:description" content="Layanan administrasi desa terintegrasi untuk dokumen, pengaduan, artikel, dan kegiatan.">
     <meta property="og:url" content="<?= esc(site_url('/')) ?>">
-    <meta property="og:image" content="<?= esc(base_url('assets/images/card-image.png')) ?>">
+    <meta property="og:image" content="<?= esc(asset_url('assets/images/card-image.png')) ?>">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Portal Desa - Pelayanan Administrasi">
     <meta name="twitter:description" content="Layanan administrasi desa terintegrasi untuk dokumen, pengaduan, artikel, dan kegiatan.">
-    <meta name="twitter:image" content="<?= esc(base_url('assets/images/card-image.png')) ?>">
-    <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,700,800&display=swap" rel="stylesheet">
-    <link href="<?= base_url('assets/plugins/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('assets/css/main.min.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('assets/css/public-theme.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('assets/css/public-home.css') ?>" rel="stylesheet">
+    <meta name="twitter:image" content="<?= esc(asset_url('assets/images/card-image.png')) ?>">
+    <link rel="preload" href="<?= asset_url('assets/plugins/bootstrap/css/bootstrap.min.css') ?>" as="style">
+    <link rel="preload" href="<?= asset_url('assets/css/main.min.css') ?>" as="style">
+    <link rel="preload" href="<?= asset_url('assets/css/public-theme.css') ?>" as="style">
+    <link rel="preload" href="<?= asset_url('assets/css/public-home.css') ?>" as="style">
+    <link href="<?= asset_url('assets/plugins/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
+    <link href="<?= asset_url('assets/css/main.min.css') ?>" rel="stylesheet">
+    <link href="<?= asset_url('assets/css/public-theme.css') ?>" rel="stylesheet">
+    <link href="<?= asset_url('assets/css/public-home.css') ?>" rel="stylesheet">
 </head>
 <body>
 <?php
@@ -208,7 +211,7 @@ $officeMapOpenUrl = $hasOfficeMap ? 'https://www.google.com/maps/search/?api=1&q
                 <div class="col-md-6 col-lg-4" data-page-item>
                     <article class="card post-card h-100">
                         <img
-                            src="<?= base_url(! empty($post['image_path']) ? $post['image_path'] : 'assets/images/card-image.png') ?>"
+                            src="<?= ! empty($post['image_path']) ? base_url($post['image_path']) : asset_url('assets/images/card-image.png') ?>"
                             alt="<?= esc($post['title']) ?>"
                             class="post-thumb"
                             loading="lazy"
@@ -241,7 +244,7 @@ $officeMapOpenUrl = $hasOfficeMap ? 'https://www.google.com/maps/search/?api=1&q
                 <div class="col-md-6 col-lg-4" data-page-item>
                     <article class="card post-card h-100">
                         <img
-                            src="<?= base_url(! empty($post['image_path']) ? $post['image_path'] : 'assets/images/card-image.png') ?>"
+                            src="<?= ! empty($post['image_path']) ? base_url($post['image_path']) : asset_url('assets/images/card-image.png') ?>"
                             alt="<?= esc($post['title']) ?>"
                             class="post-thumb"
                             loading="lazy"
@@ -274,7 +277,7 @@ $officeMapOpenUrl = $hasOfficeMap ? 'https://www.google.com/maps/search/?api=1&q
                 <div class="col-md-6 col-lg-4" data-page-item>
                     <article class="card post-card h-100">
                         <img
-                            src="<?= base_url(! empty($post['image_path']) ? $post['image_path'] : 'assets/images/card-image.png') ?>"
+                            src="<?= ! empty($post['image_path']) ? base_url($post['image_path']) : asset_url('assets/images/card-image.png') ?>"
                             alt="<?= esc($post['title']) ?>"
                             class="post-thumb"
                             loading="lazy"
@@ -445,8 +448,8 @@ $officeMapOpenUrl = $hasOfficeMap ? 'https://www.google.com/maps/search/?api=1&q
         });
     })();
 </script>
-<script src="<?= base_url('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') ?>" defer></script>
-<script src="<?= base_url('assets/js/app-lite.js') ?>" defer></script>
+<script src="<?= asset_url('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') ?>" defer></script>
+<script src="<?= asset_url('assets/js/app-lite.js') ?>" defer></script>
 <script type="application/ld+json">
 <?= json_encode([
     '@context' => 'https://schema.org',

@@ -46,11 +46,18 @@ class ComplaintController extends BaseController
             'mode'      => 'create',
             'complaint' => null,
             'role'      => (string) session()->get('user_role'),
+            'recaptchaEnabled' => $this->recaptchaIsEnabled(),
+            'recaptchaSiteKey' => $this->recaptchaSiteKey(),
         ]);
     }
 
     public function store()
     {
+        $recaptchaError = null;
+        if (! $this->verifyRecaptcha($recaptchaError, 'complaint')) {
+            return redirect()->back()->withInput()->with('error', (string) $recaptchaError);
+        }
+
         $rules = [
             'title'    => 'required|min_length[5]',
             'content'  => 'required|min_length[10]',
@@ -93,6 +100,8 @@ class ComplaintController extends BaseController
             'mode'      => 'edit',
             'complaint' => $complaint,
             'role'      => (string) session()->get('user_role'),
+            'recaptchaEnabled' => $this->recaptchaIsEnabled(),
+            'recaptchaSiteKey' => $this->recaptchaSiteKey(),
         ]);
     }
 
@@ -101,6 +110,11 @@ class ComplaintController extends BaseController
         $complaint = $this->findAuthorizedComplaint($id);
         if (! $complaint) {
             return redirect()->to('/complaints')->with('error', 'Data tidak ditemukan atau tidak diizinkan.');
+        }
+
+        $recaptchaError = null;
+        if (! $this->verifyRecaptcha($recaptchaError, 'complaint')) {
+            return redirect()->back()->withInput()->with('error', (string) $recaptchaError);
         }
 
         $role = (string) session()->get('user_role');

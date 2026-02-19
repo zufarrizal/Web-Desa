@@ -1,5 +1,6 @@
 (function () {
     var prefetched = {};
+    var dataTablesBootstrapped = false;
 
     function navigateTo(url) {
         if (!url) {
@@ -321,12 +322,16 @@
         if (!window.jQuery || !window.jQuery.fn || !window.jQuery.fn.DataTable) {
             return;
         }
+        if (dataTablesBootstrapped) {
+            return;
+        }
 
         var $ = window.jQuery;
         var tables = document.querySelectorAll('table.js-zero-conf-table');
         if (!tables.length) {
             return;
         }
+        dataTablesBootstrapped = true;
 
         tables.forEach(function (tableEl) {
             var $table = $(tableEl);
@@ -376,6 +381,8 @@
             });
         });
     }
+
+    window.AppLiteInitZeroConfigDataTables = initZeroConfigDataTables;
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function () {

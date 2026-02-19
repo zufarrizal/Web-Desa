@@ -68,7 +68,7 @@
                             </div>
                         <?php endif; ?>
 
-                        <form method="post" action="<?= site_url('register') ?>" autocomplete="off">
+                        <form id="registerForm" method="post" action="<?= site_url('register') ?>" autocomplete="off">
                             <?= csrf_field() ?>
                             <div class="mb-3">
                                 <div class="form-floating">
@@ -94,6 +94,10 @@
                                     <label for="password_confirm">Konfirmasi Password</label>
                                 </div>
                             </div>
+                            <?php if (! empty($recaptchaEnabled) && ! empty($recaptchaSiteKey)) : ?>
+                                <input type="hidden" name="g-recaptcha-response" id="recaptchaResponseRegister" value="">
+                                <input type="hidden" name="recaptcha_action" value="register">
+                            <?php endif; ?>
                             <div class="d-grid">
                                 <button type="submit" class="btn btn-primary m-b-xs">Daftar</button>
                             </div>
@@ -108,6 +112,59 @@
         </div>
     </div>
     <script src="<?= base_url('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') ?>" defer></script>
+    <?php if (! empty($recaptchaEnabled) && ! empty($recaptchaSiteKey)) : ?>
+        <script src="https://www.google.com/recaptcha/api.js?render=<?= esc((string) $recaptchaSiteKey) ?>"></script>
+        <script>
+            (function () {
+                var form = document.getElementById('registerForm');
+                var tokenInput = document.getElementById('recaptchaResponseRegister');
+                if (!form || !tokenInput) {
+                    return;
+                }
+
+                var siteKey = '<?= esc((string) $recaptchaSiteKey) ?>';
+                var isSubmitting = false;
+
+                function showFormError(message) {
+                    var cardBody = form.closest('.card-body');
+                    if (!cardBody) {
+                        return;
+                    }
+                    var old = cardBody.querySelector('.alert.alert-danger.client-recaptcha-error');
+                    if (old) {
+                        old.remove();
+                    }
+                    var alert = document.createElement('div');
+                    alert.className = 'alert alert-danger client-recaptcha-error';
+                    alert.textContent = message;
+                    cardBody.insertBefore(alert, form);
+                }
+
+                form.addEventListener('submit', function (event) {
+                    if (isSubmitting) {
+                        return;
+                    }
+                    event.preventDefault();
+
+                    if (!window.grecaptcha || typeof window.grecaptcha.execute !== 'function') {
+                        showFormError('reCAPTCHA gagal dimuat. Periksa koneksi internet lalu coba lagi.');
+                        return;
+                    }
+
+                    isSubmitting = true;
+                    window.grecaptcha.ready(function () {
+                        window.grecaptcha.execute(siteKey, {action: 'register'}).then(function (token) {
+                            tokenInput.value = token || '';
+                            form.submit();
+                        }).catch(function () {
+                            isSubmitting = false;
+                            showFormError('Verifikasi reCAPTCHA gagal. Silakan coba lagi.');
+                        });
+                    });
+                });
+            })();
+        </script>
+    <?php endif; ?>
     <script src="<?= base_url('assets/js/app-lite.js') ?>" defer></script>
 </body>
 </html>

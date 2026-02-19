@@ -141,3 +141,11 @@
 #--------------------------------------------------------------------
 
 # curlrequest.shareOptions = false
+
+#--------------------------------------------------------------------
+# reCAPTCHA
+#--------------------------------------------------------------------
+
+# recaptcha.enabled = false
+# recaptcha.siteKey = "YOUR_RECAPTCHA_SITE_KEY"
+# recaptcha.secretKey = "YOUR_RECAPTCHA_SECRET_KEY"

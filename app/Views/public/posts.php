@@ -23,8 +23,8 @@
     };
     ?>
     <title><?= esc($titleText) ?> - Portal Desa</title>
-    <link rel="icon" type="image/svg+xml" href="<?= base_url('favicon.svg') ?>">
-    <link rel="alternate icon" href="<?= base_url('assets/images/logo@2x.png') ?>">
+    <link rel="icon" type="image/svg+xml" href="<?= asset_url('favicon.svg') ?>">
+    <link rel="alternate icon" href="<?= asset_url('assets/images/logo@2x.png') ?>">
     <meta name="description" content="<?= esc($titleText) ?> terbaru dari Portal Desa.">
     <meta name="robots" content="index,follow,max-image-preview:large">
     <link rel="canonical" href="<?= esc(site_url('postingan' . ($type ? '?type=' . $type : ''))) ?>">
@@ -34,14 +34,16 @@
     <meta property="og:title" content="<?= esc($titleText) ?> - Portal Desa">
     <meta property="og:description" content="<?= esc($titleText) ?> terbaru dari Portal Desa.">
     <meta property="og:url" content="<?= esc(site_url('postingan' . ($type ? '?type=' . $type : ''))) ?>">
-    <meta property="og:image" content="<?= esc(base_url('assets/images/card-image.png')) ?>">
+    <meta property="og:image" content="<?= esc(asset_url('assets/images/card-image.png')) ?>">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="<?= esc($titleText) ?> - Portal Desa">
     <meta name="twitter:description" content="<?= esc($titleText) ?> terbaru dari Portal Desa.">
-    <meta name="twitter:image" content="<?= esc(base_url('assets/images/card-image.png')) ?>">
-    <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,700,800&display=swap" rel="stylesheet">
-    <link href="<?= base_url('assets/plugins/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('assets/css/public-posts.css') ?>" rel="stylesheet">
+    <meta name="twitter:image" content="<?= esc(asset_url('assets/images/card-image.png')) ?>">
+    <link rel="preload" href="<?= asset_url('assets/plugins/bootstrap/css/bootstrap.min.css') ?>" as="style">
+    <link rel="preload" href="<?= asset_url('assets/css/public-posts.css') ?>" as="style">
+    <link href="<?= asset_url('assets/plugins/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
+    <link href="<?= asset_url('assets/css/public-posts.css') ?>" rel="stylesheet">
+    <style>body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;}</style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg sticky-top main-nav">
@@ -69,7 +71,7 @@
         <?php foreach ($posts as $post) : ?>
             <div class="col-md-6 col-lg-4">
                 <article class="post-card h-100">
-                    <img class="post-thumb" src="<?= base_url(! empty($post['image_path']) ? $post['image_path'] : 'assets/images/card-image.png') ?>" alt="<?= esc($post['title']) ?>">
+                    <img class="post-thumb" src="<?= ! empty($post['image_path']) ? base_url($post['image_path']) : asset_url('assets/images/card-image.png') ?>" alt="<?= esc($post['title']) ?>">
                     <div class="p-3 d-flex flex-column h-100">
                         <h2 class="h6"><a href="<?= site_url('program/' . $post['slug']) ?>" class="text-decoration-none"><?= esc($post['title']) ?></a></h2>
                         <p class="mb-2"><span class="badge bg-primary"><?= esc(ucfirst((string) ($post['post_type'] ?? 'artikel'))) ?></span></p>

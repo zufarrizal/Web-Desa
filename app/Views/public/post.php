@@ -18,11 +18,11 @@
     $seoDescription = trim((string) ($post['seo_description'] ?? '')) !== '' ? (string) $post['seo_description'] : (string) ($post['excerpt'] ?? mb_strimwidth(strip_tags((string) $post['content']), 0, 160, '...'));
     $seoKeywords = (string) ($post['seo_keywords'] ?? '');
     $postUrl = site_url('program/' . $post['slug']);
-    $postImage = base_url(! empty($post['image_path']) ? $post['image_path'] : 'assets/images/card-image.png');
+    $postImage = ! empty($post['image_path']) ? base_url($post['image_path']) : asset_url('assets/images/card-image.png');
     ?>
     <title><?= esc($seoTitle) ?> - Portal Desa</title>
-    <link rel="icon" type="image/svg+xml" href="<?= base_url('favicon.svg') ?>">
-    <link rel="alternate icon" href="<?= base_url('assets/images/logo@2x.png') ?>">
+    <link rel="icon" type="image/svg+xml" href="<?= asset_url('favicon.svg') ?>">
+    <link rel="alternate icon" href="<?= asset_url('assets/images/logo@2x.png') ?>">
     <meta name="description" content="<?= esc($seoDescription) ?>">
     <?php if ($seoKeywords !== '') : ?><meta name="keywords" content="<?= esc($seoKeywords) ?>"><?php endif; ?>
     <link rel="canonical" href="<?= esc($postUrl) ?>">
@@ -38,11 +38,15 @@
     <meta name="twitter:description" content="<?= esc($seoDescription) ?>">
     <meta name="twitter:image" content="<?= esc($postImage) ?>">
     <meta name="robots" content="index,follow,max-image-preview:large">
-    <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,700,800&display=swap" rel="stylesheet">
-    <link href="<?= base_url('assets/plugins/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('assets/css/main.min.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('assets/css/public-theme.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('assets/css/public-post.css') ?>" rel="stylesheet">
+    <link rel="preload" href="<?= asset_url('assets/plugins/bootstrap/css/bootstrap.min.css') ?>" as="style">
+    <link rel="preload" href="<?= asset_url('assets/css/main.min.css') ?>" as="style">
+    <link rel="preload" href="<?= asset_url('assets/css/public-theme.css') ?>" as="style">
+    <link rel="preload" href="<?= asset_url('assets/css/public-post.css') ?>" as="style">
+    <link href="<?= asset_url('assets/plugins/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
+    <link href="<?= asset_url('assets/css/main.min.css') ?>" rel="stylesheet">
+    <link href="<?= asset_url('assets/css/public-theme.css') ?>" rel="stylesheet">
+    <link href="<?= asset_url('assets/css/public-post.css') ?>" rel="stylesheet">
+    <style>body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;}</style>
 </head>
 <body>
     <?= view('shared/layout/navbar', ['homePage' => false]) ?>
@@ -50,7 +54,7 @@
     <div class="container">
         <div class="article-wrap shadow-sm">
             <a href="<?= site_url('/') ?>" class="btn btn-light btn-sm mb-3">Kembali</a>
-            <img src="<?= base_url(! empty($post['image_path']) ? $post['image_path'] : 'assets/images/card-image.png') ?>" alt="<?= esc($post['title']) ?>" class="article-image">
+            <img src="<?= ! empty($post['image_path']) ? base_url($post['image_path']) : asset_url('assets/images/card-image.png') ?>" alt="<?= esc($post['title']) ?>" class="article-image">
             <h1><?= esc($post['title']) ?></h1>
             <p class="text-muted mb-4">Dipublikasikan: <?= esc(date('d M Y H:i', strtotime((string) $post['published_at']))) ?></p>
             <div><?= nl2br(esc((string) $post['content'])) ?></div>
@@ -86,8 +90,8 @@
             }
         })();
     </script>
-    <script src="<?= base_url('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') ?>" defer></script>
-    <script src="<?= base_url('assets/js/app-lite.js') ?>" defer></script>
+    <script src="<?= asset_url('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') ?>" defer></script>
+    <script src="<?= asset_url('assets/js/app-lite.js') ?>" defer></script>
     <script type="application/ld+json">
     <?= json_encode([
         '@context' => 'https://schema.org',

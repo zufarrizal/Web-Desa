@@ -26,17 +26,18 @@ $metaImage = (string) ($metaImage ?? base_url('assets/images/card-image.png'));
     <meta name="twitter:image" content="<?= esc($metaImage) ?>">
     <meta name="app-link-token" content="<?= esc((string) session()->get('link_token')) ?>">
     <title><?= esc($metaTitle) ?></title>
-    <link rel="icon" type="image/svg+xml" href="<?= base_url('favicon.svg') ?>">
-    <link rel="alternate icon" href="<?= base_url('assets/images/logo@2x.png') ?>">
+    <link rel="icon" type="image/svg+xml" href="<?= asset_url('favicon.svg') ?>">
+    <link rel="alternate icon" href="<?= asset_url('assets/images/logo@2x.png') ?>">
 
-    <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,700,800&display=swap" rel="stylesheet">
-    <link href="<?= base_url('assets/plugins/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('assets/plugins/font-awesome/css/all.min.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('assets/plugins/perfectscroll/perfect-scrollbar.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('assets/plugins/DataTables/datatables.min.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('assets/css/main.min.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('assets/css/custom.css') ?>" rel="stylesheet">
-    <link id="adminDarkThemeCss" href="<?= base_url('assets/css/dark-theme.css') ?>" rel="stylesheet" disabled>
+    <link rel="preload" href="<?= asset_url('assets/plugins/bootstrap/css/bootstrap.min.css') ?>" as="style">
+    <link rel="preload" href="<?= asset_url('assets/css/main.min.css') ?>" as="style">
+    <link href="<?= asset_url('assets/plugins/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
+    <link href="<?= asset_url('assets/plugins/font-awesome/css/all.min.css') ?>" rel="stylesheet">
+    <link href="<?= asset_url('assets/plugins/perfectscroll/perfect-scrollbar.css') ?>" rel="stylesheet">
+    <link id="dataTablesCssLink" href="" rel="stylesheet" disabled>
+    <link href="<?= asset_url('assets/css/main.min.css') ?>" rel="stylesheet">
+    <link href="<?= asset_url('assets/css/custom.css') ?>" rel="stylesheet">
+    <link id="adminDarkThemeCss" href="<?= asset_url('assets/css/dark-theme.css') ?>" rel="stylesheet" disabled>
     <script>
         (function () {
             var THEME_KEY = 'site-theme';
@@ -415,13 +416,30 @@ $metaImage = (string) ($metaImage ?? base_url('assets/images/card-image.png'));
     $isAdmin   = $role === 'admin';
     $userId    = (int) session()->get('user_id');
     $todayText = date('d-m-Y');
-    $setting   = (new \App\Models\LetterSettingModel())->first() ?: [];
+    $settingCache = cache();
+    $setting = $settingCache->get('layout_setting_v1');
+    if (! is_array($setting)) {
+        $setting = (new \App\Models\LetterSettingModel())->first() ?: [];
+        $settingCache->save('layout_setting_v1', $setting, 60);
+    }
     $appIcon   = (string) ($setting['app_icon'] ?? 'home');
     $brandName = (string) ($setting['village_name'] ?? 'Portal Desa');
 
     if ($isAdmin) {
-        $docPending = (new \App\Models\DocumentRequestModel())->where('status', 'diajukan')->countAllResults();
-        $complaintNew = (new \App\Models\ComplaintModel())->where('status', 'baru')->countAllResults();
+        $notifCache = cache();
+        $notifCacheKey = 'admin_notif_summary_' . (int) $userId;
+        $cachedSummary = $notifCache->get($notifCacheKey);
+        if (is_array($cachedSummary)) {
+            $docPending = (int) ($cachedSummary['docPending'] ?? 0);
+            $complaintNew = (int) ($cachedSummary['complaintNew'] ?? 0);
+        } else {
+            $docPending = (new \App\Models\DocumentRequestModel())->where('status', 'diajukan')->countAllResults();
+            $complaintNew = (new \App\Models\ComplaintModel())->where('status', 'baru')->countAllResults();
+            $notifCache->save($notifCacheKey, [
+                'docPending' => $docPending,
+                'complaintNew' => $complaintNew,
+            ], 30);
+        }
         $todayStart = date('Y-m-d 00:00:00');
         $notifSeenAt = (string) session()->get('admin_notifications_seen_at');
         $notifUsersSeenAt = (string) session()->get('admin_notifications_users_seen_at');
@@ -432,38 +450,58 @@ $metaImage = (string) ($metaImage ?? base_url('assets/images/card-image.png'));
             $userTs = strtotime($notifUsersSeenAt) ?: 0;
             $notifUsersSince = $userTs > $baseTs ? $notifUsersSeenAt : $notifSince;
         }
-        $newUserCount = (new \App\Models\UserModel())
-            ->where('role', 'user')
-            ->where('registration_source', 'register')
-            ->where('created_at >', $notifUsersSince)
-            ->countAllResults();
-        $newUsers = (new \App\Models\UserModel())
-            ->select('id,name,created_at')
-            ->where('role', 'user')
-            ->where('registration_source', 'register')
-            ->where('created_at >', $notifUsersSince)
-            ->orderBy('created_at', 'DESC')
-            ->findAll(3);
-        $newDocumentCount = (new \App\Models\DocumentRequestModel())
-            ->where('status', 'diajukan')
-            ->where('created_at >', $notifSince)
-            ->countAllResults();
-        $newDocuments = (new \App\Models\DocumentRequestModel())
-            ->select('id,user_id,citizen_name,document_type,created_at')
-            ->where('status', 'diajukan')
-            ->where('created_at >', $notifSince)
-            ->orderBy('created_at', 'DESC')
-            ->findAll(3);
-        $newComplaintCount = (new \App\Models\ComplaintModel())
-            ->where('status', 'baru')
-            ->where('created_at >', $notifSince)
-            ->countAllResults();
-        $newComplaints = (new \App\Models\ComplaintModel())
-            ->select('id,title,location,created_at')
-            ->where('status', 'baru')
-            ->where('created_at >', $notifSince)
-            ->orderBy('created_at', 'DESC')
-            ->findAll(3);
+        $newNotifCacheKey = 'admin_notif_items_' . md5($notifSince . '|' . $notifUsersSince);
+        $cachedNotifItems = $notifCache->get($newNotifCacheKey);
+        if (is_array($cachedNotifItems)) {
+            $newUserCount = (int) ($cachedNotifItems['newUserCount'] ?? 0);
+            $newDocumentCount = (int) ($cachedNotifItems['newDocumentCount'] ?? 0);
+            $newComplaintCount = (int) ($cachedNotifItems['newComplaintCount'] ?? 0);
+            $newUsers = is_array($cachedNotifItems['newUsers'] ?? null) ? $cachedNotifItems['newUsers'] : [];
+            $newDocuments = is_array($cachedNotifItems['newDocuments'] ?? null) ? $cachedNotifItems['newDocuments'] : [];
+            $newComplaints = is_array($cachedNotifItems['newComplaints'] ?? null) ? $cachedNotifItems['newComplaints'] : [];
+        } else {
+            $newUserCount = (new \App\Models\UserModel())
+                ->where('role', 'user')
+                ->where('registration_source', 'register')
+                ->where('created_at >', $notifUsersSince)
+                ->countAllResults();
+            $newUsers = (new \App\Models\UserModel())
+                ->select('id,name,created_at')
+                ->where('role', 'user')
+                ->where('registration_source', 'register')
+                ->where('created_at >', $notifUsersSince)
+                ->orderBy('created_at', 'DESC')
+                ->findAll(3);
+            $newDocumentCount = (new \App\Models\DocumentRequestModel())
+                ->where('status', 'diajukan')
+                ->where('created_at >', $notifSince)
+                ->countAllResults();
+            $newDocuments = (new \App\Models\DocumentRequestModel())
+                ->select('id,user_id,citizen_name,document_type,created_at')
+                ->where('status', 'diajukan')
+                ->where('created_at >', $notifSince)
+                ->orderBy('created_at', 'DESC')
+                ->findAll(3);
+            $newComplaintCount = (new \App\Models\ComplaintModel())
+                ->where('status', 'baru')
+                ->where('created_at >', $notifSince)
+                ->countAllResults();
+            $newComplaints = (new \App\Models\ComplaintModel())
+                ->select('id,title,location,created_at')
+                ->where('status', 'baru')
+                ->where('created_at >', $notifSince)
+                ->orderBy('created_at', 'DESC')
+                ->findAll(3);
+
+            $notifCache->save($newNotifCacheKey, [
+                'newUserCount' => $newUserCount,
+                'newDocumentCount' => $newDocumentCount,
+                'newComplaintCount' => $newComplaintCount,
+                'newUsers' => $newUsers,
+                'newDocuments' => $newDocuments,
+                'newComplaints' => $newComplaints,
+            ], 30);
+        }
         $adminNotifTotal = $newUserCount + $newDocumentCount + $newComplaintCount;
     } else {
         $docPending = (new \App\Models\DocumentRequestModel())->where('user_id', $userId)->whereIn('status', ['diajukan', 'diproses'])->countAllResults();
@@ -711,15 +749,66 @@ $metaImage = (string) ($metaImage ?? base_url('assets/images/card-image.png'));
         </div>
     </div>
 
-    <script src="<?= base_url('assets/plugins/jquery/jquery-3.4.1.min.js') ?>" defer></script>
-    <script src="<?= base_url('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') ?>" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
-    <script src="https://unpkg.com/feather-icons" defer></script>
-    <script src="<?= base_url('assets/plugins/perfectscroll/perfect-scrollbar.min.js') ?>" defer></script>
-    <script src="<?= base_url('assets/plugins/DataTables/datatables.min.js') ?>" defer></script>
-    <script src="<?= base_url('assets/js/main.min.js') ?>" defer></script>
-    <script src="<?= base_url('assets/js/app-lite.js') ?>" defer></script>
+    <script src="<?= asset_url('assets/plugins/jquery/jquery-3.4.1.min.js') ?>" defer></script>
+    <script src="<?= asset_url('assets/plugins/bootstrap/js/bootstrap.bundle.min.js') ?>" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js" defer></script>
+    <script src="https://unpkg.com/feather-icons/dist/feather.min.js" defer></script>
+    <script src="<?= asset_url('assets/plugins/perfectscroll/perfect-scrollbar.min.js') ?>" defer></script>
+    <script src="<?= asset_url('assets/js/main.min.js') ?>" defer></script>
+    <script src="<?= asset_url('assets/js/app-lite.js') ?>" defer></script>
     <script>
+        (function () {
+            function loadStyle(href, onDone) {
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = href;
+                link.onload = function () {
+                    if (typeof onDone === 'function') {
+                        onDone();
+                    }
+                };
+                document.head.appendChild(link);
+            }
+
+            function loadScript(src, onDone) {
+                var script = document.createElement('script');
+                script.src = src;
+                script.defer = true;
+                script.onload = function () {
+                    if (typeof onDone === 'function') {
+                        onDone();
+                    }
+                };
+                document.body.appendChild(script);
+            }
+
+            function initLazyDataTables() {
+                if (!document.querySelector('table.js-zero-conf-table')) {
+                    return;
+                }
+
+                var cssLink = document.getElementById('dataTablesCssLink');
+                if (cssLink) {
+                    cssLink.href = '<?= esc(asset_url('assets/plugins/DataTables/datatables.min.css')) ?>';
+                    cssLink.disabled = false;
+                } else {
+                    loadStyle('<?= esc(asset_url('assets/plugins/DataTables/datatables.min.css')) ?>');
+                }
+
+                loadScript('<?= esc(asset_url('assets/plugins/DataTables/datatables.min.js')) ?>', function () {
+                    if (typeof window.AppLiteInitZeroConfigDataTables === 'function') {
+                        window.AppLiteInitZeroConfigDataTables();
+                    }
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initLazyDataTables);
+            } else {
+                initLazyDataTables();
+            }
+        })();
+
         (function () {
             var darkCss = document.getElementById('adminDarkThemeCss');
             var toggle = document.getElementById('adminThemeToggle');

@@ -10,7 +10,7 @@ $ogSiteName      = $ogSiteName ?? 'Portal Desa';
 $ogTitle         = $ogTitle ?? $pageTitle;
 $ogDescription   = $ogDescription ?? $metaDescription;
 $ogUrl           = $ogUrl ?? $canonical;
-$ogImage         = $ogImage ?? base_url('assets/images/card-image.png');
+$ogImage         = $ogImage ?? asset_url('assets/images/card-image.png');
 $twitterCard     = $twitterCard ?? 'summary_large_image';
 $twitterTitle    = $twitterTitle ?? $ogTitle;
 $twitterDesc     = $twitterDesc ?? $ogDescription;
@@ -25,8 +25,8 @@ $pageStyles      = $pageStyles ?? '';
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= esc($pageTitle) ?></title>
-    <link rel="icon" type="image/svg+xml" href="<?= base_url('favicon.svg') ?>">
-    <link rel="alternate icon" href="<?= base_url('assets/images/logo@2x.png') ?>">
+    <link rel="icon" type="image/svg+xml" href="<?= asset_url('favicon.svg') ?>">
+    <link rel="alternate icon" href="<?= asset_url('assets/images/logo@2x.png') ?>">
     <?php if ($metaDescription !== '') : ?><meta name="description" content="<?= esc($metaDescription) ?>"><?php endif; ?>
     <?php if ($metaKeywords !== '') : ?><meta name="keywords" content="<?= esc($metaKeywords) ?>"><?php endif; ?>
     <link rel="canonical" href="<?= esc($canonical) ?>">
@@ -42,9 +42,13 @@ $pageStyles      = $pageStyles ?? '';
     <meta name="twitter:image" content="<?= esc($twitterImage) ?>">
     <?php if ($robots !== null) : ?><meta name="robots" content="<?= esc((string) $robots) ?>"><?php endif; ?>
     <?= $extraMeta ?>
-    <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,700,800&display=swap" rel="stylesheet">
-    <link href="<?= base_url('assets/plugins/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
-    <link href="<?= base_url('assets/css/main.min.css') ?>" rel="stylesheet">
+    <link rel="preload" href="<?= asset_url('assets/plugins/bootstrap/css/bootstrap.min.css') ?>" as="style">
+    <link rel="preload" href="<?= asset_url('assets/css/main.min.css') ?>" as="style">
+    <link href="<?= asset_url('assets/plugins/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
+    <link href="<?= asset_url('assets/css/main.min.css') ?>" rel="stylesheet">
+    <style>
+        body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;}
+    </style>
     <?php if ($pageStyles !== '') : ?>
     <style>
 <?= $pageStyles ?>
