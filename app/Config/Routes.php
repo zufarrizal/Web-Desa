@@ -29,6 +29,8 @@ $routes->group('', ['filter' => 'auth'], static function ($routes) {
     $routes->get('documents/generate/(:segment)', 'DocumentRequestController::generate/$1');
     $routes->get('documents/create-manual/(:segment)', 'DocumentRequestController::createManual/$1');
     $routes->post('documents/store-manual/(:segment)', 'DocumentRequestController::storeManual/$1');
+    $routes->get('documents/create-by-nik/(:segment)', 'DocumentRequestController::createByNik/$1');
+    $routes->post('documents/store-by-nik/(:segment)', 'DocumentRequestController::storeByNik/$1');
     $routes->get('documents/preview/(:num)', 'DocumentRequestController::preview/$1');
     $routes->get('documents/print/(:num)', 'DocumentRequestController::print/$1');
     $routes->post('documents/status/(:num)', 'DocumentRequestController::setStatus/$1');
@@ -95,5 +97,6 @@ $routes->group('settings', ['filter' => 'role:admin'], static function ($routes)
 });
 
 $routes->group('admin', ['filter' => 'role:admin'], static function ($routes) {
+    $routes->get('notifications/open-users', 'AdminNotificationController::openUsers');
     $routes->post('notifications/clear', 'AdminNotificationController::clear');
 });

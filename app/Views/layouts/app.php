@@ -391,15 +391,22 @@ $metaImage = (string) ($metaImage ?? base_url('assets/images/card-image.png'));
         $complaintNew = (new \App\Models\ComplaintModel())->where('status', 'baru')->countAllResults();
         $todayStart = date('Y-m-d 00:00:00');
         $notifSeenAt = (string) session()->get('admin_notifications_seen_at');
+        $notifUsersSeenAt = (string) session()->get('admin_notifications_users_seen_at');
         $notifSince = $notifSeenAt !== '' ? $notifSeenAt : $todayStart;
+        $notifUsersSince = $notifSince;
+        if ($notifUsersSeenAt !== '') {
+            $baseTs = strtotime($notifSince) ?: 0;
+            $userTs = strtotime($notifUsersSeenAt) ?: 0;
+            $notifUsersSince = $userTs > $baseTs ? $notifUsersSeenAt : $notifSince;
+        }
         $newUserCount = (new \App\Models\UserModel())
             ->where('role', 'user')
-            ->where('created_at >', $notifSince)
+            ->where('created_at >', $notifUsersSince)
             ->countAllResults();
         $newUsers = (new \App\Models\UserModel())
             ->select('id,name,created_at')
             ->where('role', 'user')
-            ->where('created_at >', $notifSince)
+            ->where('created_at >', $notifUsersSince)
             ->orderBy('created_at', 'DESC')
             ->findAll(3);
         $newDocumentCount = (new \App\Models\DocumentRequestModel())
@@ -407,11 +414,29 @@ $metaImage = (string) ($metaImage ?? base_url('assets/images/card-image.png'));
             ->where('created_at >', $notifSince)
             ->countAllResults();
         $newDocuments = (new \App\Models\DocumentRequestModel())
-            ->select('id,citizen_name,document_type,created_at')
+            ->select('id,user_id,citizen_name,document_type,created_at')
             ->where('status', 'diajukan')
             ->where('created_at >', $notifSince)
             ->orderBy('created_at', 'DESC')
             ->findAll(3);
+        if ($newDocumentCount > 0 && $newUsers !== []) {
+            // Jika warga yang sama sudah punya notifikasi dokumen baru, sembunyikan notifikasi warga barunya.
+            $newDocumentUserIds = [];
+            foreach ($newDocuments as $docItem) {
+                $docUserId = (int) ($docItem['user_id'] ?? 0);
+                if ($docUserId > 0) {
+                    $newDocumentUserIds[$docUserId] = true;
+                }
+            }
+
+            if ($newDocumentUserIds !== []) {
+                $newUsers = array_values(array_filter($newUsers, static function (array $item) use ($newDocumentUserIds): bool {
+                    $userId = (int) ($item['id'] ?? 0);
+                    return $userId < 1 || ! isset($newDocumentUserIds[$userId]);
+                }));
+                $newUserCount = count($newUsers);
+            }
+        }
         $newComplaintCount = (new \App\Models\ComplaintModel())
             ->where('status', 'baru')
             ->where('created_at >', $notifSince)
@@ -462,7 +487,7 @@ $metaImage = (string) ($metaImage ?? base_url('assets/images/card-image.png'));
                                 <div class="dropdown-menu dropdown-menu-end notif-drop-menu" aria-labelledby="adminNotifDropDown">
                                     <h6 class="dropdown-header">Notifikasi Admin</h6>
                                     <?php foreach ($newUsers as $item) : ?>
-                                        <a href="<?= site_url('users') ?>">
+                                        <a href="<?= site_url('admin/notifications/open-users') ?>">
                                             <div class="header-notif">
                                                 <div class="notif-image">
                                                     <span class="notification-badge bg-primary text-white">
@@ -476,7 +501,7 @@ $metaImage = (string) ($metaImage ?? base_url('assets/images/card-image.png'));
                                         </a>
                                     <?php endforeach; ?>
                                     <?php foreach ($newDocuments as $item) : ?>
-                                        <a href="<?= site_url('documents') ?>">
+                                        <a href="<?= site_url('documents') . '#riwayat-surat' ?>">
                                             <div class="header-notif">
                                                 <div class="notif-image">
                                                     <span class="notification-badge bg-warning text-white">

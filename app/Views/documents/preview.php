@@ -4,7 +4,28 @@
 <?php
     $birthDateRaw = (string) ($citizen['birth_date'] ?? '');
     $birthTs = $birthDateRaw !== '' ? strtotime($birthDateRaw) : false;
-    $birthDateFormatted = $birthTs ? date('d/m/Y', $birthTs) : ($birthDateRaw !== '' ? $birthDateRaw : '-');
+    if ($birthTs) {
+        $monthNames = [
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember',
+        ];
+        $day = date('d', $birthTs);
+        $month = $monthNames[(int) date('n', $birthTs)] ?? date('m', $birthTs);
+        $year = date('Y', $birthTs);
+        $birthDateFormatted = $day . ' ' . $month . ' ' . $year;
+    } else {
+        $birthDateFormatted = $birthDateRaw !== '' ? $birthDateRaw : '-';
+    }
 ?>
 <style>
     .preview-canvas {
@@ -82,6 +103,7 @@
                                 <?= csrf_field() ?>
                                 <input type="hidden" name="status" value="selesai">
                                 <input type="hidden" name="admin_notes" value="Disetujui admin dari preview">
+                                <input type="hidden" name="redirect_to" value="<?= '/documents/preview/' . (int) $request['id'] ?>">
                                 <button class="btn btn-sm btn-success" type="submit">Setujui Surat</button>
                             </form>
                         <?php endif; ?>

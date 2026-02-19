@@ -56,6 +56,9 @@
         white-space: nowrap;
         min-width: 240px;
     }
+    #riwayat-surat {
+        scroll-margin-top: 130px;
+    }
 </style>
 <div class="row">
     <div class="col-md-12">
@@ -96,6 +99,13 @@
                                                                 Isi Data Manual
                                                             </a>
                                                         </li>
+                                                        <?php if ($role === 'admin') : ?>
+                                                            <li>
+                                                                <a class="dropdown-item" href="<?= site_url('documents/create-by-nik/' . $key) ?>">
+                                                                    Berdasarkan NIK
+                                                                </a>
+                                                            </li>
+                                                        <?php endif; ?>
                                                     </ul>
                                                 </div>
                                             </div>
@@ -116,7 +126,7 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title mb-3">Riwayat Surat</h5>
+                <h5 class="card-title mb-3" id="riwayat-surat">Riwayat Surat</h5>
                 <div class="table-responsive">
                     <table class="display js-zero-conf-table doc-history-table" id="documentsHistoryTable" style="width:100%">
                         <thead>

@@ -135,6 +135,68 @@ class DocumentRequestController extends BaseController
         ]);
     }
 
+    public function createByNik(string $type)
+    {
+        if ((string) session()->get('user_role') !== 'admin') {
+            return redirect()->to('/documents')->with('error', 'Hanya admin yang bisa membuat surat berdasarkan NIK.');
+        }
+
+        $docType = self::DOC_TYPES[$type] ?? null;
+        if (! $docType) {
+            return redirect()->to('/documents')->with('error', 'Jenis surat tidak dikenali.');
+        }
+
+        return view('documents/nik_form', [
+            'docTypeKey' => $type,
+            'docTypeLabel' => $docType,
+        ]);
+    }
+
+    public function storeByNik(string $type)
+    {
+        if ((string) session()->get('user_role') !== 'admin') {
+            return redirect()->to('/documents')->with('error', 'Hanya admin yang bisa membuat surat berdasarkan NIK.');
+        }
+
+        $docType = self::DOC_TYPES[$type] ?? null;
+        if (! $docType) {
+            return redirect()->to('/documents')->with('error', 'Jenis surat tidak dikenali.');
+        }
+
+        $rules = [
+            'nik' => 'required|min_length[8]|max_length[30]',
+        ];
+        if (! $this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $nik = trim((string) $this->request->getPost('nik'));
+        $targetUser = $this->findCitizenByNik($nik);
+        if (! $targetUser) {
+            return redirect()->back()->withInput()->with('error', 'NIK tidak ditemukan pada data warga.');
+        }
+
+        if (! $this->hasRequiredProfile($targetUser)) {
+            return redirect()->back()->withInput()->with('error', 'Profil warga belum lengkap, surat tidak bisa dibuat otomatis.');
+        }
+
+        $model = new DocumentRequestModel();
+        $id = $model->insert([
+            'user_id'       => (int) $targetUser['id'],
+            'citizen_name'  => (string) ($targetUser['name'] ?? ''),
+            'nik'           => (string) ($targetUser['nik'] ?? ''),
+            'document_type' => $docType,
+            'description'   => json_encode([
+                'created_by_admin_id' => (int) session()->get('user_id'),
+                'source' => 'admin_nik',
+            ], JSON_UNESCAPED_UNICODE),
+            'status'        => 'diajukan',
+            'admin_notes'   => null,
+        ], true);
+
+        return redirect()->to('/documents/preview/' . $id)->with('success', 'Surat berhasil dibuat berdasarkan NIK warga.');
+    }
+
     public function storeManual(string $type)
     {
         $docType = self::DOC_TYPES[$type] ?? null;
@@ -217,13 +279,15 @@ class DocumentRequestController extends BaseController
 
     public function setStatus(int $id)
     {
+        $redirectTarget = $this->statusRedirectTarget($id);
+
         if ((string) session()->get('user_role') !== 'admin') {
-            return redirect()->to('/documents')->with('error', 'Hanya admin yang bisa mengubah status surat.');
+            return redirect()->to($redirectTarget)->with('error', 'Hanya admin yang bisa mengubah status surat.');
         }
 
         $request = $this->findAuthorizedRequest($id);
         if (! $request) {
-            return redirect()->to('/documents')->with('error', 'Data surat tidak ditemukan.');
+            return redirect()->to($redirectTarget)->with('error', 'Data surat tidak ditemukan.');
         }
 
         $rules = [
@@ -232,7 +296,7 @@ class DocumentRequestController extends BaseController
         ];
 
         if (! $this->validate($rules)) {
-            return redirect()->to('/documents')->with('error', 'Status surat tidak valid.');
+            return redirect()->to($redirectTarget)->with('error', 'Status surat tidak valid.');
         }
 
         $model = new DocumentRequestModel();
@@ -241,20 +305,20 @@ class DocumentRequestController extends BaseController
             'admin_notes' => (string) $this->request->getPost('admin_notes'),
         ]);
 
-        return redirect()->to('/documents')->with('success', 'Status surat berhasil diperbarui.');
+        return redirect()->to($redirectTarget)->with('success', 'Status surat berhasil diperbarui.');
     }
 
     public function delete(int $id)
     {
         $request = $this->findAuthorizedRequest($id);
         if (! $request) {
-            return redirect()->to('/documents')->with('error', 'Data surat tidak ditemukan atau tidak diizinkan.');
+            return redirect()->to('/documents#riwayat-surat')->with('error', 'Data surat tidak ditemukan atau tidak diizinkan.');
         }
 
         $model = new DocumentRequestModel();
         $model->delete($id);
 
-        return redirect()->to('/documents')->with('success', 'Data surat berhasil dihapus.');
+        return redirect()->to('/documents#riwayat-surat')->with('success', 'Data surat berhasil dihapus.');
     }
 
     private function findAuthorizedRequest(int $id): ?array
@@ -291,6 +355,24 @@ class DocumentRequestController extends BaseController
         }
 
         return true;
+    }
+
+    private function findCitizenByNik(string $nik): ?array
+    {
+        $needle = trim($nik);
+        if ($needle === '') {
+            return null;
+        }
+
+        $userModel = new UserModel();
+        $users = $userModel->where('role !=', 'admin')->findAll();
+        foreach ($users as $user) {
+            if (trim((string) ($user['nik'] ?? '')) === $needle) {
+                return $user;
+            }
+        }
+
+        return null;
     }
 
     private function letterBody(string $documentType, array $citizen): string
@@ -504,5 +586,15 @@ class DocumentRequestController extends BaseController
     private function isApprovedForPrint(array $request): bool
     {
         return (string) ($request['status'] ?? '') === 'selesai';
+    }
+
+    private function statusRedirectTarget(int $id): string
+    {
+        $redirectTo = trim((string) $this->request->getPost('redirect_to'));
+        if ($redirectTo !== '' && preg_match('#^/documents/preview/' . $id . '$#', $redirectTo) === 1) {
+            return $redirectTo;
+        }
+
+        return '/documents#riwayat-surat';
     }
 }
