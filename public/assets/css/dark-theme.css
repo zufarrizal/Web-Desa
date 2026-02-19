@@ -111,6 +111,19 @@ background: linear-gradient(180deg, rgba(32,43,59,0.9458158263305322) 0%, rgba(3
     color: rgba(235, 242, 252, 0.96) !important;
 }
 
+/* Brand area (top-left): make brighter in dark mode */
+.top-brand-title {
+    color: #dfe8ff !important;
+}
+
+.top-brand-subtitle {
+    color: rgba(205, 220, 245, 0.92) !important;
+}
+
+.top-brand-icon {
+    color: #b9ccff !important;
+}
+
 /* Document group titles in layanan dokumen */
 .docs-group-title {
     color: rgba(225, 235, 245, 0.92) !important;
