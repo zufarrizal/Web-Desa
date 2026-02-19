@@ -278,7 +278,7 @@ $metaImage = (string) ($metaImage ?? base_url('assets/images/card-image.png'));
                 margin-top: 124px !important;
             }
         }
-        @media (max-width: 768px) {
+        @media (max-width: 1350px) {
             .page-container {
                 padding: 10px;
             }
@@ -419,7 +419,21 @@ $metaImage = (string) ($metaImage ?? base_url('assets/images/card-image.png'));
             ->where('created_at >', $notifSince)
             ->orderBy('created_at', 'DESC')
             ->findAll(3);
-        if ($newDocumentCount > 0 && $newUsers !== []) {
+        $newComplaintCount = (new \App\Models\ComplaintModel())
+            ->where('status', 'baru')
+            ->where('created_at >', $notifSince)
+            ->countAllResults();
+        $complaintPriorityCount = (new \App\Models\ComplaintModel())
+            ->whereIn('status', ['baru', 'ditindaklanjuti'])
+            ->where('created_at >', $notifSince)
+            ->countAllResults();
+        $newComplaints = (new \App\Models\ComplaintModel())
+            ->select('id,title,location,created_at')
+            ->where('status', 'baru')
+            ->where('created_at >', $notifSince)
+            ->orderBy('created_at', 'DESC')
+            ->findAll(3);
+        if (($newDocumentCount > 0 || $complaintPriorityCount > 0) && $newUsers !== []) {
             // Jika warga yang sama sudah punya notifikasi dokumen baru, sembunyikan notifikasi warga barunya.
             $newDocumentUserIds = [];
             foreach ($newDocuments as $docItem) {
@@ -436,17 +450,12 @@ $metaImage = (string) ($metaImage ?? base_url('assets/images/card-image.png'));
                 }));
                 $newUserCount = count($newUsers);
             }
+            if ($complaintPriorityCount > 0) {
+                // Jika ada pengaduan baru, sembunyikan notifikasi user baru.
+                $newUsers = [];
+                $newUserCount = 0;
+            }
         }
-        $newComplaintCount = (new \App\Models\ComplaintModel())
-            ->where('status', 'baru')
-            ->where('created_at >', $notifSince)
-            ->countAllResults();
-        $newComplaints = (new \App\Models\ComplaintModel())
-            ->select('id,title,location,created_at')
-            ->where('status', 'baru')
-            ->where('created_at >', $notifSince)
-            ->orderBy('created_at', 'DESC')
-            ->findAll(3);
         $adminNotifTotal = $newUserCount + $newDocumentCount + $newComplaintCount;
     } else {
         $docPending = (new \App\Models\DocumentRequestModel())->where('user_id', $userId)->whereIn('status', ['diajukan', 'diproses'])->countAllResults();
@@ -719,13 +728,13 @@ $metaImage = (string) ($metaImage ?? base_url('assets/images/card-image.png'));
                 if (!link) {
                     return;
                 }
-                if (window.matchMedia('(max-width: 768px)').matches) {
+                if (window.matchMedia('(max-width: 1350px)').matches) {
                     closeSidebar();
                 }
             });
 
             window.addEventListener('resize', function () {
-                if (!window.matchMedia('(max-width: 768px)').matches) {
+                if (!window.matchMedia('(max-width: 1350px)').matches) {
                     closeSidebar();
                 }
             });
