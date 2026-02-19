@@ -93,3 +93,7 @@ $routes->group('settings', ['filter' => 'role:admin'], static function ($routes)
     $routes->get('home', 'HomeSettingController::edit');
     $routes->post('home', 'HomeSettingController::update');
 });
+
+$routes->group('admin', ['filter' => 'role:admin'], static function ($routes) {
+    $routes->post('notifications/clear', 'AdminNotificationController::clear');
+});

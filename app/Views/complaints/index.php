@@ -20,19 +20,9 @@
                             <option value="ditolak">Ditolak</option>
                         </select>
                     </div>
-                    <div class="table-tools-group">
-                        <label for="complaintsPageSize" class="mb-0">Tampil</label>
-                        <select id="complaintsPageSize" class="form-select form-select-sm" data-page-size-for="complaintsTable">
-                            <option value="5">5</option>
-                            <option value="10" selected>10</option>
-                            <option value="20">20</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                        </select>
-                    </div>
                 </div>
                 <div class="table-responsive">
-                    <table class="table" id="complaintsTable" data-table-paginate="true">
+                    <table class="display js-zero-conf-table" id="complaintsTable" style="width:100%">
                         <thead>
                         <tr>
                             <th>No</th>
@@ -67,7 +57,6 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="table-pager" data-pager-for="complaintsTable"></div>
             </div>
         </div>
     </div>

@@ -33,6 +33,7 @@ $metaImage = (string) ($metaImage ?? base_url('assets/images/card-image.png'));
     <link href="<?= base_url('assets/plugins/bootstrap/css/bootstrap.min.css') ?>" rel="stylesheet">
     <link href="<?= base_url('assets/plugins/font-awesome/css/all.min.css') ?>" rel="stylesheet">
     <link href="<?= base_url('assets/plugins/perfectscroll/perfect-scrollbar.css') ?>" rel="stylesheet">
+    <link href="<?= base_url('assets/plugins/DataTables/datatables.min.css') ?>" rel="stylesheet">
     <link href="<?= base_url('assets/css/main.min.css') ?>" rel="stylesheet">
     <link href="<?= base_url('assets/css/custom.css') ?>" rel="stylesheet">
     <link id="adminDarkThemeCss" href="<?= base_url('assets/css/dark-theme.css') ?>" rel="stylesheet" disabled>
@@ -326,9 +327,50 @@ $metaImage = (string) ($metaImage ?? base_url('assets/images/card-image.png'));
     if ($isAdmin) {
         $docPending = (new \App\Models\DocumentRequestModel())->where('status', 'diajukan')->countAllResults();
         $complaintNew = (new \App\Models\ComplaintModel())->where('status', 'baru')->countAllResults();
+        $todayStart = date('Y-m-d 00:00:00');
+        $notifSeenAt = (string) session()->get('admin_notifications_seen_at');
+        $notifSince = $notifSeenAt !== '' ? $notifSeenAt : $todayStart;
+        $newUserCount = (new \App\Models\UserModel())
+            ->where('role', 'user')
+            ->where('created_at >', $notifSince)
+            ->countAllResults();
+        $newUsers = (new \App\Models\UserModel())
+            ->select('id,name,created_at')
+            ->where('role', 'user')
+            ->where('created_at >', $notifSince)
+            ->orderBy('created_at', 'DESC')
+            ->findAll(3);
+        $newDocumentCount = (new \App\Models\DocumentRequestModel())
+            ->where('status', 'diajukan')
+            ->where('created_at >', $notifSince)
+            ->countAllResults();
+        $newDocuments = (new \App\Models\DocumentRequestModel())
+            ->select('id,citizen_name,document_type,created_at')
+            ->where('status', 'diajukan')
+            ->where('created_at >', $notifSince)
+            ->orderBy('created_at', 'DESC')
+            ->findAll(3);
+        $newComplaintCount = (new \App\Models\ComplaintModel())
+            ->where('status', 'baru')
+            ->where('created_at >', $notifSince)
+            ->countAllResults();
+        $newComplaints = (new \App\Models\ComplaintModel())
+            ->select('id,title,location,created_at')
+            ->where('status', 'baru')
+            ->where('created_at >', $notifSince)
+            ->orderBy('created_at', 'DESC')
+            ->findAll(3);
+        $adminNotifTotal = $newUserCount + $newDocumentCount + $newComplaintCount;
     } else {
         $docPending = (new \App\Models\DocumentRequestModel())->where('user_id', $userId)->whereIn('status', ['diajukan', 'diproses'])->countAllResults();
         $complaintNew = (new \App\Models\ComplaintModel())->where('user_id', $userId)->whereIn('status', ['baru', 'ditindaklanjuti'])->countAllResults();
+        $newUserCount = 0;
+        $newDocumentCount = 0;
+        $newComplaintCount = 0;
+        $newUsers = [];
+        $newDocuments = [];
+        $newComplaints = [];
+        $adminNotifTotal = 0;
     }
     ?>
     <div class="page-container">
@@ -350,6 +392,55 @@ $metaImage = (string) ($metaImage ?? base_url('assets/images/card-image.png'));
                                 <i data-feather="menu"></i>
                             </button>
                         </li>
+                        <?php if ($isAdmin) : ?>
+                            <li class="nav-item dropdown d-flex align-items-center me-2">
+                                <a class="nav-link position-relative px-2" href="#" id="adminNotifDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Notifikasi Admin">
+                                    <i data-feather="bell"></i>
+                                    <?php if ($adminNotifTotal > 0) : ?>
+                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                            <?= esc((string) $adminNotifTotal) ?>
+                                        </span>
+                                    <?php endif; ?>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end profile-drop-menu" aria-labelledby="adminNotifDropDown" style="min-width: 320px;">
+                                    <h6 class="dropdown-header">Notifikasi Admin</h6>
+                                    <a class="dropdown-item" href="<?= site_url('users') ?>">
+                                        Registrasi User Baru
+                                        <span class="badge bg-primary float-end"><?= esc((string) $newUserCount) ?></span>
+                                    </a>
+                                    <?php foreach ($newUsers as $item) : ?>
+                                        <div class="dropdown-item-text py-1 text-muted">
+                                            <small><?= esc((string) ($item['name'] ?? '-')) ?></small>
+                                        </div>
+                                    <?php endforeach; ?>
+                                    <a class="dropdown-item" href="<?= site_url('documents') ?>">
+                                        Dokumen Baru
+                                        <span class="badge bg-warning text-dark float-end"><?= esc((string) $newDocumentCount) ?></span>
+                                    </a>
+                                    <?php foreach ($newDocuments as $item) : ?>
+                                        <div class="dropdown-item-text py-1 text-muted">
+                                            <small><?= esc((string) ($item['citizen_name'] ?? '-')) ?></small>
+                                        </div>
+                                    <?php endforeach; ?>
+                                    <a class="dropdown-item" href="<?= site_url('complaints') ?>">
+                                        Pengaduan Baru
+                                        <span class="badge bg-danger float-end"><?= esc((string) $newComplaintCount) ?></span>
+                                    </a>
+                                    <?php foreach ($newComplaints as $item) : ?>
+                                        <div class="dropdown-item-text py-1 text-muted">
+                                            <small><?= esc((string) ($item['title'] ?? '-')) ?></small>
+                                        </div>
+                                    <?php endforeach; ?>
+                                    <?php if ($adminNotifTotal > 0) : ?>
+                                        <div class="dropdown-divider"></div>
+                                        <form action="<?= site_url('admin/notifications/clear') ?>" method="post" class="px-3 py-2">
+                                            <?= csrf_field() ?>
+                                            <button type="submit" class="btn btn-sm btn-outline-danger w-100">Hapus Notifikasi</button>
+                                        </form>
+                                    <?php endif; ?>
+                                </div>
+                            </li>
+                        <?php endif; ?>
                         <li class="nav-item d-flex align-items-center me-2">
                             <button id="adminThemeToggle" type="button" class="admin-theme-toggle">Dark Mode</button>
                         </li>
@@ -470,6 +561,7 @@ $metaImage = (string) ($metaImage ?? base_url('assets/images/card-image.png'));
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
     <script src="https://unpkg.com/feather-icons" defer></script>
     <script src="<?= base_url('assets/plugins/perfectscroll/perfect-scrollbar.min.js') ?>" defer></script>
+    <script src="<?= base_url('assets/plugins/DataTables/datatables.min.js') ?>" defer></script>
     <script src="<?= base_url('assets/js/main.min.js') ?>" defer></script>
     <script src="<?= base_url('assets/js/app-lite.js') ?>" defer></script>
     <script>

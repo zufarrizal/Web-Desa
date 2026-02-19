@@ -62,6 +62,19 @@ class DocumentSettingController extends BaseController
                 return redirect()->back()->withInput()->with('errors', ['Ukuran file tanda tangan maksimal 2MB.']);
             }
 
+            $imageMeta = @getimagesize($signatureFile->getTempName());
+            if (! is_array($imageMeta) || count($imageMeta) < 2) {
+                return redirect()->back()->withInput()->with('errors', ['File tanda tangan tidak valid.']);
+            }
+
+            $width = (int) $imageMeta[0];
+            $height = (int) $imageMeta[1];
+            if ($width < 800 || $height < 200) {
+                return redirect()->back()->withInput()->with('errors', [
+                    'Resolusi tanda tangan terlalu rendah. Minimal 800x200 piksel agar hasil print tidak pecah.',
+                ]);
+            }
+
             $uploadDir = FCPATH . 'uploads/signatures';
             if (! is_dir($uploadDir)) {
                 mkdir($uploadDir, 0755, true);

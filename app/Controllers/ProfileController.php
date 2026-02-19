@@ -6,6 +6,20 @@ use App\Models\UserModel;
 
 class ProfileController extends BaseController
 {
+    private function toCapitalizedCase(string $value): string
+    {
+        $value = trim($value);
+        if ($value === '') {
+            return '';
+        }
+
+        if (function_exists('mb_convert_case')) {
+            return mb_convert_case($value, MB_CASE_TITLE, 'UTF-8');
+        }
+
+        return ucwords(strtolower($value));
+    }
+
     public function edit()
     {
         $userModel = new UserModel();
@@ -31,6 +45,7 @@ class ProfileController extends BaseController
         $rules = [
             'name'           => 'required|min_length[3]',
             'email'          => 'required|valid_email|is_unique[users.email,id,' . $userId . ']',
+            'no_kk'          => 'permit_empty|min_length[8]',
             'nik'            => 'required|min_length[8]',
             'birth_place'    => 'required',
             'birth_date'     => 'required|regex_match[/^\d{2}\/\d{2}\/\d{4}$/]',
@@ -61,22 +76,23 @@ class ProfileController extends BaseController
         }
 
         $userModel->update($userId, [
-            'name'           => (string) $this->request->getPost('name'),
+            'name'           => $this->toCapitalizedCase((string) $this->request->getPost('name')),
             'email'          => (string) $this->request->getPost('email'),
+            'no_kk'          => (string) $this->request->getPost('no_kk'),
             'nik'            => (string) $this->request->getPost('nik'),
-            'birth_place'    => (string) $this->request->getPost('birth_place'),
+            'birth_place'    => $this->toCapitalizedCase((string) $this->request->getPost('birth_place')),
             'birth_date'     => $birthDateDb,
             'gender'         => (string) $this->request->getPost('gender'),
-            'religion'       => (string) $this->request->getPost('religion'),
-            'occupation'     => (string) $this->request->getPost('occupation'),
-            'marital_status' => (string) $this->request->getPost('marital_status'),
-            'address'        => (string) $this->request->getPost('address'),
+            'religion'       => $this->toCapitalizedCase((string) $this->request->getPost('religion')),
+            'occupation'     => $this->toCapitalizedCase((string) $this->request->getPost('occupation')),
+            'marital_status' => $this->toCapitalizedCase((string) $this->request->getPost('marital_status')),
+            'address'        => $this->toCapitalizedCase((string) $this->request->getPost('address')),
             'rt'             => (string) $this->request->getPost('rt'),
             'rw'             => (string) $this->request->getPost('rw'),
-            'village'        => (string) $this->request->getPost('village'),
-            'district'       => (string) $this->request->getPost('district'),
-            'city'           => (string) $this->request->getPost('city'),
-            'province'       => (string) $this->request->getPost('province'),
+            'village'        => $this->toCapitalizedCase((string) $this->request->getPost('village')),
+            'district'       => $this->toCapitalizedCase((string) $this->request->getPost('district')),
+            'city'           => $this->toCapitalizedCase((string) $this->request->getPost('city')),
+            'province'       => $this->toCapitalizedCase((string) $this->request->getPost('province')),
             'citizenship'    => (string) ($this->request->getPost('citizenship') ?: 'WNI'),
         ]);
 

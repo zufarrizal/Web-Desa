@@ -15,6 +15,7 @@ class UserModel extends Model
     protected $allowedFields = [
         'name',
         'email',
+        'no_kk',
         'nik',
         'birth_place',
         'birth_date',
@@ -44,6 +45,7 @@ class UserModel extends Model
      * @var string[]
      */
     private array $encryptedFields = [
+        'no_kk',
         'nik',
         'birth_place',
         'birth_date',

@@ -46,6 +46,13 @@
             font-size: 12pt;
             margin-bottom: 0;
         }
+        .signature-image {
+            height: 22mm;
+            width: auto;
+            max-width: 55mm;
+            image-rendering: auto;
+            image-rendering: -webkit-optimize-contrast;
+        }
         @media print {
             .no-print { display: none !important; }
             .sheet { margin: 0 !important; max-width: 100% !important; }
@@ -65,6 +72,24 @@
         $birthDateRaw = (string) ($citizen['birth_date'] ?? '');
         $birthTs = $birthDateRaw !== '' ? strtotime($birthDateRaw) : false;
         $birthDateFormatted = $birthTs ? date('d/m/Y', $birthTs) : ($birthDateRaw !== '' ? $birthDateRaw : '-');
+        $signatureSrc = '';
+        $signaturePath = (string) ($setting['signer_signature'] ?? '');
+        if ($signaturePath !== '') {
+            $absoluteSignaturePath = FCPATH . ltrim($signaturePath, '/\\');
+            if (is_file($absoluteSignaturePath)) {
+                $mime = function_exists('mime_content_type') ? (string) mime_content_type($absoluteSignaturePath) : 'image/png';
+                if ($mime === '') {
+                    $mime = 'image/png';
+                }
+                $binary = file_get_contents($absoluteSignaturePath);
+                if (is_string($binary) && $binary !== '') {
+                    $signatureSrc = 'data:' . $mime . ';base64,' . base64_encode($binary);
+                }
+            }
+            if ($signatureSrc === '') {
+                $signatureSrc = base_url($signaturePath);
+            }
+        }
     ?>
     <div class="container sheet">
         <div class="no-print mb-3">
@@ -102,8 +127,8 @@
                 <div class="col-6 text-center">
                     <p><?= esc($setting['village_name'] ?? 'Desa') ?>, <?= date('d-m-Y') ?></p>
                     <p><?= esc($setting['signer_title'] ?? 'Kepala Desa') ?></p>
-                    <?php if (! empty($setting['signer_signature'])) : ?>
-                        <p class="mb-1"><img src="<?= base_url($setting['signer_signature']) ?>" alt="Tanda Tangan" style="max-height: 90px; width: auto;"></p>
+                    <?php if ($signatureSrc !== '') : ?>
+                        <p class="mb-1"><img src="<?= esc($signatureSrc) ?>" alt="Tanda Tangan" class="signature-image"></p>
                     <?php else : ?>
                         <br><br>
                     <?php endif; ?>

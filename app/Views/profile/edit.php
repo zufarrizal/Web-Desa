@@ -26,11 +26,15 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Nama Lengkap</label>
-                            <input type="text" name="name" class="form-control" value="<?= old('name', $user['name'] ?? '') ?>" required>
+                            <input type="text" name="name" class="form-control js-capitalize-case" value="<?= old('name', $user['name'] ?? '') ?>" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Email</label>
                             <input type="email" name="email" class="form-control" value="<?= old('email', $user['email'] ?? '') ?>" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">No. KK</label>
+                            <input type="text" name="no_kk" class="form-control" value="<?= old('no_kk', $user['no_kk'] ?? '') ?>">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">NIK</label>
@@ -38,11 +42,11 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Pekerjaan</label>
-                            <input type="text" name="occupation" class="form-control" value="<?= old('occupation', $user['occupation'] ?? '') ?>" required>
+                            <input type="text" name="occupation" class="form-control js-capitalize-case" value="<?= old('occupation', $user['occupation'] ?? '') ?>" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Tempat Lahir</label>
-                            <input type="text" name="birth_place" class="form-control" value="<?= old('birth_place', $user['birth_place'] ?? '') ?>" required>
+                            <input type="text" name="birth_place" class="form-control js-capitalize-case" value="<?= old('birth_place', $user['birth_place'] ?? '') ?>" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Tanggal Lahir</label>
@@ -59,15 +63,26 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Agama</label>
-                            <input type="text" name="religion" class="form-control" value="<?= old('religion', $user['religion'] ?? '') ?>">
+                            <input type="text" name="religion" class="form-control js-capitalize-case" value="<?= old('religion', $user['religion'] ?? '') ?>">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Status Perkawinan</label>
-                            <input type="text" name="marital_status" class="form-control" value="<?= old('marital_status', $user['marital_status'] ?? '') ?>">
+                            <?php $maritalStatus = old('marital_status', $user['marital_status'] ?? ''); ?>
+                            <select name="marital_status" class="form-control js-capitalize-case">
+                                <option value="">Pilih</option>
+                                <option value="Belum Kawin" <?= $maritalStatus === 'Belum Kawin' ? 'selected' : '' ?>>Belum Kawin</option>
+                                <option value="Kawin" <?= $maritalStatus === 'Kawin' ? 'selected' : '' ?>>Kawin</option>
+                                <option value="Cerai Hidup" <?= $maritalStatus === 'Cerai Hidup' ? 'selected' : '' ?>>Cerai Hidup</option>
+                                <option value="Cerai Mati" <?= $maritalStatus === 'Cerai Mati' ? 'selected' : '' ?>>Cerai Mati</option>
+                            </select>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Kewarganegaraan</label>
-                            <input type="text" name="citizenship" class="form-control" value="<?= old('citizenship', $user['citizenship'] ?? 'WNI') ?>">
+                            <?php $citizenship = old('citizenship', $user['citizenship'] ?? 'WNI'); ?>
+                            <select name="citizenship" class="form-control">
+                                <option value="WNI" <?= $citizenship === 'WNI' ? 'selected' : '' ?>>WNI</option>
+                                <option value="WNA" <?= $citizenship === 'WNA' ? 'selected' : '' ?>>WNA</option>
+                            </select>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">RT</label>
@@ -79,23 +94,23 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Desa/Kelurahan</label>
-                            <input type="text" name="village" class="form-control" value="<?= old('village', $user['village'] ?? '') ?>" required>
+                            <input type="text" name="village" class="form-control js-capitalize-case" value="<?= old('village', $user['village'] ?? '') ?>" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Kecamatan</label>
-                            <input type="text" name="district" class="form-control" value="<?= old('district', $user['district'] ?? '') ?>" required>
+                            <input type="text" name="district" class="form-control js-capitalize-case" value="<?= old('district', $user['district'] ?? '') ?>" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Kabupaten/Kota</label>
-                            <input type="text" name="city" class="form-control" value="<?= old('city', $user['city'] ?? '') ?>" required>
+                            <input type="text" name="city" class="form-control js-capitalize-case" value="<?= old('city', $user['city'] ?? '') ?>" required>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Provinsi</label>
-                            <input type="text" name="province" class="form-control" value="<?= old('province', $user['province'] ?? '') ?>">
+                            <input type="text" name="province" class="form-control js-capitalize-case" value="<?= old('province', $user['province'] ?? '') ?>">
                         </div>
                         <div class="col-md-12 mb-3">
                             <label class="form-label">Alamat Lengkap</label>
-                            <textarea name="address" class="form-control" rows="3" required><?= old('address', $user['address'] ?? '') ?></textarea>
+                            <textarea name="address" class="form-control js-capitalize-case" rows="3" required><?= old('address', $user['address'] ?? '') ?></textarea>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary">Simpan Profil</button>
@@ -104,4 +119,25 @@
         </div>
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    function toCapitalizedCase(value) {
+        return value.replace(/\w\S*/g, function (txt) {
+            return txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase();
+        });
+    }
+
+    var fields = document.querySelectorAll('.js-capitalize-case');
+    fields.forEach(function (field) {
+        var handler = function () {
+            if (field.tagName === 'SELECT') {
+                return;
+            }
+            field.value = toCapitalizedCase(field.value);
+        };
+        field.addEventListener('blur', handler);
+        field.addEventListener('change', handler);
+    });
+});
+</script>
 <?= $this->endSection() ?>

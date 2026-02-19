@@ -117,20 +117,8 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title mb-3">Riwayat Surat</h5>
-                <div class="table-tools mb-3">
-                    <div class="table-tools-group">
-                        <label for="documentsPageSize" class="mb-0">Tampil</label>
-                        <select id="documentsPageSize" class="form-select form-select-sm" data-page-size-for="documentsHistoryTable">
-                            <option value="5">5</option>
-                            <option value="10" selected>10</option>
-                            <option value="20">20</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                        </select>
-                    </div>
-                </div>
                 <div class="table-responsive">
-                    <table class="table doc-history-table" id="documentsHistoryTable" data-table-paginate="true">
+                    <table class="display js-zero-conf-table doc-history-table" id="documentsHistoryTable" style="width:100%">
                         <thead>
                         <tr>
                             <th>No</th>
@@ -173,7 +161,6 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="table-pager" data-pager-for="documentsHistoryTable"></div>
             </div>
         </div>
     </div>
