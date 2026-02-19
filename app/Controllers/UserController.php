@@ -103,6 +103,7 @@ class UserController extends BaseController
         $userModel = new UserModel();
         $payload = $this->collectProfilePayload();
         $payload['password'] = password_hash((string) $this->request->getPost('password'), PASSWORD_BCRYPT);
+        $payload['registration_source'] = 'admin';
         $userModel->insert($payload);
 
         return redirect()->to('/users')->with('success', 'User berhasil dibuat.');

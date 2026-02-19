@@ -97,6 +97,7 @@ $routes->group('settings', ['filter' => 'role:admin'], static function ($routes)
 });
 
 $routes->group('admin', ['filter' => 'role:admin'], static function ($routes) {
+    $routes->get('audit-logs', 'AuditLogController::index');
     $routes->get('notifications/open-users', 'AdminNotificationController::openUsers');
     $routes->post('notifications/clear', 'AdminNotificationController::clear');
 });

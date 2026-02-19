@@ -93,6 +93,30 @@
 
         var maxBytes = 1024 * 1024; // 1MB
         var isSubmitting = false;
+        var validMime = ['image/jpeg', 'image/png', 'image/webp'];
+
+        function showFloatingError(message) {
+            var host = document.querySelector('.floating-alert-container');
+            if (!host) {
+                host = document.createElement('div');
+                host.className = 'floating-alert-container';
+                document.body.appendChild(host);
+            }
+
+            var box = document.createElement('div');
+            box.className = 'alert alert-danger floating-alert';
+            box.textContent = message || 'Terjadi kesalahan saat upload gambar.';
+            host.appendChild(box);
+
+            setTimeout(function () {
+                box.classList.add('opacity-0');
+                setTimeout(function () {
+                    if (box.parentNode) {
+                        box.parentNode.removeChild(box);
+                    }
+                }, 350);
+            }, 5000);
+        }
 
         function compressImageToJpeg(file, maxSize) {
             return new Promise(function (resolve, reject) {
@@ -157,6 +181,11 @@
             }
 
             var file = fileInput.files && fileInput.files[0] ? fileInput.files[0] : null;
+            if (file && validMime.indexOf((file.type || '').toLowerCase()) === -1) {
+                event.preventDefault();
+                showFloatingError('Format gambar tidak valid. Gunakan JPG, PNG, atau WEBP.');
+                return;
+            }
             if (!file || file.size <= maxBytes) {
                 return;
             }
@@ -177,7 +206,7 @@
                 form.submit();
             }).catch(function (error) {
                 isSubmitting = false;
-                alert(error && error.message ? error.message : 'Gagal kompres gambar. Gunakan file yang lebih kecil.');
+                showFloatingError(error && error.message ? error.message : 'Gagal kompres gambar. Gunakan file yang lebih kecil.');
             });
         });
     })();

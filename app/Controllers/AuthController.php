@@ -106,10 +106,11 @@ class AuthController extends BaseController
         try {
             $userModel = new UserModel();
             $userModel->insert([
-                'name'     => (string) $this->request->getPost('name'),
-                'email'    => (string) $this->request->getPost('email'),
-                'password' => password_hash((string) $this->request->getPost('password'), PASSWORD_BCRYPT),
-                'role'     => 'user',
+                'name'                => (string) $this->request->getPost('name'),
+                'email'               => (string) $this->request->getPost('email'),
+                'password'            => password_hash((string) $this->request->getPost('password'), PASSWORD_BCRYPT),
+                'role'                => 'user',
+                'registration_source' => 'register',
             ]);
         } catch (Throwable $e) {
             log_message('error', 'Register DB error: {message}', ['message' => $e->getMessage()]);

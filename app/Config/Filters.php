@@ -3,6 +3,7 @@
 namespace Config;
 
 use App\Filters\AuthFilter;
+use App\Filters\AuditLogFilter;
 use App\Filters\BotShieldFilter;
 use App\Filters\LinkTokenFilter;
 use App\Filters\RequestThrottleFilter;
@@ -30,6 +31,7 @@ class Filters extends BaseConfig
         'invalidchars'  => InvalidChars::class,
         'secureheaders' => SecureHeaders::class,
         'auth'          => AuthFilter::class,
+        'auditlog'      => AuditLogFilter::class,
         'botshield'     => BotShieldFilter::class,
         'role'          => RoleFilter::class,
         'throttle'      => RequestThrottleFilter::class,
@@ -52,6 +54,7 @@ class Filters extends BaseConfig
         'after' => [
             // 'toolbar',
             'honeypot',
+            'auditlog',
             // 'secureheaders',
         ],
     ];
@@ -94,6 +97,7 @@ class Filters extends BaseConfig
                 'users/*',
                 'programs',
                 'programs/*',
+                'admin/audit-logs',
             ],
         ],
     ];

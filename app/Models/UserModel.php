@@ -33,6 +33,7 @@ class UserModel extends Model
         'citizenship',
         'password',
         'role',
+        'registration_source',
         'last_login_at',
     ];
     protected $useTimestamps = true;

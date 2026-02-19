@@ -434,11 +434,13 @@ $metaImage = (string) ($metaImage ?? base_url('assets/images/card-image.png'));
         }
         $newUserCount = (new \App\Models\UserModel())
             ->where('role', 'user')
+            ->where('registration_source', 'register')
             ->where('created_at >', $notifUsersSince)
             ->countAllResults();
         $newUsers = (new \App\Models\UserModel())
             ->select('id,name,created_at')
             ->where('role', 'user')
+            ->where('registration_source', 'register')
             ->where('created_at >', $notifUsersSince)
             ->orderBy('created_at', 'DESC')
             ->findAll(3);
@@ -456,39 +458,12 @@ $metaImage = (string) ($metaImage ?? base_url('assets/images/card-image.png'));
             ->where('status', 'baru')
             ->where('created_at >', $notifSince)
             ->countAllResults();
-        $complaintPriorityCount = (new \App\Models\ComplaintModel())
-            ->whereIn('status', ['baru', 'ditindaklanjuti'])
-            ->where('created_at >', $notifSince)
-            ->countAllResults();
         $newComplaints = (new \App\Models\ComplaintModel())
             ->select('id,title,location,created_at')
             ->where('status', 'baru')
             ->where('created_at >', $notifSince)
             ->orderBy('created_at', 'DESC')
             ->findAll(3);
-        if (($newDocumentCount > 0 || $complaintPriorityCount > 0) && $newUsers !== []) {
-            // Jika warga yang sama sudah punya notifikasi dokumen baru, sembunyikan notifikasi warga barunya.
-            $newDocumentUserIds = [];
-            foreach ($newDocuments as $docItem) {
-                $docUserId = (int) ($docItem['user_id'] ?? 0);
-                if ($docUserId > 0) {
-                    $newDocumentUserIds[$docUserId] = true;
-                }
-            }
-
-            if ($newDocumentUserIds !== []) {
-                $newUsers = array_values(array_filter($newUsers, static function (array $item) use ($newDocumentUserIds): bool {
-                    $userId = (int) ($item['id'] ?? 0);
-                    return $userId < 1 || ! isset($newDocumentUserIds[$userId]);
-                }));
-                $newUserCount = count($newUsers);
-            }
-            if ($complaintPriorityCount > 0) {
-                // Jika ada pengaduan baru, sembunyikan notifikasi user baru.
-                $newUsers = [];
-                $newUserCount = 0;
-            }
-        }
         $adminNotifTotal = $newUserCount + $newDocumentCount + $newComplaintCount;
     } else {
         $docPending = (new \App\Models\DocumentRequestModel())->where('user_id', $userId)->whereIn('status', ['diajukan', 'diproses'])->countAllResults();
@@ -500,6 +475,38 @@ $metaImage = (string) ($metaImage ?? base_url('assets/images/card-image.png'));
         $newDocuments = [];
         $newComplaints = [];
         $adminNotifTotal = 0;
+    }
+
+    $flashSuccess = session()->getFlashdata('success');
+    $flashError = session()->getFlashdata('error');
+    $flashErrorsRaw = session()->getFlashdata('errors');
+    $flashErrors = is_array($flashErrorsRaw) ? array_values($flashErrorsRaw) : [];
+
+    $floatingImageError = '';
+    $imageErrorKeywords = ['gambar', 'jpg', 'jpeg', 'png', 'webp', 'format'];
+    if (is_string($flashError) && $flashError !== '') {
+        $lower = strtolower($flashError);
+        foreach ($imageErrorKeywords as $keyword) {
+            if (str_contains($lower, $keyword)) {
+                $floatingImageError = $flashError;
+                break;
+            }
+        }
+    }
+    if ($floatingImageError === '') {
+        foreach ($flashErrors as $msg) {
+            $msg = is_string($msg) ? $msg : '';
+            if ($msg === '') {
+                continue;
+            }
+            $lower = strtolower($msg);
+            foreach ($imageErrorKeywords as $keyword) {
+                if (str_contains($lower, $keyword)) {
+                    $floatingImageError = $msg;
+                    break 2;
+                }
+            }
+        }
     }
     ?>
     <div class="page-container">
@@ -638,6 +645,9 @@ $metaImage = (string) ($metaImage ?? base_url('assets/images/card-image.png'));
                     <li class="<?= str_starts_with($path, 'users') ? 'active-page' : '' ?>">
                         <a href="<?= site_url('users') ?>"><i data-feather="users"></i>Managemen Pengguna</a>
                     </li>
+                    <li class="<?= $path === 'admin/audit-logs' ? 'active-page' : '' ?>">
+                        <a href="<?= site_url('admin/audit-logs') ?>"><i data-feather="shield"></i>Audit Log</a>
+                    </li>
                     <li class="<?= $path === 'programs/program' || $path === 'programs' ? 'active-page' : '' ?>">
                         <a href="<?= site_url('programs/program') ?>"><i data-feather="clipboard"></i>Posting Program Desa</a>
                     </li>
@@ -686,11 +696,14 @@ $metaImage = (string) ($metaImage ?? base_url('assets/images/card-image.png'));
 
         <div class="page-content">
             <div class="main-wrapper">
-                <?php if (session()->getFlashdata('success')) : ?>
-                    <div class="alert alert-success"><?= esc(session()->getFlashdata('success')) ?></div>
+                <?php if ($flashSuccess) : ?>
+                    <div class="alert alert-success"><?= esc((string) $flashSuccess) ?></div>
                 <?php endif; ?>
-                <?php if (session()->getFlashdata('error')) : ?>
-                    <div class="alert alert-danger"><?= esc(session()->getFlashdata('error')) ?></div>
+                <?php if ($flashError && ($floatingImageError === '' || (string) $flashError !== $floatingImageError)) : ?>
+                    <div class="alert alert-danger"><?= esc((string) $flashError) ?></div>
+                <?php endif; ?>
+                <?php if ($floatingImageError !== '') : ?>
+                    <div class="alert alert-danger"><?= esc($floatingImageError) ?></div>
                 <?php endif; ?>
 
                 <?= $this->renderSection('content') ?>
