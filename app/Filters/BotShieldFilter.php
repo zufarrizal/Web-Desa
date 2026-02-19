@@ -48,11 +48,61 @@ class BotShieldFilter implements FilterInterface
                 ->setBody('Form ini dikirim terlalu sering. Mohon tunggu sebentar.');
         }
 
+        // Burst guard: block rapid-fire submissions in a short window.
+        if (! $throttler->check('post_burst_' . $ipKey, 8, 10)) {
+            return service('response')
+                ->setStatusCode(429)
+                ->setBody('Submit terlalu cepat. Mohon jeda beberapa detik sebelum mencoba lagi.');
+        }
+
+        // Duplicate payload guard: block repeated identical submits to same endpoint.
+        $cache = cache();
+        $sessionId = session_id();
+        $clientKey = $sessionId !== '' ? $sessionId : $ipKey;
+        $dedupeKey = 'post_dedupe_' . md5($clientKey . '|' . $uri);
+        $payloadHash = $this->buildPayloadHash($request);
+        $lastPayloadHash = (string) ($cache->get($dedupeKey) ?? '');
+        if ($payloadHash !== '' && $payloadHash === $lastPayloadHash) {
+            return service('response')
+                ->setStatusCode(429)
+                ->setBody('Data yang sama terdeteksi dikirim berulang. Mohon tunggu sebentar.');
+        }
+        if ($payloadHash !== '') {
+            // Short TTL to stop spam loops but still allow normal repeat actions later.
+            $cache->save($dedupeKey, $payloadHash, 15);
+        }
+
         return null;
     }
 
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
         return null;
+    }
+
+    private function buildPayloadHash(IncomingRequest $request): string
+    {
+        $post = $request->getPost();
+        if (! is_array($post) || $post === []) {
+            return '';
+        }
+
+        $security = config('Security');
+        $csrfTokenName = is_object($security) && property_exists($security, 'tokenName')
+            ? (string) $security->tokenName
+            : 'csrf_test_name';
+
+        unset($post[$csrfTokenName], $post['honeypot'], $post['_method']);
+        if ($post === []) {
+            return '';
+        }
+
+        ksort($post);
+        $encoded = json_encode($post, JSON_UNESCAPED_UNICODE);
+        if (! is_string($encoded) || $encoded === '') {
+            return '';
+        }
+
+        return hash('sha256', $encoded);
     }
 }

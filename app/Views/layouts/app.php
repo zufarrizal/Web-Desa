@@ -154,16 +154,49 @@ $metaImage = (string) ($metaImage ?? base_url('assets/images/card-image.png'));
             color: #4f64d9;
             border-color: #cfd8ea;
         }
-        #adminNotifDropDown.notifications-dropdown {
-            min-width: 30px;
-            height: 30px;
-            border-radius: 15px;
+        .page-header .navbar #headerNav>ul>li>a#adminNotifDropDown.notifications-dropdown {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
+            position: relative;
+            padding: 0;
+            margin: 0;
+            min-width: 38px;
+            line-height: 1;
+            text-align: center;
+            color: #1e3a8a !important;
+            background: #e0ebff !important;
+            border: 1px solid #bcd3ff !important;
+        }
+        .page-header .navbar #headerNav>ul>li>a#adminNotifDropDown.notifications-dropdown:hover {
+            color: #1e40af !important;
+            border-color: #93b4ff !important;
+            background: #cfe0ff !important;
+        }
+        #adminNotifDropDown .notif-bell {
+            font-size: 14px;
+            line-height: 1;
+        }
+        #adminNotifDropDown .notif-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 4px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
             font-weight: 700;
             line-height: 1;
+            color: #fff;
+            background: #2563eb;
+            border: 2px solid #fff;
         }
         .notif-drop-menu {
             min-width: 320px;
@@ -491,7 +524,10 @@ $metaImage = (string) ($metaImage ?? base_url('assets/images/card-image.png'));
                         <?php if ($isAdmin) : ?>
                             <li class="nav-item dropdown d-flex align-items-center me-2">
                                 <a class="nav-link notifications-dropdown" href="#" id="adminNotifDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <?= $adminNotifTotal > 0 ? esc((string) $adminNotifTotal) : '' ?>
+                                    <i class="fas fa-bell notif-bell"></i>
+                                    <?php if ($adminNotifTotal > 0) : ?>
+                                        <span class="notif-badge"><?= esc((string) $adminNotifTotal) ?></span>
+                                    <?php endif; ?>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end notif-drop-menu" aria-labelledby="adminNotifDropDown">
                                     <h6 class="dropdown-header">Notifikasi Admin</h6>
