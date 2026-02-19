@@ -154,6 +154,68 @@ $metaImage = (string) ($metaImage ?? base_url('assets/images/card-image.png'));
             color: #4f64d9;
             border-color: #cfd8ea;
         }
+        #adminNotifDropDown.notifications-dropdown {
+            min-width: 30px;
+            height: 30px;
+            border-radius: 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .notif-drop-menu {
+            min-width: 320px;
+            max-width: 360px;
+        }
+        .notif-drop-menu > a {
+            text-decoration: none;
+            display: block;
+        }
+        .notif-drop-menu .header-notif {
+            min-height: 52px;
+            padding: 8px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .notif-drop-menu .notif-image {
+            width: 30px;
+            height: 30px;
+            flex: 0 0 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .notif-drop-menu .notification-badge {
+            width: 30px !important;
+            min-width: 30px !important;
+            max-width: 30px !important;
+            height: 30px !important;
+            min-height: 30px !important;
+            max-height: 30px !important;
+            padding: 0 !important;
+            border-radius: 50% !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            line-height: 1 !important;
+        }
+        .notif-drop-menu .notification-badge i {
+            line-height: 1 !important;
+        }
+        .notif-drop-menu .notif-text {
+            min-width: 0;
+            flex: 1 1 auto;
+            line-height: 1.2;
+        }
+        .notif-drop-menu .notif-text p {
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
         .top-profile-avatar {
             width: 40px;
             height: 40px;
@@ -394,42 +456,52 @@ $metaImage = (string) ($metaImage ?? base_url('assets/images/card-image.png'));
                         </li>
                         <?php if ($isAdmin) : ?>
                             <li class="nav-item dropdown d-flex align-items-center me-2">
-                                <a class="nav-link position-relative px-2" href="#" id="adminNotifDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Notifikasi Admin">
-                                    <i data-feather="bell"></i>
-                                    <?php if ($adminNotifTotal > 0) : ?>
-                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                            <?= esc((string) $adminNotifTotal) ?>
-                                        </span>
-                                    <?php endif; ?>
+                                <a class="nav-link notifications-dropdown" href="#" id="adminNotifDropDown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <?= $adminNotifTotal > 0 ? esc((string) $adminNotifTotal) : '' ?>
                                 </a>
-                                <div class="dropdown-menu dropdown-menu-end profile-drop-menu" aria-labelledby="adminNotifDropDown" style="min-width: 320px;">
+                                <div class="dropdown-menu dropdown-menu-end notif-drop-menu" aria-labelledby="adminNotifDropDown">
                                     <h6 class="dropdown-header">Notifikasi Admin</h6>
-                                    <a class="dropdown-item" href="<?= site_url('users') ?>">
-                                        Registrasi User Baru
-                                        <span class="badge bg-primary float-end"><?= esc((string) $newUserCount) ?></span>
-                                    </a>
                                     <?php foreach ($newUsers as $item) : ?>
-                                        <div class="dropdown-item-text py-1 text-muted">
-                                            <small><?= esc((string) ($item['name'] ?? '-')) ?></small>
-                                        </div>
+                                        <a href="<?= site_url('users') ?>">
+                                            <div class="header-notif">
+                                                <div class="notif-image">
+                                                    <span class="notification-badge bg-primary text-white">
+                                                        <i class="fas fa-user-plus"></i>
+                                                    </span>
+                                                </div>
+                                                <div class="notif-text">
+                                                    <p class="bold-notif-text"><?= esc((string) ($item['name'] ?? '-')) ?></p>
+                                                </div>
+                                            </div>
+                                        </a>
                                     <?php endforeach; ?>
-                                    <a class="dropdown-item" href="<?= site_url('documents') ?>">
-                                        Dokumen Baru
-                                        <span class="badge bg-warning text-dark float-end"><?= esc((string) $newDocumentCount) ?></span>
-                                    </a>
                                     <?php foreach ($newDocuments as $item) : ?>
-                                        <div class="dropdown-item-text py-1 text-muted">
-                                            <small><?= esc((string) ($item['citizen_name'] ?? '-')) ?></small>
-                                        </div>
+                                        <a href="<?= site_url('documents') ?>">
+                                            <div class="header-notif">
+                                                <div class="notif-image">
+                                                    <span class="notification-badge bg-warning text-white">
+                                                        <i class="fas fa-file-alt"></i>
+                                                    </span>
+                                                </div>
+                                                <div class="notif-text">
+                                                    <p class="bold-notif-text"><?= esc((string) ($item['citizen_name'] ?? '-')) ?></p>
+                                                </div>
+                                            </div>
+                                        </a>
                                     <?php endforeach; ?>
-                                    <a class="dropdown-item" href="<?= site_url('complaints') ?>">
-                                        Pengaduan Baru
-                                        <span class="badge bg-danger float-end"><?= esc((string) $newComplaintCount) ?></span>
-                                    </a>
                                     <?php foreach ($newComplaints as $item) : ?>
-                                        <div class="dropdown-item-text py-1 text-muted">
-                                            <small><?= esc((string) ($item['title'] ?? '-')) ?></small>
-                                        </div>
+                                        <a href="<?= site_url('complaints') ?>">
+                                            <div class="header-notif">
+                                                <div class="notif-image">
+                                                    <span class="notification-badge bg-danger text-white">
+                                                        <i class="fas fa-bullhorn"></i>
+                                                    </span>
+                                                </div>
+                                                <div class="notif-text">
+                                                    <p class="bold-notif-text"><?= esc((string) ($item['title'] ?? '-')) ?></p>
+                                                </div>
+                                            </div>
+                                        </a>
                                     <?php endforeach; ?>
                                     <?php if ($adminNotifTotal > 0) : ?>
                                         <div class="dropdown-divider"></div>
