@@ -7,6 +7,7 @@ Aplikasi pelayanan administrasi desa berbasis CodeIgniter 4 untuk kebutuhan warg
 - Role dan otorisasi: `admin` dan `user`.
 - Dashboard terpisah untuk admin dan user.
 - Manajemen pengguna oleh admin.
+- Audit log aktivitas admin (`/admin/audit-logs`) untuk aksi mutasi data.
 - Pelayanan dokumen warga:
   - generate surat,
   - input manual,
@@ -15,6 +16,7 @@ Aplikasi pelayanan administrasi desa berbasis CodeIgniter 4 untuk kebutuhan warg
   - print setelah disetujui,
   - update status.
 - Pengaduan masyarakat dengan lampiran gambar.
+- Notifikasi admin berbasis database (warga baru, dokumen baru, pengaduan baru).
 - Konten publik terpisah: Program, Artikel, Kegiatan, Pengumuman.
 - Halaman publik desa dengan dark/light mode.
 - Halaman listing publik: `/postingan` + filter kategori.
@@ -134,6 +136,8 @@ Catatan:
 - `/users/*`
 - `/programs/*`
 - `/settings/home`
+- `/admin/audit-logs`
+- `/admin/notifications/*`
 
 ## Pengaturan Homepage oleh Admin
 Menu: `Pengaturan Halaman Utama` (`/settings/home`)
@@ -193,6 +197,9 @@ Pastikan kredensial test valid sebelum menjalankan test.
 - CSRF aktif untuk request form agar mencegah serangan cross-site request forgery.
 - Honeypot dipakai untuk menahan bot form sederhana.
 - Throttle/rate limit menurunkan risiko spam submit (misalnya login brute force ringan atau spam form).
+- Tambahan proteksi anti-spam submit massal:
+  - burst guard untuk submit terlalu cepat,
+  - duplicate payload guard untuk payload identik berulang dalam waktu singkat.
 
 ### 4. Keamanan upload file
 - Validasi upload aktif dan penyimpanan file runtime memakai nama acak di `public/uploads` untuk menurunkan risiko tebakan path file.
@@ -218,6 +225,7 @@ Pastikan kredensial test valid sebelum menjalankan test.
 ### 7. Error handling
 - Halaman error kustom 404 dan 500 disediakan.
 - Untuk production, detail sensitif error tidak ditampilkan ke user.
+- Notifikasi validasi upload gambar ditampilkan sebagai alert mengambang (pojok kanan bawah, auto-hide 5 detik), bukan popup native browser.
 
 ## Checklist Keamanan Sebelum Go-Live
 - Set `CI_ENVIRONMENT=production`.
@@ -230,10 +238,18 @@ Pastikan kredensial test valid sebelum menjalankan test.
 - Pastikan `app.profileDataKey` terisi dan kuat (jangan gunakan key pendek/lemah).
 - Monitoring log error di `writable/logs` secara berkala.
 
+## Audit Log
+- Tabel: `audit_logs`.
+- Akses admin: `/admin/audit-logs`.
+- Mencatat request mutasi data (`POST/PUT/PATCH/DELETE`) dengan data:
+  - user, role, method, endpoint, status HTTP,
+  - IP address, user agent,
+  - payload tersanitasi (field sensitif di-redact).
+
 ## Rekomendasi Lanjutan (Opsional)
 - Tambahkan reCAPTCHA pada form sensitif (login, register, pengaduan) jika traffic publik tinggi.
 - Terapkan pembatasan IP atau WAF di level infrastruktur.
-- Tambahkan audit trail aktivitas admin (siapa mengubah apa dan kapan).
+- Pertimbangkan ekspor arsip audit log berkala (CSV/PDF) untuk kebutuhan kepatuhan.
 - Jadwalkan backup database harian + uji restore berkala.
 - Siapkan prosedur rotasi key enkripsi terencana (karena data lama perlu proses re-encrypt jika key diganti).
 
